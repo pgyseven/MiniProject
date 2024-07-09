@@ -39,7 +39,28 @@ delete from member where userId = ?;
 
 -- dooly 라는 회원의 이메일을 수정하는 쿼리문
 update member set email = 'dooly@dooly.com' where userId = 'dooly'; 
--- 데이터 선택 안되었다 에러드면 스키마 이름을 pgy.member 이렇게 use pgy;!
+-- 데이터 선택 안되었다 에러드면 스키마 이름을 pgy.member 이렇게 use pgy; !
 
 -- dooly 회원이 전화번호를 변결할 때 쿼리문 업데이트 쿼리문은 경우의 수가 많다 모바일일 수 도 있고 아닐수 도
 update member set mobile = ? where userId = ?; 
+
+
+-- 계층형 게시판 생성
+CREATE TABLE `pgy`.`hboard` (
+  `boardNo` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(2000) NULL,
+  `writer` VARCHAR(8) NULL,
+  `postDate` DATETIME NULL DEFAULT now(),
+  `readCount` INT NULL DEFAULT 0,
+  `ref` INT NULL DEFAULT 0,
+  `step` INT NULL DEFAULT 0,
+  `refOrder` INT NULL DEFAULT 0,
+  PRIMARY KEY (`boardNo`),
+  INDEX `hboard_member_fk_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `hboard_member_fk`
+    FOREIGN KEY (`writer`)
+    REFERENCES `pgy`.`member` (`userId`)
+    ON DELETE SET NULL
+    ON UPDATE NO ACTION)
+COMMENT = '계층형 게시판';
