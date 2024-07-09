@@ -22,7 +22,7 @@
     <div class="collapse navbar-collapse" id="mynavbar">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)">계층형 게시판</a>
+          <a class="nav-link" href="/hboard/listAll">계층형 게시판</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="javascript:void(0)">댓글형 게시판</a>
