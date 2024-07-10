@@ -15,7 +15,36 @@
 
 		<div class="content">
 			<h1>계층형 게시판 전체 리스트 페이지</h1>
+
+			
+
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>title</th>
+						<th>writer</th>
+						<th>postDate</th>
+						<th>readCount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="board" items="${boardList}">
+						<tr>
+							<td>${board.boardNo}</td>
+							<td>${board.title}</td>
+							<td>${board.writer}</td>
+							<td>${board.postDate}</td>
+							<td>${board.readCount}</td>
+							
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
 		</div>
+	<div>
+	<button type="button" class="btn btn-primary">글 저장</button>
+	</div>
 		<c:import url="./../footer.jsp"></c:import>
 
 	</div>
