@@ -64,3 +64,16 @@ CREATE TABLE `pgy`.`hboard` (
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
 COMMENT = '계층형 게시판';
+
+-- 계층형 게시판에 모든 게시글을 가져오는 쿼리문
+select * from hboard order by boardNo desc;
+
+-- 계층형 게시판에 게시글을 등록하는 쿼리문
+insert into hboard(title, content, writer)
+values('아싸~~ 1등이다.', '내용 무....', 'dooly');
+
+insert into hboard(title, content, writer)
+values('금산에 살얼이', '죽고 죽어 일백번', 'kildong');
+
+insert into hboard(title, content, writer)
+values(?, ?, ?);
