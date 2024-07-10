@@ -80,7 +80,7 @@
 			</table>
 		</div>
 	<div>
-	<button type="button" class="btn btn-primary">글 저장</button>
+	<button type="button" class="btn btn-primary" onclick="location.href='/hboard/saveBoard';">글 저장</button>
 	</div>
 	
 		<c:import url="./../footer.jsp"></c:import>
