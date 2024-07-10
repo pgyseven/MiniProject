@@ -10,7 +10,15 @@
 <script>
 	$(function(){
 		
+		timediffPostDate(); // 함수 호출
 
+		
+
+
+	}); // 웹 문서가 로딩 완료되면 현재의 함수를 실행하도록 한다 window.onload = function 웹브라우즈 로딩이 완료되면 실행해라라는 즉 웹문서 로딩이 완료후 실행되어라
+	
+	//게시글의 작성일을 얻어와 2시간 이내에 작성한 글이라면 new.png 이미지를 제목 앞에 붙여 출력한다.
+	function timediffPostDate(){
 		$(".postDate").each(function(i, e){
 			//console.log(i + '번째 태그 : ' + $(e).html() );
 			let postDate = new Date($(e).html()); // 글 작성일 저장 (Date 객체로 변환 후)
@@ -33,9 +41,7 @@
 			}
 
 		});
-
-
-	}); // 웹 문서가 로딩 완료되면 현재의 함수를 실행하도록 한다 window.onload = function 웹브라우즈 로딩이 완료되면 실행해라라는 즉 웹문서 로딩이 완료후 실행되어라
+	}
 </script>
 </head>
 <body>
