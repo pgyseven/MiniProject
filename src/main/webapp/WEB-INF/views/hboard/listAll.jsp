@@ -6,11 +6,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 	$(function(){
 		
 		timediffPostDate(); // 함수 호출
+
+		// 클래스가 modalCloseBtn 태그를 클릭하면 실행되는 함수  
+		    $('.modalCloseBtn').click(function(){  // onclick과 같은 함수 click
+		    	$("#myModal").hide(); //태그를 화면에서 감춤
+		    }); // 클릭하면 이 함수가 실행된다. 
 
 		
 
@@ -53,36 +59,71 @@
 		<div class="content">
 			<h1>계층형 게시판 전체 리스트 페이지</h1>
 
-			
+			<!-- choose if와 else 합친거랑 생각해라 when 이 if -->
+			<c:choose>
+				<c:when test="${boardList != null}">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>title</th>
+								<th>writer</th>
+								<th>postDate</th>
+								<th>readCount</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach var="board" items="${boardList}">
+								<tr class="table-primary">
+									<td>${board.boardNo}</td>
+									<td>${board.title}</td>
+									<td>${board.writer}</td>
+									<td class="postDate">${board.postDate}</td>
+									<td>${board.readCount}</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</c:when>
+				<c:when test="${boardList == null and exception == 'error'}">
+					
 
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>title</th>
-						<th>writer</th>
-						<th>postDate</th>
-						<th>readCount</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="board" items="${boardList}">
-						<tr class="table table-hover">
-							<td>${board.boardNo}</td>
-							<td>${board.title}</td>
-							<td>${board.writer}</td>
-							<td class="postDate">${board.postDate}</td>
-							<td>${board.readCount}</td>
-							
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
+				           <!-- The Modal -->
+               <div class="modal" id="myModal" style="display: block;">
+                  <div class="modal-dialog">
+                     <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                           <h4 class="modal-title">MiniProject</h4>
+                           <button type="button" class="btn-close modalCloseBtn" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">문제가 발생하여 데이터를 가져오지 못했습니다!</div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                           <button type="button" class="btn btn-danger modalCloseBtn"
+                              data-bs-dismiss="modal">Close</button>
+                        </div>
+
+                     </div>
+                  </div>
+               </div>
+
+
+            </c:when>
+         </c:choose>
+
+
+
 		</div>
-	<div>
-	<button type="button" class="btn btn-primary" onclick="location.href='/hboard/saveBoard';">글 저장</button>
-	</div>
-	
+		<div>
+			<button type="button" class="btn btn-primary"
+				onclick="location.href='/hboard/saveBoard';">글 저장</button>
+		</div>
+
 		<c:import url="./../footer.jsp"></c:import>
 
 	</div>
