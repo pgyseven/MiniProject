@@ -18,8 +18,10 @@ public class HBoardDAOImpl implements HBoardDAO {
 	
 	private static String NS = "com.miniproj.mapper.hboardmapper";
 	
+	
+	// throws : 현재 메서드에서 예외가 발생하면 현재 메서드를 호출한 곳에서 예외처리를 하도록 미뤄두는 키워드
 	@Override
-	public List<HBoardVO> selectAllBoard() {
+	public List<HBoardVO> selectAllBoard() throws Exception {
 		System.out.println("여기는 HBoard ...................");
 		
 		List<HBoardVO> list = ses.selectList(NS + ".getAllHBoard");

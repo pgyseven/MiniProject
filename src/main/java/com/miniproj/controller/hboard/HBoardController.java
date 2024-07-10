@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.miniproj.model.HBoardVO;
@@ -29,12 +30,18 @@ public class HBoardController
       logger.info("HBoardController.listAll()~");
       
       // 서비스 단 호출
-      List<HBoardVO> list = service.getAllBoard();
+      List<HBoardVO> list = null;
+	try {
+		list = service.getAllBoard();
+		 model.addAttribute("boardList", list);
+	} catch (Exception e) {
+		model.addAttribute("exception", "error");
+	}
       
 //      for(HBoardVO b : list) {
 //			System.out.println(b.toString());
 //		}
-      model.addAttribute("boardList", list); //바이터 파인딩
+      //model.addAttribute("boardList", list); //바이터 파인딩
       // return "/hboard/listAll.jsp";
       // /hboard/listAll.jsp 으로 포워딩 됨
    }

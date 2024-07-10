@@ -20,7 +20,7 @@ public class HBoardServiceImpl implements HBoardService {
 	private HBoardDAO bDao;
 	
 	@Override
-	public List<HBoardVO> getAllBoard() {
+	public List<HBoardVO> getAllBoard() throws Exception {
 		logger.info("HBoardServiceImpl.........");
 		
 		
