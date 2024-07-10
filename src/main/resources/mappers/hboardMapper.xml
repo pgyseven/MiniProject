@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miniproj.mapper.hboardmapper">  <!-- 여긴 다오단에서 부를 이름이니 대문자 M 이 아니여도 된다.패키지명 클래스명 -->
+	<!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
+	<select id="getAllHBoard" resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
+		select * from hboard order by boardNo desc
+	</select>
+</mapper>
