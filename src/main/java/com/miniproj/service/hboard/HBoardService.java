@@ -2,6 +2,7 @@ package com.miniproj.service.hboard;
 
 import java.util.List;
 
+import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 
 public interface HBoardService   //클래스와 동급이다 클래스를 디자인하기 위해서 먼저 만드는것 중괄호 없는 추상메서드만 만들수 있음 추상클래스와 인터페이스도 상속 가능 
@@ -9,8 +10,8 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    // 게시판 전체 리스트 조회
    public List<HBoardVO> getAllBoard() throws Exception;
    
-   // 게시판 글 작성 기능
-   
+   // 게시판 글 작성 
+   boolean saveBoard(HBoardDTO newBoard) throws Exception;
    
    // 게시판 글 수정
    
