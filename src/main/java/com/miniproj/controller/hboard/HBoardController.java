@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.service.hboard.HBoardService;
 
@@ -52,6 +54,12 @@ public class HBoardController
 	   return "/hboard/saveBoardForm";
    }
    
-   
-   
+   // 게시글 저장 버튼을 눌렀을때 해당 게시글을 db에 저장하는 메서드
+	@RequestMapping(value="/saveBoard", method = RequestMethod.POST)  /*url 호출이름이 위와 같은데 전송방식이 다르기 때문에 문제 없다*/
+   public void saveBoard(HBoardDTO boardDTO) {
+		 System.out.println("이게시글을 출력하자...................." + boardDTO.toString()); //"/saveBoard 보이드는 이거에 의해서 .jsp 가 붙어서 간다.
+		 
+			// VO는 리드 온리로서 디비에 꺼내온걸 저장해서 앞단까지 가져가는 것 즉 뷰단까지 즉 DTO와 VO가 다른거다 같이 쓰기도 하는데 앞단 뷰단은 자주 바뀔수 있다. 그래서 따로 쓰는게 좋다. 
+	}
+  
 }
