@@ -65,6 +65,8 @@ CREATE TABLE `pgy`.`hboard` (
     ON UPDATE NO ACTION)
 COMMENT = '계층형 게시판';
 
+
+
 -- 계층형 게시판에 모든 게시글을 가져오는 쿼리문
 select * from hboard order by boardNo desc;
 
@@ -77,3 +79,49 @@ values('금산에 살얼이', '죽고 죽어 일백번', 'kildong');
 
 insert into hboard(title, content, writer)
 values(?, ?, ?);
+
+-- 유저에게 지급되는 포인트를 정의한 테이블 생성
+CREATE TABLE `pgy`.`pointdef` (
+  `pointWhy` VARCHAR(20) NOT NULL,
+  `pointScore` INT NULL,
+  PRIMARY KEY (`pointWhy`))
+COMMENT = '유저에게 적립할 포인트에 대한 저의 테이블,\n어떤 사유로 몇 포인트를 지급하는지에 대해 정의';
+
+-- pointdef 테이블의 기초 데이터
+INSERT INTO `pgy`.`pointdef` (`pointWhy`, `pointScore`) VALUES ('회원가입', '100');
+INSERT INTO `pgy`.`pointdef` (`pointWhy`, `pointScore`) VALUES ('로그인', '1');
+INSERT INTO `pgy`.`pointdef` (`pointWhy`, `pointScore`) VALUES ('글작성', '10');
+INSERT INTO `pgy`.`pointdef` (`pointWhy`, `pointScore`) VALUES ('댓글작성', '2');
+INSERT INTO `pgy`.`pointdef` (`pointWhy`, `pointScore`) VALUES ('게시글신고', '-10');
+
+
+ALTER TABLE `pgy`.`pointdef` 
+ADD COLUMN `pointdefNo` INT NOT NULL AUTO_INCREMENT FIRST,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`pointdefNo`);
+;
+
+--  유저의 포인트 적립 내역을 기록하는 pointlog 테이블 생성
+CREATE TABLE `pgy`.`pointlog` (
+  `pointLogNo` INT NOT NULL AUTO_INCREMENT,
+  `pointWho` VARCHAR(8) NOT NULL,
+  `pointWhen` DATETIME NULL DEFAULT now(),
+  `pointWhy` VARCHAR(20) NOT NULL,
+  `pointScore` INT NOT NULL,
+  PRIMARY KEY (`pointLogNo`),
+  CONSTRAINT `pointdef_member_fk`
+    FOREIGN KEY (`pointWho`)
+    REFERENCES `pgy`.`member` (`userId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+COMMENT = '어떤 유저에게 어떤 사유로 몇 포인트가 언제 지급 되었는지를 기록하는 테이블 ';
+
+-- 계층형 게시판 글 삭제 쿼리문
+delete from hboard where boardNo=3;
+
+-- 유저에게 포인트를 지급하는 쿼리문 
+insert into pointlog(pointWho, pointWhy, pointScore) values(?, ?, (select pointScore from pointdef where pointWhy = ?));
+
+
+
+
