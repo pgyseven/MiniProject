@@ -17,22 +17,22 @@
 	<div class="container">
 		<c:import url="./../header.jsp"></c:import>
 		<h2>게시글 작성</h2>
-		<form>
+		<form action="saveBoard" method="POST">   <!-- 데이터 양이 많으니 포스트 방식으로 보낸다 만약 겟방식이면 url에 쿼리 스트링 형식으로 보내진다. 그러면 내용때문에 url의 길이 제한 때문에 문제 생긴다 정확히 2083자까지만 가능하다. --> 
 			<div class="mb-3">
 				<label for="title" class="form-label">글제목</label> <input type="text"
-					class="form-control" id="title" placeholder="글제목을 입력하세요">
+					class="form-control" id="title" name="title" placeholder="글제목을 입력하세요">
 			</div>
 			<div class="mb-3">
 				<label for="author" class="form-label">작성자</label> <input
-					type="text" class="form-control" id="author"
+					type="text" class="form-control" id="writer" name="writer"
 					placeholder="작성자를 입력하세요">
 			</div>
 			<div class="mb-3">
 				<label for="content" class="form-label">내용</label>
-				<textarea class="form-control" id="content" rows="5"
+				<textarea class="form-control" id="content" name="content" rows="5"
 					placeholder="내용을 입력하세요"></textarea>
 			</div>
-			<button type="submit" class="btn btn-primary">제출</button>
+			<button type="submit" class="btn btn-primary">저장</button>
 		</form>
 		
 		<c:import url="./../footer.jsp"></c:import>
