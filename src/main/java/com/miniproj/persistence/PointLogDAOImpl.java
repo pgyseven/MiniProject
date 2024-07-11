@@ -11,7 +11,7 @@ public class PointLogDAOImpl implements PointLogDAO { // 임플리먼트 상속 
 	@Autowired
 	private SqlSession ses;
 	
-	private static String NS = "com.miniproj.mapper.hboardmapper";
+	private static String NS = "com.miniproj.mapper.pointlogmapper";
 	
 	@Override
 	public int insertPointLog(PointLogDTO pointLogDTO) throws Exception {

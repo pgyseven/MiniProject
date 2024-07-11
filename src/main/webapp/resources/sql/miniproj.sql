@@ -117,7 +117,7 @@ CREATE TABLE `pgy`.`pointlog` (
 COMMENT = '어떤 유저에게 어떤 사유로 몇 포인트가 언제 지급 되었는지를 기록하는 테이블 ';
 
 -- 계층형 게시판 글 삭제 쿼리문
-delete from hboard where boardNo=3;
+delete from hboard where boardNo=10;
 
 -- 유저에게 포인트를 지급하는 쿼리문 
 insert into pointlog(pointWho, pointWhy, pointScore) values(?, ?, (select pointScore from pointdef where pointWhy = ?));

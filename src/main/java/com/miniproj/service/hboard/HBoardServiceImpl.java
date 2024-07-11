@@ -44,7 +44,8 @@ public class HBoardServiceImpl implements HBoardService {
 		// 1) newBoard를 ( 새로넘겨진 게시글) DAO 단을 통해 insert 해본다. -insert close
 		if (bDao.insertNewBoard(newBoard)==1) {
 		// 2) 1)번에서 insert 가 성공했을 때 글 작성자의 point를 부여한다. -(select) close - insert close 참고로 commit은 데이터를 영구하게 저장하기 위함
-			System.out.println(pDao.insertPointLog(new PointLogDTO(newBoard.getWriter() , "글작성", 0)));
+			System.out.println(pDao.insertPointLog(new PointLogDTO(newBoard.getWriter(), "글작성", 0)));
+
 		// 3) 작성자의 userpoint 값 update close
 		
 		//위처럼 우리가 이전 만든 경우처럼 closeAll이 매번 경우에 있었듯 클로즈가 되면 중간에 두번째 인서트가 안되면 롤백이 안된다. 이전에 클로즈 하면서 커밋이 된거니깐
