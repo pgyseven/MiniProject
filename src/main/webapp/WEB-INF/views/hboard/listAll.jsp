@@ -10,6 +10,25 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 	$(function(){
+		let status = '${param.status}'; // url 주소창에서 status 쿼리스트링 값을 가져와 변수 저장
+		console.log(status);
+
+		if (status == 'success') {
+			//글 저장 성공 모달창을 띄움
+			$('.modal-body').html('<h5>글 저장 성공하였습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+
+		} else if (status == 'fail') { //참고로 경우의 수 -1 개의 if 문을 만들어야 하는거 잊지마라 마지막에 else
+			$('.modal-body').html('<h5>글 저장 실패하였습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+		}
+
+		let boardList = '${boardList}';
+		if (boardList == '') {
+			$('.modal-body').html('<h5>게시글이 없거나 문제가 발생해 데이터를 불러오지 못했습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+
+		}
 		
 		timediffPostDate(); // 함수 호출
 
@@ -85,9 +104,9 @@
 						</tbody>
 					</table>
 				</c:when>
-				<c:when test="${boardList == null and exception == 'error'}">
-					
-
+				
+				
+				<%-- <c:when test="${boardList == null and exception == 'error'}">
 				           <!-- The Modal -->
                <div class="modal" id="myModal" style="display: block;">
                   <div class="modal-dialog">
@@ -111,9 +130,9 @@
                      </div>
                   </div>
                </div>
-
-
-            </c:when>
+            </c:when> --%>
+            
+            
          </c:choose>
 
 
@@ -123,6 +142,30 @@
 			<button type="button" class="btn btn-primary"
 				onclick="location.href='/hboard/saveBoard';">글 저장</button>
 		</div>
+
+				           <!-- The Modal -->
+						   <div class="modal" id="myModal" style="display: none;">
+							<div class="modal-dialog">
+							   <div class="modal-content">
+		  
+								  <!-- Modal Header -->
+								  <div class="modal-header">
+									 <h4 class="modal-title">MiniProject</h4>
+									 <button type="button" class="btn-close modalCloseBtn" data-bs-dismiss="modal"></button>
+								  </div>
+		  
+								  <!-- Modal body -->
+								  <div class="modal-body"></div>
+		  
+								  <!-- Modal footer -->
+								  <div class="modal-footer">
+									 <button type="button" class="btn btn-danger modalCloseBtn"
+										data-bs-dismiss="modal">Close</button>
+								  </div>
+		  
+							   </div>
+							</div>
+						 </div>
 
 		<c:import url="./../footer.jsp"></c:import>
 
