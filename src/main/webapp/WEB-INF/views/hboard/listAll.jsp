@@ -10,26 +10,9 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 	$(function(){
-		let status = '${param.status}'; // url 주소창에서 status 쿼리스트링 값을 가져와 변수 저장
-		console.log(status);
 
-		if (status == 'success') {
-			//글 저장 성공 모달창을 띄움
-			$('.modal-body').html('<h5>글 저장 성공하였습니다.</h5>');
-			$('#myModal').show();  //제이커리문
+		showModalAccordingToStatus();
 
-		} else if (status == 'fail') { //참고로 경우의 수 -1 개의 if 문을 만들어야 하는거 잊지마라 마지막에 else
-			$('.modal-body').html('<h5>글 저장 실패하였습니다.</h5>');
-			$('#myModal').show();  //제이커리문
-		}
-
-		let boardList = '${boardList}';
-		if (boardList == '') {
-			$('.modal-body').html('<h5>게시글이 없거나 문제가 발생해 데이터를 불러오지 못했습니다.</h5>');
-			$('#myModal').show();  //제이커리문
-
-		}
-		
 		timediffPostDate(); // 함수 호출
 
 		// 클래스가 modalCloseBtn 태그를 클릭하면 실행되는 함수  
@@ -42,6 +25,37 @@
 
 	}); // 웹 문서가 로딩 완료되면 현재의 함수를 실행하도록 한다 window.onload = function 웹브라우즈 로딩이 완료되면 실행해라라는 즉 웹문서 로딩이 완료후 실행되어라
 	
+
+	// 데이터 로딩 상태에 따라 모달창을 띄우는 함수
+	function showModalAccordingToStatus(){
+		let status = '${param.status}'; // url 주소창에서 status 쿼리스트링 값을 가져와 변수 저장
+		console.log(status); //자바스크릅트에러는 크롬등 창에서 콘솔을 보아라
+
+		if (status == 'success') {
+			//글 저장 성공 모달창을 띄움
+			$('.modal-body').html('<h5>글 저장 성공하였습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+
+		} else if (status == 'fail') { //참고로 경우의 수 -1 개의 if 문을 만들어야 하는거 잊지마라 마지막에 else
+			//글 저장 실패 모달창을 띄움
+			$('.modal-body').html('<h5>글 저장 실패하였습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+		}
+
+			//게시글을 불러올때 예외가 발생했거나 데이터가 없을때
+		let except = '${exception}'
+		// boardList = '${boardList}'; 이렇게 하고 아래 if 문을 if (boardList == '') 이렇게 하면 글 내용에 자바스크립트 허용 안하는 문구 있다고 에러뜸
+		if (except == 'error') {
+			$('.modal-body').html('<h5>게시글이 없거나 문제가 발생해 데이터를 불러오지 못했습니다.</h5>');
+			$('#myModal').show();  //제이커리문
+
+		}
+
+	}
+
+
+
+
 	//게시글의 작성일을 얻어와 2시간 이내에 작성한 글이라면 new.png 이미지를 제목 앞에 붙여 출력한다.
 	function timediffPostDate(){
 		$(".postDate").each(function(i, e){
