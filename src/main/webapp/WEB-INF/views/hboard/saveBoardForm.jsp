@@ -33,7 +33,7 @@
 			
 			// 유효성 검사 하는 자바스크립트에서는 마지막에 boolean 타입의 값을 반환하여
 			// 데이터가 백엔드 단으로 넘어갈지 말지늘 결정해줘야 한다.
-			return true;
+			return result;
 		}
 
 	</script>
