@@ -40,5 +40,13 @@ public class HomeController {
 	public void goWeatherPage() {
 		
 	}
+	@RequestMapping("/movie")
+	public void goMoviePage() {
+		
+	}
+	@RequestMapping("/movieTwo")
+	public void goMovieTwoPage() {
+		
+	}
 	
 }
