@@ -51,16 +51,16 @@
 			//이미지 파일이 아니다...
 			
 			let output = `<div><img src='/resources/images/noimage.png' /><span>\${file.name}</span>`;
-			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" /></span></div>` //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
+			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" /></span></div>`; //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
 			$('.preview').append(output); //어펜드 끝에다가 추가
 		}
 	}
 	
 	function remFile(obj) {
-		let removeFileName = $(obj).parent().prev().html(); // 콘솔에서 경로를 보면 된다. 
+		let removedFileName = $(obj).parent().prev().html(); // 콘솔에서 경로를 보면 된다. 
 		
 		for(let i = 0; i < upfiles.length; i++) { //인덱스 값을 알기 위해 이걸로 바꿈 원래는 렛 파일 오브였음 /let file of upfiles업파일 배열에서 꺼내와서 파일이라는 지역변수에 넣어줘라 하나씩
-			if(upfile[i].name == removeFileName) {
+			if(upfiles[i].name == removedFileName) {
 				// 파일 삭제
 				upfiles.splice(i, 1); //배열에서 삭제 i번째에서 1개 삭제
 				console.log(upfiles);
