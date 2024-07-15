@@ -125,4 +125,25 @@ insert into pointlog(pointWho, pointWhy, pointScore) values(?, ?, (select pointS
 -- 유저에게 지급된 point를 update하는 쿼리문
 update member set userpoint = userpoint + (select pointScore from pointdef where pointWhy = '글작성') where userId = ?;
 
+-- 게시글의 첨부파일을 저장하는 테이블 생성
+CREATE TABLE `pgy`.`boardimg` (
+  `boardImgNo` INT NOT NULL AUTO_INCREMENT,
+  `newFileName` VARCHAR(50) NOT NULL,
+  `originalFileName` VARCHAR(50) NOT NULL,
+  `ext` VARCHAR(4) NULL,
+  `size` INT NULL,
+  `boardNo` INT NOT NULL,
+  `base64Img` TEXT NULL,
+  INDEX `board_boardNo_fk_idx` (`boardNo` ASC) VISIBLE,
+  PRIMARY KEY (`boardImgNo`),
+  CONSTRAINT `board_boardNo_fk`
+    FOREIGN KEY (`boardNo`)
+    REFERENCES `pgy`.`hboard` (`boardNo`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+COMMENT = '게시판에 업로드 되는 업로드 파일을 기록하는 테이블';
+
+-- 게시글 첨부 파일 테이블 수정
+ALTER TABLE `pgy`.`boardimg` 
+ADD COLUMN `thumbFileName` VARCHAR(60) NULL AFTER `originalFileName`;
 
