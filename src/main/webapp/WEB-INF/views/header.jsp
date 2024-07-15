@@ -33,6 +33,12 @@
         <li class="nav-item">
           <a class="nav-link" href="/weather">오늘의 날씨</a>
         </li>
+         <li class="nav-item">
+          <a class="nav-link" href="/movie">박스 오피스 이미지</a>
+        </li>
+         <li class="nav-item">
+          <a class="nav-link" href="/movieTwo">박스 오피스</a>
+        </li>
       </ul>
       <form class="d-flex">
         <input class="form-control me-2" type="text" placeholder="Search">
