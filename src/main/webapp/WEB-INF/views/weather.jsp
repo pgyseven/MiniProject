@@ -60,42 +60,7 @@ function outputWeather(data){
 
 </script>
 
-<script>
-	let boxApiKey = '212b91c38ff2a760ae151153c78d580f';
-    let boxBaseUrl = 'https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=' + apiKey + "&targetDt=20240711";
-    
-$(function(){
-    boxOffice();
-});
 
-    function boxOffice() {
-        $.ajax({  
-            url : baseUrl,   
-            type : 'GET',    
-            dataType : 'json',      
-                                 
-            success : function(data) { 
-                console.log(data);
-                outputBoxOffice(data)
-
-            }, error : function() {  
-
-            }, complete : function() { 
-                
-            }
-        });
-
-
-    }
-
-function outputBoxOffice(data){
-	 
-   
-
-   $.each(data.boxOfficeResult.dailyBoxOfficeList, function(index, item) { $('.rank'+index).html(item.rank);
-   console.log(index, item);
-}
-</script>
 
 </head>
 <body>
@@ -117,14 +82,6 @@ function outputBoxOffice(data){
                 <div class="sunset"></div>
             </div>
 
-            <div id="boxoffice"></div>
-            <h1><span id="showRange"></span> 일별 박스오피스</h1>
-            <div>순위</div>
-            <% for (int i = 0 ; i<11 ; i++) { %>
-            <div class="rank<%=i%>"></div>
-            <%}%>
-           
-            
 		</div>
 
 		<c:import url="./footer.jsp"></c:import>
