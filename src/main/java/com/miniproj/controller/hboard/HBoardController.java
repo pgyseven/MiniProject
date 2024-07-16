@@ -47,7 +47,6 @@ public class HBoardController {
 	private FileProcess fileProcess;
 	
 	//아래서 지역변수에 의해 안날아가고 유저가 저장누르기 전까지 파일 정보 가지고 있게 하기 이걸 만든다.
-	@Autowired
 	private List<BoardUpFilesVODTO> uploadFileList = new ArrayList<BoardUpFilesVODTO>();  // 이게 스테이틱하면 모든 객체가 공유하니깐 다른 사람도 올린것처럼 될수도???
 	
 	// 게시판 전체 목록 리스트를 출력하는 메서드

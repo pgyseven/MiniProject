@@ -100,14 +100,20 @@ public class FileProcess {
 		File tmp = new File(saveFilePath);
 		
 		boolean isFind = false;
-		for(String name : tmp.list()) { //tmp.list()하나의 배열이다
+		String[] dirs = tmp.list();
+		if(dirs != null) {
+				
+		
+		for(String name : tmp.list()) { //tmp.list()하나의 배열이다 이게 널일수 있으니 
 			if(name.equals(originalFileName)) {
 				System.out.println("이름이 같은게 있다.");
 				isFind = true;
 				break;
 			}
+		}
 		
-		
+		}else { //경로에 기존 업로드된 파일이나 폴더가 없을 떄
+			return isFind;
 		}
 		
 		if(!isFind) {
