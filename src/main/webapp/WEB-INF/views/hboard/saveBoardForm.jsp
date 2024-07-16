@@ -42,12 +42,10 @@
 					console.log(upfiles);
 					
 					
-					
 					//해당 파일 업로드
 					fileUpload(file)
 					
-					// 미리 보기
-					showPreview(file);
+				
 				}
 				
 				
@@ -64,28 +62,53 @@
 		let fd = new FormData() //FormData 객체를 생성 : 폼태그와 같은 역할의 객체
 		fd.append("file", file); // 폼데이터 안에 키와 밸류 형태로 넣어준다.
 		
+		/* 비동기 방식과 동기 방식
+		동기방식은 카페에서 각각 주문을 받아서 한번에 두개를 처리 못하니깐 잠깐 기다려 달라고 다음 사람한테 한다. 이게 동기 방식이다.
+		아이스아메리카노 가져가세요 한다. 그런데도 가지갈때까지 기다린다 이게 동기식
+		비동기식은 가지가던 말던 테이블에 둔다. 이게 비동기식임
+		자기꺼 아닌데 누가 잘못 가져가면 다시 만들어줌
+		일단 접수 쭉 받고 받던 안받던 만들어줌 
+		자바스크립트는 함수를 비동기로 실행한다. 빠르게 하기 위해서 */
+		
+		
 		$.ajax({
 	         url : '/hboard/upfiles',             // 데이터가 송수신될 서버의 주소
 	         type : 'post',             // 통신 방식 : GET, POST, PUT, DELETE, PATCH 대소문자 상관없음  
-	         dataType : 'json',         // 수신 받을 데이터의 타입 (text, xml, json)
+	         dataType : 'text',         // 수신 받을 데이터의 타입 (text, xml, json)
 	    	 data : fd,					// 보낼 데이터
 	         // processData : false -> 데이터를 쿼리 스트링 형태로 보내지 안겠다는 설정
 	         // contentType 의 디폴트 값이 "application/x-www-form-urlencoded"(get과 같다 url에 붙여서 보내는것)인데 그렇기에 프로세스도 같이 폴스로 설정, 파일을 전송하는 방식이기에 " multipart/form-data로 되어야 하므로
 	         processData : false,
 	         contentType : false,
+	         async : false, // 비동기 통신 : false 응답이 오기를 기다렸다가 아래꺼 실행 비동기는 응답이 없어도 아래꺼를 실행 할 수도 있어서!
 	         success : function (data) {     // 비동기 통신에 성공하면 자동으로 호출될 callback function
-	            console.log(data);
+	             
+	        	 console.log(data);
+	         
+	         	if(data == 'success'){
+	         		
+	         		// 미리 보기
+					showPreview(file);
+	         	}
+	         }, error : function (data){
+	        	 console.log(data);
+	        	 if(data == 'fail') {
+	        		 alert('파일을 업로드 하지 못 했습니다.');
+	        		 
+	        		 for(let i = 0; i < upfiles.length; i++)  {
+	        			 
+	        			 if(upfiles[i].name == file.name) {
+	        				 
+	        				 upfiles.splice(i, 1); //배열에서 삭제
+	        			 }
+	        		 }
+	        	 }
+	         }
 	            
 				//여러개의 데이터는 아작스가 편하다. 폼태그 형식도 가능은 하지만....
 	         }
 
 	      });
-		
-		
-		
-		
-		
-		
 		
 	}
 
@@ -111,6 +134,7 @@
 		
 		for(let i = 0; i < upfiles.length; i++) { //인덱스 값을 알기 위해 이걸로 바꿈 원래는 렛 파일 오브였음 /let file of upfiles업파일 배열에서 꺼내와서 파일이라는 지역변수에 넣어줘라 하나씩
 			if(upfiles[i].name == removedFileName) {
+				// 파일 삭제(백엔드 단에서도 삭제 해야함)
 				// 파일 삭제
 				upfiles.splice(i, 1); //배열에서 삭제 i번째에서 1개 삭제
 				console.log(upfiles);
@@ -155,7 +179,7 @@
 		<c:import url="./../header.jsp"></c:import>
 		<h2>게시글 작성</h2>
 		<!-- multipart form-data : 데이터를 여러 조각으로 나누어서 전송하는 방식. 수신되는 곳에서는 재조립이 필요하다. -->
-		<form action="saveBoard" method="multipart/form-data">
+		<form action="saveBoard" method="post">
 			<!-- 패킷이란 단위로 데이터가 전송이됨 인터넷 선이 하나인데 대용량 업로드 중인데 하나만 하면 다른사람하고 통신을 못함 그래서 그걸 잘게 끊어서 날린다 그게 패킷단위고 이게 하나에 64kb 이다. 데이터가 이동할때 잘게 순서없이 보내지는데 그게 나중에 합쳐져야함 파일을 저장할땐 그래서 이속성을 꼭 써야함  4000바이트는 4kb /기존에 post였음 데이터 양이 많으니 포스트 방식으로 보낸다 만약 겟방식이면 url에 쿼리 스트링 형식으로 보내진다. 그러면 내용때문에 url의 길이 제한 때문에 문제 생긴다 정확히 2083자까지만 가능하다. -->
 			<div class="mb-3">
 				<label for="title" class="form-label">글제목</label> <input type="text"
