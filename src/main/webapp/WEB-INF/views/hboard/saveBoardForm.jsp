@@ -25,23 +25,73 @@
 			evt.preventDefault(); // 기본 이벤트 캔슬
 			});
 		
+		// 유저가 fileUploadArea에 파일을 드래그&드랍하면...
 		$('.fileUploadArea').on("drop", function(evt) {
 			evt.preventDefault();
 			// console.log(evt.originalEvent.dataTransfer.files); //업로드 되는 파일 객체의 정보	
-			for (let file of evt.originalEvent.dataTransfer.files) {
-				upfiles.push(file); // 배열에 담기
-				console.log(upfiles);
-				// 미리 보기
-				showPreview(file);
+			for (let file of evt.originalEvent.dataTransfer.files) { //읽기 전용 속성임 즉 세터가 없다.
+				
+				
+				// 파일 사이즈 검사 하여 10MB 가 넘게되면 파일 업로드가 안되도록...
+				if (file.size > 10485760){
+					// 알림창은 alert는 쓰는게 사실 아니다 유저가 불편한게 있어서
+					alert("파일 용량이 너무 큽니다! 업로드한 파일을 확인해 주세요.") //원래는 이거 모달로 해야한다.
+					
+				} else {
+					upfiles.push(file); // 배열에 담기
+					console.log(upfiles);
+					
+					
+					
+					//해당 파일 업로드
+					fileUpload(file)
+					
+					// 미리 보기
+					showPreview(file);
+				}
+				
+				
 				
 				
 			}
 		});
 	});
+	
+	//실제로 유저가 업로드한 파일을 컨트롤러단에 전송하여 저장하도록 하는 함수
+	//
+	function fileUpload(file) {
+		let result = false;
+		let fd = new FormData() //FormData 객체를 생성 : 폼태그와 같은 역할의 객체
+		fd.append("file", file); // 폼데이터 안에 키와 밸류 형태로 넣어준다.
+		
+		$.ajax({
+	         url : '/hboard/upfiles',             // 데이터가 송수신될 서버의 주소
+	         type : 'post',             // 통신 방식 : GET, POST, PUT, DELETE, PATCH 대소문자 상관없음  
+	         dataType : 'json',         // 수신 받을 데이터의 타입 (text, xml, json)
+	    	 data : fd,					// 보낼 데이터
+	         // processData : false -> 데이터를 쿼리 스트링 형태로 보내지 안겠다는 설정
+	         // contentType 의 디폴트 값이 "application/x-www-form-urlencoded"(get과 같다 url에 붙여서 보내는것)인데 그렇기에 프로세스도 같이 폴스로 설정, 파일을 전송하는 방식이기에 " multipart/form-data로 되어야 하므로
+	         processData : false,
+	         contentType : false,
+	         success : function (data) {     // 비동기 통신에 성공하면 자동으로 호출될 callback function
+	            console.log(data);
+	            
+				//여러개의 데이터는 아작스가 편하다. 폼태그 형식도 가능은 하지만....
+	         }
+
+	      });
+		
+		
+		
+		
+		
+		
+		
+	}
 
 	// 넘겨진 file 이 이미지 파일이라면 미리보기 하여 출력한다.
 	function showPreview(file) {
-		let imageType = ["image/jpeg", "image/png", "image/gif"];  //콘솔에 뜨는 파일의 타입의 형태 아래 콘솔로 찍어보면 볼 수 있는 타입이 뜬다.
+		let imageType = ["image/jpeg", "image/png", "image/gif"];  //콘솔에 뜨는 파일의 타입의 형태 아래 콘솔로 찍어보면 볼 수 있는 타입이 뜬다. 서버탭에 웹.xml dp mime-type을 보면된다.
 		console.log(file);
 		let fileType = file.type.toLowerCase(); // 대문자가 있을 수 있으니 소문자로 바꾸라는 함수 투로이어 케이스
 		if(imageType.indexOf(fileType) != -1){
