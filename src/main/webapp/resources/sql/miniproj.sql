@@ -147,3 +147,16 @@ COMMENT = '게시판에 업로드 되는 업로드 파일을 기록하는 테이
 ALTER TABLE `pgy`.`boardimg` 
 ADD COLUMN `thumbFileName` VARCHAR(60) NULL AFTER `originalFileName`;
 
+-- 첨부 파일 테이블 이름 변경
+ALTER TABLE `pgy`.`boardimg` 
+RENAME TO  `pgy`.`boardupfiles` ;
+
+ -- 컬럼명 변경
+ ALTER TABLE `pgy`.`boardupfiles` 
+CHANGE COLUMN `boardImgNo` `boardUpFileNo` INT NOT NULL AUTO_INCREMENT ;
+
+-- 컬럼 크기 수정
+ALTER TABLE `pgy`.`boardupfiles` 
+CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
+
+
