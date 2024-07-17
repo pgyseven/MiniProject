@@ -128,17 +128,37 @@
 			$('.preview').append(output); //어펜드 끝에다가 추가
 		}
 	}
-	
+	// 업로드한 파일을 지운다. (화면, front배열, 백엔드)
 	function remFile(obj) {
 		let removedFileName = $(obj).parent().prev().html(); // 콘솔에서 경로를 보면 된다. 
 		
-		for(let i = 0; i < upfiles.length; i++) { //인덱스 값을 알기 위해 이걸로 바꿈 원래는 렛 파일 오브였음 /let file of upfiles업파일 배열에서 꺼내와서 파일이라는 지역변수에 넣어줘라 하나씩
+		for(let i = 0; i < upfiles.length; i++) { 
 			if(upfiles[i].name == removedFileName) {
 				// 파일 삭제(백엔드 단에서도 삭제 해야함)
-				// 파일 삭제
+				// 파일 삭제(백엔드 단에서 삭제가 성공하면 fornt 단에서도 배여르, 화면에서 삭제 해야함 )
+						$.ajax({
+	         url : '/hboard/removefile',             // 데이터가 송수신될 서버의 주소
+	         type : 'post',             // 통신 방식 : GET, POST, PUT, DELETE, PATCH 대소문자 상관없음  
+	         
+	         dataType : 'text',         // 수신 받을 데이터의 타입 (text, xml, json)
+	         data : {					//보낼데이터
+	        	 "removedFileName" : removedFileName
+	         },
+						async : false, // 비동기 통신 : false 응답이 오기를 기다렸다가 아래꺼 실행 비동기는 응답이 없어도 아래꺼를 실행 할 수도 있어서!
+	         success : function (data) {     // 비동기 통신에 성공하면 자동으로 호출될 callback function
+	             
+	        	 console.log(data);
+	         
+	        
+	         }
+
+	      });
 				upfiles.splice(i, 1); //배열에서 삭제 i번째에서 1개 삭제
 				console.log(upfiles);
-				$(obj).parent().parent().remove(); //태그 삭제
+				$(obj).parent().parent().remove(); //태그 삭제 / 화면에서 삭제된거
+				
+				
+				
 			}
 		}
 		
