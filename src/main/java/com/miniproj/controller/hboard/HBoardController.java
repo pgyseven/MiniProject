@@ -141,7 +141,7 @@ public class HBoardController {
 		} catch (IOException e) {
 			
 			e.printStackTrace();
-			result = new ResponseEntity<BoardUpFilesVODTO>(HttpStatus.NOT_ACCEPTABLE);
+			result = new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		
