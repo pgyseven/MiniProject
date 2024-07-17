@@ -85,7 +85,7 @@
 	             
 	        	 console.log(data);
 	         
-	         	if(data == 'success'){
+	         	if(data !== null){
 	         		
 	         		// 미리 보기
 					showPreview(file);
@@ -140,7 +140,7 @@
 	         url : '/hboard/removefile',             // 데이터가 송수신될 서버의 주소
 	         type : 'post',             // 통신 방식 : GET, POST, PUT, DELETE, PATCH 대소문자 상관없음  
 	         
-	         dataType : 'text',         // 수신 받을 데이터의 타입 (text, xml, json)
+	         dataType : 'json',         // 수신 받을 데이터의 타입 (text, xml, json)
 	         data : {					//보낼데이터
 	        	 "removedFileName" : removedFileName
 	         },
