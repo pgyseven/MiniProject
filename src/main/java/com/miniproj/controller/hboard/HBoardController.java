@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
+import com.miniproj.model.MyResponseWithoutData;
 import com.miniproj.service.hboard.HBoardService;
 import com.miniproj.util.FileProcess;
 //import java.lang.* //생략 java lang패키지는 기본 패키지
@@ -101,12 +102,12 @@ public class HBoardController {
 	}
 	
 	@RequestMapping(value="/upfiles", method = RequestMethod.POST, produces = "application/json; charset=UTF-8;") // text/plain/  application/json이걸보고 페이지 이동을 안해도 되겠구나 한다. / 요청처리를 제이슨으로 하겠다. produces 리퀘스트 매핑을 처리하는 방식 우린 제이슨으로 할거임
-	  public ResponseEntity<BoardUpFilesVODTO> saveBoardFile(@RequestParam("file")MultipartFile file, HttpServletRequest request) { // file 이라고 했는데 못찾을때가 있다 그래서 @RequestParam("file") 이걸 넣었다. / 컨트롤단 즉 서블릿단이다 여기는 리퀘스트가 있는곳
+	  public ResponseEntity<MyResponseWithoutData> saveBoardFile(@RequestParam("file")MultipartFile file, HttpServletRequest request) { // file 이라고 했는데 못찾을때가 있다 그래서 @RequestParam("file") 이걸 넣었다. / 컨트롤단 즉 서블릿단이다 여기는 리퀘스트가 있는곳
 		// ResponseEntity<>  http status 서로 상태를 주고 받음 통신은~ 받을 준비 보낼준비까지도 요청의 성공 여부를 나타내는 상태코드   참고로 나중에 하겠지만 레스트 방식은 제이슨 형태고 주고 받음
 		//MultipartFile file 이건 컨트롤 단에서만 작동함
 		System.out.println("파일 전송됨... 이제 저장해야함...");
 		
-		ResponseEntity<BoardUpFilesVODTO> result = null;
+		ResponseEntity<MyResponseWithoutData> result = null;
 		//파일의 기본정보 가져옴
 		String contentType = file.getContentType(); // 마인 타입?
 		String originalFileName = file.getOriginalFilename();
@@ -116,7 +117,7 @@ public class HBoardController {
 			upfile = file.getBytes();//2진파일의 파일 내용 즉 실제 파일 IO익셉션 뜸 하드디스크 내용을 읽을때 하드디스크가 말성이면 못 읽을테니~ 예외처리 여기서 못하니 에드 뜨로우로 컨트롤단으로 보낸다.
 			// 저장될 파일의 실제 contents 즉 파일의 실제 데이터
 			
-			String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
+			String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles"); // 지금들어온 요청에서 가각의 세션에서 우리 프로젝트(프로젝트 여러개를 서버에서 다 돌릴 수 있으니깐)객체를 얻어오고 그것의 리얼패스 즉 각각의 서블릿은 리얼패스가 다를 수 있다.
 			// boardUpFiles 서버가 실행되면 서버에 만들어진다. 리퀘스트 객체에서 얻어와야하는데 리퀘스트 객체는 컨트롤단에서만 움직인다 컨트롤은 서블릿객체와 스프링이 동시 작동하는 공간이기에
 			BoardUpFilesVODTO fileInfo = fileProcess.saveFileToRealPath(upfile, realPath, contentType, originalFileName, fileSize); //지역변수라서 파일 여러개 올리면 오버라이드 된다.
 			
@@ -131,11 +132,22 @@ public class HBoardController {
 				System.out.println(f.toString());
 			System.out.println("===================================================");
 			
-			String tmp = fileInfo.getNewFileName().substring(fileInfo.getNewFileName().lastIndexOf(File.separator)+1);
+			String tmp = null;
+			if(fileInfo.getThumbFileName() != null) {
+				//이미지
+				tmp = fileInfo.getThumbFileName();
+			}else {
+				tmp = fileInfo.getNewFileName().substring(fileInfo.getNewFileName().lastIndexOf(File.separator)+1);
+			}
 			
+			MyResponseWithoutData mrw = MyResponseWithoutData.builder()
+			.code(200)
+			.msg("success")
+			.newFileName(tmp).build();
 			
-			result = new ResponseEntity<BoardUpFilesVODTO>(fileInfo, HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
-			
+			// 저장된 새로운 파이르 이름을 json으로 return 시키도록
+			result = new ResponseEntity<MyResponseWithoutData>(mrw, HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
+			// BoardUpFilesVODTO 이걸 제이슨으로 바꿔서
 			
 		} catch (IOException e) {
 			
@@ -149,15 +161,50 @@ public class HBoardController {
 	}
 	
 	@RequestMapping(value="/removefile", method=RequestMethod.POST)
-	public void removeUpFile(@RequestParam("removedFileName") String removedFileName) {
-		System.out.println("업로드 파일 삭제" + removedFileName);
-		
-		// 넘겨져온 removeFileName과 uploadFileList 배열의 originalFileName과 같은 것이 있는지 체크하여 삭제처리 해야 함
-		for (int i = 0; i < this.uploadFileList.size(); i++) { //this.uploadFileList 컬렉션이라 랭스가 없다 java.api를 보고 참고하면 size 가 있다.
-			if (removedFileName.equals(this.uploadFileList.get(i).getOriginalFileName()));
-		}
- 	}
-	
+	   public ResponseEntity<MyResponseWithoutData> removeUpFile(@RequestParam("removedFileName") String removeFileName, HttpServletRequest request) {
+	      System.out.println("업로드된 파일을 삭제하자 : " + removeFileName);
+	      
+	      boolean removeResult = false;
+	      
+	      ResponseEntity<MyResponseWithoutData> result = null;
+	      
+	      int removeIndex = -1;
+	      
+	   // 넘겨져온 removeFileName과 uploadFileList 배열의 originalFileName과 같은 것이 있는지 체크하여 삭제처리 해야 함
+	      for (int i = 0; i < this.uploadFileList.size(); i++) {  //this.uploadFileList 컬렉션이라 랭스가 없다 java.api를 보고 참고하면 size 가 있다.
+	         if(uploadFileList.get(i).getNewFileName().contains(removeFileName)) {
+	        	// 지금 contains를 쓴건 이퀠스를 안쓴 이유는 지금 2024\07\14\파일이름.확장자  와 뉴파일 이름만 파일이름.확장자만 가지고 비교해서 삭제해야하니 파일 이름만 포함된거에서 삭제하느라
+	            System.out.println(i + "번째에서 해당 파일 찾았음 : " + uploadFileList.get(i).getNewFileName()); // 파일 4개 올렸을때 두번째꺼 삭제하면 : 2번째에서 해당 파일 찾았음 ! \2024\07\17\BoardDAO.java
+	            
+	            String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
+	            
+	            if(fileProcess.removeFile(realPath + uploadFileList.get(i).getNewFileName())) { // 지금 역슬라이스 붙일 필요 없는게 년월일 만들때 앞에다가 만들어둬서
+	               removeIndex = i;
+	               removeResult = true;
+	               break; //포문 안에 if문안에다가 삭제를 넣으면 size만큼 돌으라고 했는데 하나가 비면 어리둥절한 상황이라 에러날 수 있다 그러니 포문 다 돌고 밖에서! 삭제해라
+	           	
+	            }
+	         }
+	      }
+	      if (removeResult) { //하드디스크에서 파일 삭제
+	         uploadFileList.remove(removeIndex);
+
+	         System.out.println("====================================================================================");
+	         System.out.println("현재 파일 리스트에 있는 파일들");
+	         for(BoardUpFilesVODTO f : this.uploadFileList) {
+	            System.out.println(f.toString());
+	         }
+	         System.out.println("=====================================================================================");
+	         
+	         result = new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, "", "success"), HttpStatus.OK);
+	      } else {
+	         result = new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(400, "", "fail"), HttpStatus.CONFLICT);
+	      }
+	      
+	       return result;
+	      
+
+	   }
 	
 	
 }

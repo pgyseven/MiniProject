@@ -1,11 +1,16 @@
 package com.miniproj.util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FileUtils;
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Mode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +36,7 @@ public class FileProcess {
 		
 		String newFileName = null;
 		String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+		
 		if(fileSize > 0) {
 			if(checkFileExist(saveFilePath, originalFileName)) { // 파일 이름이 중복 되는지 검사 중복 된다면, 파일 이름 변경
 				newFileName = renameFileName(originalFileName);
@@ -40,14 +46,29 @@ public class FileProcess {
 			}else {
 				newFileName = originalFileName;
 			}
+			File saveFile = new File(saveFilePath + File.separator + newFileName);
+			FileUtils.writeByteArrayToFile(saveFile, upfile); // 실제 파일 저장 / pom.xml 에 라이브러리 추가해서 메이븐에 coomons fileupload 1.3.3 jar 
 			
 			
 			if(ImageMimeType.isImage(ext)) {
 				//이미지 파일임 -> 썸네일 이미지, base64 문자열을 만들고 이미지와 함께 저장해야 한다.
+				
+				
+				String thumbImgName = makeThumbNailImage(saveFilePath, newFileName);
+				
+				// base64 문자열 encoding 작업도 해야함... 언제? 내일
+				
+				result = BoardUpFilesVODTO.builder()
+						.ext(contentType)
+						.newFileName(ymd[2] + File.separator + newFileName)
+						.originalFileName(ymd[2] + File.separator + originalFileName)
+						.size(fileSize)
+						.thumbFileName(ymd[2] + File.separator + thumbImgName)
+						.build();
+				
+				
 			}else {
 				// 이미지 파일이 아니다. 그냥 현재 파일만 하드디스크에 저장하면 된다.
-				File saveFile = new File(saveFilePath + File.separator + newFileName);
-				FileUtils.writeByteArrayToFile(saveFile, upfile); // 실제 파일 저장 / pom.xml 에 라이브러리 추가해서 메이븐에 coomons fileupload 1.3.3 jar 
 				
 				
 				result = BoardUpFilesVODTO.builder()
@@ -66,7 +87,39 @@ public class FileProcess {
 		return result; //저장된 파일의 정보를 담은 객체
 	}
 	
+	private String makeThumbNailImage(String saveFilePath, String newFileName) throws IOException {
+		//원본 이미지 파일을 읽음
+		BufferedImage origianlImage =  ImageIO.read(new File(saveFilePath + File.separator + newFileName)); //버퍼드이미지가 메모리에 모여 있는 것
+		
+		//원본 이미지 파일을 읽어 세로 크기를 50px로 맞춰 resizing 라도록...
+		BufferedImage thumbNailImage = Scalr.resize(origianlImage, Mode.FIT_TO_HEIGHT, 50); // Mode org.imagescalr.scalr Scalr는 org.imgscalr   / 이런 외부 api는 scalr api 검색하여 보기 / 잘 안보이면 위로 가서 해당 임포트에 컨트롤 누르고 클릭
+		//메모리에 저장된것 파일로도 저장해야함 / 렌더드 이미지의 자식이 버퍼임
+		
+		String thumbImgName = "thumb_" + newFileName;
+		
+		File saveThumbImg = new File(saveFilePath + File.separator + thumbImgName);
+		String ext = thumbImgName.substring(thumbImgName.lastIndexOf(".") + 1);
+		if (ImageIO.write(thumbNailImage, ext, saveThumbImg)) { // 부모는 모든 자식을 매개변수로 받을수 있음 지금 맨 처음자리에 렌더드 이미지를 줘야하는데 버퍼가 렌더이미지 자식이니 이곳에 올 수 있음
+			return thumbImgName;	
+		}else {
+			return null;
+		}
+		
+		
+	}
 	
+	
+	
+	//업로드 되었던 파일을 하드디스크에서 삭제하는 메서드
+	//romoveFileName  : realPath +년월일경로 + 파일 확장자
+	public boolean removeFile(String removeFileName) {
+		boolean result = false;
+		File tmpFile = new File(removeFileName);
+		if(tmpFile.exists()) {
+			result = tmpFile.delete();
+		}
+		return result;
+	}
 	
 	
 	
@@ -78,6 +131,10 @@ public class FileProcess {
 		String timestamp = System.currentTimeMillis() + "";    // ""이걸로 문자화 long은 정수다 시스템은 컴퓨터 자체다.
 		
 		String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1); //substring(a,b) a이상 b 미만 한개만 쓰면 거기 부터 끝까지
+		
+		//가능하면 숨김파일 ishidden 을 이요해서 만들어도 보아라
+		
+		
 		String fileNameWithOutExt = originalFileName.substring(0, originalFileName.lastIndexOf(".")); // .는 미만이니깐 포함 안됨
 		
 		String newFileName = fileNameWithOutExt + "_" + timestamp + "." + ext;

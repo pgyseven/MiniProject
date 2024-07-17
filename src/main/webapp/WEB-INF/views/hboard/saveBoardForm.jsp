@@ -74,7 +74,7 @@
 		$.ajax({
 	         url : '/hboard/upfiles',             // 데이터가 송수신될 서버의 주소
 	         type : 'post',             // 통신 방식 : GET, POST, PUT, DELETE, PATCH 대소문자 상관없음  
-	         dataType : 'text',         // 수신 받을 데이터의 타입 (text, xml, json)
+	         dataType : 'json',         // 수신 받을 데이터의 타입 (text, xml, json)
 	    	 data : fd,					// 보낼 데이터
 	         // processData : false -> 데이터를 쿼리 스트링 형태로 보내지 안겠다는 설정
 	         // contentType 의 디폴트 값이 "application/x-www-form-urlencoded"(get과 같다 url에 붙여서 보내는것)인데 그렇기에 프로세스도 같이 폴스로 설정, 파일을 전송하는 방식이기에 " multipart/form-data로 되어야 하므로
@@ -85,10 +85,10 @@
 	             
 	        	 console.log(data);
 	         
-	         	if(data !== null){
+	         	if(data.msg ==  'success'){
 	         		
 	         		// 미리 보기
-					showPreview(file);
+					showPreview(file, data.newFileName);
 	         	}
 	         }, error : function (data){
 	        	 console.log(data);
@@ -113,27 +113,39 @@
 	}
 
 	// 넘겨진 file 이 이미지 파일이라면 미리보기 하여 출력한다.
-	function showPreview(file) {
+	function showPreview(file, newFileName) {
 		let imageType = ["image/jpeg", "image/png", "image/gif"];  //콘솔에 뜨는 파일의 타입의 형태 아래 콘솔로 찍어보면 볼 수 있는 타입이 뜬다. 서버탭에 웹.xml dp mime-type을 보면된다.
 		console.log(file);
 		let fileType = file.type.toLowerCase(); // 대문자가 있을 수 있으니 소문자로 바꾸라는 함수 투로이어 케이스
 		if(imageType.indexOf(fileType) != -1){
 			// 이미지 파일이라면...
-			alert("이미지 파일이다.");
+			
+			// 업로드 했던 이미지를 reader객체로 읽어와 출력 합시다. 내일~~~
+			
+			
+			
+ 			let output = `<div><img src='/resources/boardUpFile\${imageFileName}' /><span>\${file.name}</span>`;
+			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" id="\${newFileName}" /></span></div>`; //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
+			$('.preview').append(output); 
+			
+			
+			
+			
 		}else{
 			//이미지 파일이 아니다...
 			
 			let output = `<div><img src='/resources/images/noimage.png' /><span>\${file.name}</span>`;
-			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" /></span></div>`; //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
+			
+			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" id="\${newFileName}" /></span></div>`; //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
 			$('.preview').append(output); //어펜드 끝에다가 추가
 		}
 	}
 	// 업로드한 파일을 지운다. (화면, front배열, 백엔드)
 	function remFile(obj) {
-		let removedFileName = $(obj).parent().prev().html(); // 콘솔에서 경로를 보면 된다. 
-		
+		let removedFileName = $(obj).attr('id'); //attr 어트리뷰트 속성을 까보는것  / obj가 위에서 this 니깐img 태크를 보낸것, 콘솔에서 경로를 보면 된다. 
+		console.log('지워야 할 파일 이름 : ' + removedFileName)
 		for(let i = 0; i < upfiles.length; i++) { 
-			if(upfiles[i].name == removedFileName) {
+			if(upfiles[i].name == $(obj).parent().prev().html()) {
 				// 파일 삭제(백엔드 단에서도 삭제 해야함)
 				// 파일 삭제(백엔드 단에서 삭제가 성공하면 fornt 단에서도 배여르, 화면에서 삭제 해야함 )
 						$.ajax({
@@ -148,14 +160,16 @@
 	         success : function (data) {     // 비동기 통신에 성공하면 자동으로 호출될 callback function
 	             
 	        	 console.log(data);
-	         
+	         	if (data.msg == 'success'){
+	         		upfiles.splice(i, 1); //배열에서 삭제 i번째에서 1개 삭제
+					console.log(upfiles);
+					$(obj).parent().parent().remove(); //태그 삭제 / 화면에서 삭제된거
+	         	}
 	        
 	         }
 
 	      });
-				upfiles.splice(i, 1); //배열에서 삭제 i번째에서 1개 삭제
-				console.log(upfiles);
-				$(obj).parent().parent().remove(); //태그 삭제 / 화면에서 삭제된거
+				
 				
 				
 				
