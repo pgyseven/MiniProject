@@ -1,5 +1,6 @@
 package com.miniproj.controller.hboard;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class HBoardController {
 	private FileProcess fileProcess;
 	
 	//아래서 지역변수에 의해 안날아가고 유저가 저장누르기 전까지 파일 정보 가지고 있게 하기 이걸 만든다.
+	//유저가 업로드한 파일을 임시 보관하는 객체(컬렉션) 
 	private List<BoardUpFilesVODTO> uploadFileList = new ArrayList<BoardUpFilesVODTO>();  // 이게 스테이틱하면 모든 객체가 공유하니깐 다른 사람도 올린것처럼 될수도???
 	
 	// 게시판 전체 목록 리스트를 출력하는 메서드
@@ -101,25 +103,26 @@ public class HBoardController {
 	@RequestMapping(value="/upfiles", method = RequestMethod.POST, produces = "text/plain; charset=UTF-8;") // application/json이걸보고 페이지 이동을 안해도 되겠구나 한다. / 요청처리를 제이슨으로 하겠다. produces 리퀘스트 매핑을 처리하는 방식 우린 제이슨으로 할거임
 	public ResponseEntity<String> saveBoardFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) { // file 이라고 했는데 못찾을때가 있다 그래서 @RequestParam("file") 이걸 넣었다. / 컨트롤단 즉 서블릿단이다 여기는 리퀘스트가 있는곳
 		// ResponseEntity<>  http status 서로 상태를 주고 받음 통신은~ 받을 준비 보낼준비까지도 요청의 성공 여부를 나타내는 상태코드   참고로 나중에 하겠지만 레스트 방식은 제이슨 형태고 주고 받음
+		//MultipartFile file 이건 컨트롤 단에서만 작동함
 		System.out.println("파일 전송됨... 이제 저장해야함...");
 		
 		ResponseEntity<String> result = null;
-		
+		//파일의 기본정보 가져옴
 		String contentType = file.getContentType(); // 마인 타입?
 		String originalFileName = file.getOriginalFilename();
 		long fileSize = file.getSize();
-		byte[] upfile = null;
+		byte[] upfile = null; 
 		try {
 			upfile = file.getBytes();//2진파일의 파일 내용 즉 실제 파일 IO익셉션 뜸 하드디스크 내용을 읽을때 하드디스크가 말성이면 못 읽을테니~ 예외처리 여기서 못하니 에드 뜨로우로 컨트롤단으로 보낸다.
-			// 저장될 파일의 실제 contents
+			// 저장될 파일의 실제 contents 즉 파일의 실제 데이터
 			
 			String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
-			
+			// boardUpFiles 서버가 실행되면 서버에 만들어진다. 리퀘스트 객체에서 얻어와야하는데 리퀘스트 객체는 컨트롤단에서만 움직인다 컨트롤은 서블릿객체와 스프링이 동시 작동하는 공간이기에
 			BoardUpFilesVODTO fileInfo = fileProcess.saveFileToRealPath(upfile, realPath, contentType, originalFileName, fileSize); //지역변수라서 파일 여러개 올리면 오버라이드 된다.
 			
 			//System.out.println("저장된 파일의 정보" + fileInfo.toString());
 			
-			this.uploadFileList.add(fileInfo);
+			this.uploadFileList.add(fileInfo); //맴버변수라서 버릇처럼 강사님이 하시는 것 지역변수와 매개변수를 구문 잘하면 상관 없다.
 			
 			// 7월 17일 가장 먼저 해야 할 코드 : front에서 업로드한 파일을 지웠을때 백엔드에서도 지워야 한다.
 			System.out.println("===================================================");
@@ -128,7 +131,8 @@ public class HBoardController {
 				System.out.println(f.toString());
 			System.out.println("===================================================");
 			
-			result = new ResponseEntity<String>("success", HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
+			String tmp = fileInfo.getNewFileName().substring(fileInfo.getNewFileName().lastIndexOf(File.separator)+1);
+			result = new ResponseEntity<String>("success_"+ tmp, HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
 			
 			
 		} catch (IOException e) {
@@ -141,6 +145,17 @@ public class HBoardController {
 		return result;
 		
 	}
+	
+	@RequestMapping(value="/removefile", method=RequestMethod.POST)
+	public void removeUpFile(@RequestParam("removedFileName") String removedFileName) {
+		System.out.println("업로드 파일 삭제" + removedFileName);
+		
+		// 넘겨져온 removeFileName과 uploadFileList 배열의 originalFileName과 같은 것이 있는지 체크하여 삭제처리 해야 함
+		for (int i = 0; i < this.uploadFileList.size(); i++) { //this.uploadFileList 컬렉션이라 랭스가 없다 java.api를 보고 참고하면 size 가 있다.
+			if (removedFileName.equals(this.uploadFileList.get(i).getOriginalFileName()));
+		}
+ 	}
+	
 	
 	
 }
