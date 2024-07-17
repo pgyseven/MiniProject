@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miniproj.model.BoardUpFilesVODTO;
+
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.service.hboard.HBoardService;
@@ -100,13 +101,13 @@ public class HBoardController {
 		return returnPage; //게시글 전체 목록 페이지로 돌아감
 	}
 	
-	@RequestMapping(value="/upfiles", method = RequestMethod.POST, produces = "text/plain; charset=UTF-8;") // application/json이걸보고 페이지 이동을 안해도 되겠구나 한다. / 요청처리를 제이슨으로 하겠다. produces 리퀘스트 매핑을 처리하는 방식 우린 제이슨으로 할거임
-	public ResponseEntity<String> saveBoardFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) { // file 이라고 했는데 못찾을때가 있다 그래서 @RequestParam("file") 이걸 넣었다. / 컨트롤단 즉 서블릿단이다 여기는 리퀘스트가 있는곳
+	@RequestMapping(value="/upfiles", method = RequestMethod.POST, produces = "application/json; charset=UTF-8;") // text/plain/  application/json이걸보고 페이지 이동을 안해도 되겠구나 한다. / 요청처리를 제이슨으로 하겠다. produces 리퀘스트 매핑을 처리하는 방식 우린 제이슨으로 할거임
+	  public ResponseEntity<BoardUpFilesVODTO> saveBoardFile(@RequestParam("file")MultipartFile file, HttpServletRequest request) { // file 이라고 했는데 못찾을때가 있다 그래서 @RequestParam("file") 이걸 넣었다. / 컨트롤단 즉 서블릿단이다 여기는 리퀘스트가 있는곳
 		// ResponseEntity<>  http status 서로 상태를 주고 받음 통신은~ 받을 준비 보낼준비까지도 요청의 성공 여부를 나타내는 상태코드   참고로 나중에 하겠지만 레스트 방식은 제이슨 형태고 주고 받음
 		//MultipartFile file 이건 컨트롤 단에서만 작동함
 		System.out.println("파일 전송됨... 이제 저장해야함...");
 		
-		ResponseEntity<String> result = null;
+		ResponseEntity<BoardUpFilesVODTO> result = null;
 		//파일의 기본정보 가져옴
 		String contentType = file.getContentType(); // 마인 타입?
 		String originalFileName = file.getOriginalFilename();
@@ -132,13 +133,15 @@ public class HBoardController {
 			System.out.println("===================================================");
 			
 			String tmp = fileInfo.getNewFileName().substring(fileInfo.getNewFileName().lastIndexOf(File.separator)+1);
-			result = new ResponseEntity<String>("success_"+ tmp, HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
+			
+			
+			result = new ResponseEntity<BoardUpFilesVODTO>(fileInfo, HttpStatus.OK); //이넘타입(컨트롤 스페이스 누르면 뜨는 아이콘)은 점 찍고 나오는 상수의 값만 받을수 있는 
 			
 			
 		} catch (IOException e) {
 			
 			e.printStackTrace();
-			result = new ResponseEntity<String>("fail", HttpStatus.NOT_ACCEPTABLE);
+			result = new ResponseEntity<BoardUpFilesVODTO>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		
