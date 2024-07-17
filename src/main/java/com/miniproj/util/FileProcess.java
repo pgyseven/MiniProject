@@ -52,8 +52,8 @@ public class FileProcess {
 				
 				result = BoardUpFilesVODTO.builder()
 						.ext(contentType)
-						.newFileName(newFileName)
-						.originalFileName(originalFileName)
+						.newFileName(ymd[2] + File.separator + newFileName)
+						.originalFileName(ymd[2] + File.separator + newFileName)
 						.size(fileSize)
 						.build(); //객체가 만들어진다.
 				
