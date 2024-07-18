@@ -124,10 +124,10 @@
 			
 			
 			
- 			let output = `<div><img src='/resources/boardUpFile\${imageFileName}' /><span>\${file.name}</span>`;
-			output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" id="\${newFileName}" /></span></div>`; //디스는 현재의 파일을 나타내니깐 해당 객체 즉 그 해당하는 이미지의 객체가 됌
-			$('.preview').append(output); 
-			
+		     let output=`<div><img src='/resources/boardUpFiles\${newFileName}' /><span>\${file.name}</span>`;
+	          output += `<span><img src='/resources/images/remove.png' width='20px' onclick="remFile(this);" id="\${newFileName}"></span></div>`;
+	          $('.preview').append(output);
+
 			
 			
 			
