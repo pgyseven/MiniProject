@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Base64;
 import java.util.Calendar;
 
 import javax.imageio.ImageIO;
@@ -56,13 +57,23 @@ public class FileProcess {
 				
 				String thumbImgName = makeThumbNailImage(saveFilePath, newFileName);
 				
-				// base64 문자열 encoding 작업도 해야함... 언제? 내일
+				// base64 문자열 encoding
+				//base64 문자열 : 이진수(binary) 데이터를 Text로 바꾸는 인코딩의 하나로써 이진수 데이터를 ASCII(아스키코드) 영역의 문자로만 이루어진 문자열로 바꾸는 인코딩 방식이다.
+				
+				// 장점 : 파일을 별도로 저장할 공간이 필요하지 않다. (하지만, 파일을 저장하는 것보다 크기가 더 크다.)
+				// 특징 : 파일을 별도로 저장할 공간이 필요하지 않다. (하지만, 문자열 저장해야 한다면 파일을 저장하는 것보다 크기가 더 크다.)
+				// 특징 : 인코딩 디코딩에 따른 부하가 걸린다.
+				String base64Str = makeBase64String(upfile);
+				System.out.println("======================================================================================================");
+				System.out.println(base64Str);
+				System.out.println("======================================================================================================");
 				
 				result = BoardUpFilesVODTO.builder()
 						.ext(contentType)
 						.newFileName(ymd[2] + File.separator + newFileName)
 						.originalFileName(ymd[2] + File.separator + originalFileName)
 						.size(fileSize)
+						.base64Img(base64Str)
 						.thumbFileName(ymd[2] + File.separator + thumbImgName)
 						.build();
 				
@@ -87,6 +98,14 @@ public class FileProcess {
 		return result; //저장된 파일의 정보를 담은 객체
 	}
 	
+	private String makeBase64String(byte[] upfile) {
+		String result = null;
+				
+				result = Base64.getEncoder().encodeToString(upfile); //이건 메모리에 있는 이미지를 변환한거다 즉 하드에 있는 이미지를 전환한게 아니다. 즉 하드가 아니니깐 예외가 없다. 예외정보는 마우스 올리면 있는 애들은 보인다. base64 개체에서 불러오고 여기서 인코더를 불러온다. Base64.getEncoder() 여기까지가 인코더
+				
+		return result;
+	}
+
 	private String makeThumbNailImage(String saveFilePath, String newFileName) throws IOException {
 		//원본 이미지 파일을 읽음
 		BufferedImage origianlImage =  ImageIO.read(new File(saveFilePath + File.separator + newFileName)); //버퍼드이미지가 메모리에 모여 있는 것
