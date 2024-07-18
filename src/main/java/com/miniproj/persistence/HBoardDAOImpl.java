@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 
@@ -42,6 +43,20 @@ public class HBoardDAOImpl implements HBoardDAO {
 	public int insertNewBoard(HBoardDTO newBoard) {
 		
 		return ses.insert(NS + ".saveNewBoard", newBoard);
+	}
+
+
+	@Override
+	public int getMaxBoardNo() throws Exception {
+		
+		return ses.selectOne(NS + ".getMaxNo");
+	}
+
+
+	@Override
+	public int insertBoardUpFile(BoardUpFilesVODTO upFile) throws Exception {
+		
+		return ses.insert(NS + ".saveUpFile", upFile);
 	}
 
 }

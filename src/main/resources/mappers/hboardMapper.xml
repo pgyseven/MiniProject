@@ -16,4 +16,17 @@
 	</insert>
 	
 	
+	<!-- 저당된 글번호를 가져오는 쿼리문 -->
+	<select id="getMaxNo" resultType="int">
+		select max(boardNo) from hboard
+	</select>
+	
+	<!-- 업로드된 첨부파일을 저장하는 쿼리문 -->
+	<insert id="saveUpFile">
+		insert into boardupfiles(newFileName, originalFileName, thumbFileName, ext, size, boardNo, base64Img)
+		values(#{newFileName}, #{originalFileName}, #{thumbFileName}, #{ext}, #{size}, #{boardNo}, #{base64Img});
+	</insert>
+	
+	
+	
 </mapper>

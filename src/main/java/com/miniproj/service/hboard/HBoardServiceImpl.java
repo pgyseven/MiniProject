@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miniproj.controller.hboard.HBoardController;
+import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.PointLogDTO;
@@ -71,6 +72,16 @@ public class HBoardServiceImpl implements HBoardService {
 		
 		// 1) newBoard를 ( 새로넘겨진 게시글) DAO 단을 통해 insert 해본다. -insert close
 		if (bDao.insertNewBoard(newBoard) == 1) {
+			//1-2) 위에서 저장된 게시글의 pk(boardNo)를 가져와야 한다.select
+			int newBoardNo = bDao.getMaxBoardNo();
+			//System.out.println("방금 저장된 글 번호 : " + newBoardNo);
+			//1-2) 첨부된 파일이 있다면... 첨부 파일 또한 저장한다...insert
+			for (BoardUpFilesVODTO file : newBoard.getFileList()) { // newBoard.getFileList() 사이즈가 0이면 즉 없으면 첨부된게 포문이 안도니깐 이프문 필요 없음
+				file.setBoardNo(newBoardNo);
+				bDao.insertBoardUpFile(file); // 여기서도 여러개의 파일이 하나라도 안들어가면 트랜잭션이란 애로 롤백위에 한다고 했으니 롤백
+				
+			}
+			
 			// 2) 1)번에서 insert 가 성공했을 때 글 작성자의 point를 부여한다. -(select) close - insert close
 			// 참고로 commit은 데이터를 영구하게 저장하기 위함
 			if (pDao.insertPointLog(new PointLogDTO(newBoard.getWriter(), "글작성", 0)) == 1) {
