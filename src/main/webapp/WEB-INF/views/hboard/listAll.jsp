@@ -107,7 +107,7 @@
 						</thead>
 						<tbody>
 							<c:forEach var="board" items="${boardList}">
-								<tr class="table-primary">
+								<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';" class="table-primary">
 									<td>${board.boardNo}</td>
 									<td>${board.title}</td>
 									<td>${board.writer}</td>

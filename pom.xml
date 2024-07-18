@@ -223,8 +223,8 @@ DAO 단의 JDBC 작업이 수행되는 과정을 로그로 남겨주는 라이�
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.21</source>
-                    <target>1.21</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>

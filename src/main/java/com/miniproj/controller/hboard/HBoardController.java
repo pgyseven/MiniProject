@@ -84,6 +84,7 @@ public class HBoardController {
 	@RequestMapping(value = "/saveBoard", method = RequestMethod.POST) /* url 호출이름이 위와 같은데 전송방식이 다르기 때문에 문제 없다 */
 	public String saveBoard(HBoardDTO boardDTO, RedirectAttributes redirectAttributes) {
 		System.out.println("이게시글을 출력하자....................");
+		
 		boardDTO.setFileList(this.uploadFileList); // 첨부파일 리스트를 boardDTO에 주입
 		
 		System.out.println("이게시글을 출력하자...................." + boardDTO.toString()); // "/saveBoard 보이드는 이거에 의해서 .jsp 가

@@ -179,6 +179,8 @@
 	}
 	
 	function validBoard() { //$function은 로드가 다되고 실행되는데 여기서 사용을 안하는 이유는 페이지가 다 뜨고 클릭을 해야 함수가 작동하기에 $function이 필요 없다.
+		
+		console.log("validBoard에 들어옴!!!!!!!!!!!!!!!!!!!!!!!!!");
 		let result = false;
 		let title = $('#title').val();
 		console.log(title);
@@ -253,8 +255,8 @@
 			</div>
 			<div class="preview"></div>
 			
-			<button type="submit" class="btn btn-primary"
-				onclick="return validBoard();">저장</button>
+			<button type="submit" class="btn btn-primary"   
+				onclick="return validBoard();">저장</button>  <!-- 서밋은 폼태그 날아가는데 폼은 인풋타입의 네임을 가지고 간다. 인풋!!! -->
 			<!-- 이벤트 캔슬링과 같다 리턴해오는 값에 따라서 서밋을 할지 말지!!!return validBoard()뒤에서 가저온 함수를 리턴으로 보낸다 위에서 return 값을 false로하면 결국 false 가 가니깐 즉 서밋하면 false가 가서 너 그기능 하지마! 이게 되는 거임 true 면 할 행동을 하게됨 -->
 		<button type="button" class="btn btn-warning" onclick="cancelBoard();">취소</button>  <!-- 버튼 타입 리셋으로 하면 새로고침만 되는거라 서버나 파일에 담아뒀던게 삭제 안된다. 이럴때는 일반 버튼으로 해라 -->
 		</form>

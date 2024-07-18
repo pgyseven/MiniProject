@@ -159,4 +159,57 @@ CHANGE COLUMN `boardImgNo` `boardUpFileNo` INT NOT NULL AUTO_INCREMENT ;
 ALTER TABLE `pgy`.`boardupfiles` 
 CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
 
+-- 방금 insert 된 글의 글번호를 가져오는 쿼리문
+select max(boardNo) from hboard;
 
+-- 유저가 게시글을 저장할때 파일 업로드 하는 쿼리문
+insert into boardupfiles(newFileName, originalFileName, thumbFileName, ext, size, boardNo, base64Img)
+values(?, ?, ?, ?, ?, ?, ?);
+
+-- 게시판 상세 페이지를 출력하는 쿼리문
+select * from hboard where boardNo = 16;
+
+select * from boardUpfiles where boardno=13; -- 이건 두번이라 속도에는 조금 느릴수 있다 2번 처리되니깐 뷰단으로 각각 가져가야해서 아우터 조인으로 하면 한번에
+
+-- 게시판 상세 페이지에서 그 게시글을 작성한 유저의 정보까지 출력 해 보자...
+
+
+-- 부서명과 부서번호를 분리한 이유 데이터의 중복을 줄이기 위해서 equi(equal / =)Inner join사용 근데 이건 오라클만 가능 mysql은 ansi join
+-- 서브쿼리로도 가능하다. 문제는 메인쿼리에서만 정보를 가져온다.
+select *
+from hboard inner join member
+on hboard.writer = member.userid
+where boardNo = 13;
+
+select hboard.boardNo, board.title
+from hboard inner join member
+on hboard.writer = member.userid
+where boardNo = 13;
+
+-- 위도 기니깐 별명
+select h.boardNo, h.title, m.userid, m.username
+from hboard h inner join member m
+on h.writer = m.userid -- 조인 조건(조인이 되는 테이블에서 의미가 같은 컬럼)
+where h.boardNo = 13;
+
+-- 게시글과 첨부파일을 함께 출력해보자
+select *
+from hboard h inner join boardupfiles f
+on h.boardno = f.boardno;
+
+select *
+from hboard h left outer join boardupfiles f
+on h.boardno = f.boardno; -- 이렇게 하면 현재 hboar 즉 왼쪽에 있는 board 정보 안나오니 left outer join을 쓴다 양쪽 다는 full outer
+-- 이런 기능은 바지를 고르면 그 바지와 연관된걸 보여준다. 
+
+-- 오라클에서 아래 두번째 명령어는 mysql도 가능 매니저가 king인 사원들의 이름과 직급 출력하세요
+-- self join 하니의 테이블을 2개의 테이블인 것처럼 조인하여 출력하는 것, (테이블 별칭을 별도로 줘서 2개의 테이블인 것처럼 해야한다.)
+SELECT ename, job FROM emp WHERE mgr=(SELECT empno FROM emp WHERE ename='KING');
+select e.ename, e.mgr
+from emp m inner join emp e on m.empNo = e.mgr
+where m.ename = 'king';
+
+-- 사원의 급여와 급여등급을 출력하세요 ... (NON EQUI JOIN)
+select e.ename, e.sal, s.grade
+from emp e, salgrade s
+where e.sal > s.losal and e.sal < s.hisal; -- 오라클만 가능 ex 회원등급 얼마 팔았으면 골드 등급 사실 쓸데 많이 없다.
