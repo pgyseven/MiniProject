@@ -5,7 +5,7 @@
 <mapper namespace="com.miniproj.mapper.hboardmapper">
    
    <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문(최신글부터 보여지도록 내림차순한다.) -->
-   <select id="getAllHBoard" resultType="com.miniproj.model.HBoardVO">
+   <select id="getAllHBoard" resultType="HBoardVO">
       SELECT * FROM hboard ORDER BY boardNo DESC
    </select>
    
@@ -25,7 +25,9 @@
       VALUES(#{newFileName}, #{originFileName}, #{thumbFileName}, #{ext}, #{size}, #{boardNo}, #{base64Img})
    </insert>
    
-   <!--  -->
-   
+   <!-- 글번호로 게시글을 가져오는 쿼리문 -->
+   <select id="selectBoardByBoardNo" resultType="HBoardVO">
+   	select * from hboard where boardNo = #{boardNo};
+   </select>
    
 </mapper>

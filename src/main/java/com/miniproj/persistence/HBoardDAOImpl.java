@@ -59,4 +59,11 @@ public class HBoardDAOImpl implements HBoardDAO {
 		return ses.insert(NS + ".saveUpFile", upFile);
 	}
 
+
+	@Override
+	public HBoardVO selectBoardByBoardNo(int boardNo) throws Exception {
+		
+		return ses.selectOne(NS + ".selectBoardByBoardNo", boardNo);
+	}
+
 }

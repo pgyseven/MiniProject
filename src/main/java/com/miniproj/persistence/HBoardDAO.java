@@ -20,4 +20,7 @@ public interface HBoardDAO  {
 	
 	// 업로드된 첨부파일을 저장하는 쿼리문
 	int insertBoardUpFile(BoardUpFilesVODTO upFile) throws Exception;
+	
+	//글번호 게시글을 가져오는 쿼리문
+	HBoardVO selectBoardByBoardNo(int boardNo) throws Exception;
 }

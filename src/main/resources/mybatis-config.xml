@@ -4,7 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
   
   <configuration>
-  	<TypeAliases>
-  		<TypeAliase alias="HBoardVO" type="com.miniproj.model.HBoardVO"></TypeAliase>
-  	</TypeAliases>   <!-- 별칭 그리고 이곳은 마이바티스 환경 설정 하는곳-->
+<typeAliases>
+         <typeAlias alias="HBoardVO" type="com.miniproj.model.HBoardVO"/>
+      </typeAliases>   <!-- 별칭 그리고 이곳은 마이바티스 환경 설정 하는곳-->
   </configuration>

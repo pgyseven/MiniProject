@@ -12,6 +12,9 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    
    // 게시판 글 작성 
    boolean saveBoard(HBoardDTO newBoard) throws Exception;
+
+   // 게시판 글 상세 조회
+   public void read(int boardNo) throws Exception;
    
    // 게시판 글 수정
    

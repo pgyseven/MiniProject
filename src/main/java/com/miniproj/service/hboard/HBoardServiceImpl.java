@@ -103,4 +103,12 @@ public class HBoardServiceImpl implements HBoardService {
 		return result;
 	}
 
+	@Override
+	public void read(int boardNo) throws Exception {
+		//게시글 조회를 한다... select(첨부파일이 있다면 첨부파일도 조회한다. select)
+		System.out.println(bDao.selectBoardByBoardNo(boardNo).toString());
+		// 해당 글번호의 조회수를 증가한다. update
+		
+	}
+
 }
