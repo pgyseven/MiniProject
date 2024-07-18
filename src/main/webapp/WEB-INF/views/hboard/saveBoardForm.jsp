@@ -197,6 +197,22 @@
 		// 데이터가 백엔드 단으로 넘어갈지 말지늘 결정해줘야 한다.
 		return result;
 	}
+	 // 유저가 취소 버튼을 클릭하면 서버에 저장한 모든 업로드된 파일을 지우고, 게시판 전체 조회 페이지로 돌아간다.
+    function cancelBoard() {
+       
+       $.ajax({
+           url : '/hboard/cancelBoard',
+           type : 'GET',
+           dataType : 'json',
+           async : false, 
+           success : function (data) {
+              console.log(data); 
+              if (data.msg == 'success') {
+                 location.href='/hboard/listAll';
+              }
+           }
+        });   
+    }
 </script>
 <style>
 .fileUploadArea {
@@ -240,6 +256,7 @@
 			<button type="submit" class="btn btn-primary"
 				onclick="return validBoard();">저장</button>
 			<!-- 이벤트 캔슬링과 같다 리턴해오는 값에 따라서 서밋을 할지 말지!!!return validBoard()뒤에서 가저온 함수를 리턴으로 보낸다 위에서 return 값을 false로하면 결국 false 가 가니깐 즉 서밋하면 false가 가서 너 그기능 하지마! 이게 되는 거임 true 면 할 행동을 하게됨 -->
+		<button type="button" class="btn btn-warning" onclick="cancelBoard();">취소</button>  <!-- 버튼 타입 리셋으로 하면 새로고침만 되는거라 서버나 파일에 담아뒀던게 삭제 안된다. 이럴때는 일반 버튼으로 해라 -->
 		</form>
 
 		<c:import url="./../footer.jsp"></c:import>

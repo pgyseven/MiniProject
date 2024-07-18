@@ -160,7 +160,7 @@ public class HBoardController {
 		
 	}
 	
-	@RequestMapping(value="/removefile", method=RequestMethod.POST)
+	@RequestMapping(value="/removefile", method=RequestMethod.POST, produces = "application/json; charset=UTF-8;")
 	   public ResponseEntity<MyResponseWithoutData> removeUpFile(@RequestParam("removedFileName") String removeFileName, HttpServletRequest request) {
 	      System.out.println("업로드된 파일을 삭제하자 : " + removeFileName);
 	      
@@ -205,6 +205,29 @@ public class HBoardController {
 	      
 
 	   }
+	
+	
+	@RequestMapping(value="/cancelBoard",method=RequestMethod.GET, produces = "application/json; charset=UTF-8;") //제이슨으로 반환하기에 , produces = "application/json; charset=UTF-8;" 이거 꼭 써야함
+	public ResponseEntity<MyResponseWithoutData> cancelBoard(HttpServletRequest request) {
+		System.out.println("유저가 업로드 한 모든 파일을 삭제하자!");
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
+		if(this.uploadFileList.size() > 0) { //new로 호출했기에 주소값은 있어서 널은 무조건 아니기에 널하고 비교 불가
+		
+			for (int i = 0; i < uploadFileList.size(); i++) { //반복문이 다돌면 파일이 다 삭제
+				fileProcess.removeFile(realPath + uploadFileList.get(i).getNewFileName());
+					
+				// 이미지 파일이면 썸네일 파일또한 삭제 해야함
+				if(uploadFileList.get(i).getThumbFileName() !=null || uploadFileList.get(i).getThumbFileName() != "") {
+		               fileProcess.removeFile(realPath + uploadFileList.get(i).getThumbFileName());
+		            }
+				
+			}
+		this.uploadFileList.clear(); // 리스트에 있는 모든 데이터 삭제  / 반복 횟수에 영향을 줄 수있는 행동이니 삭제는 이렇게 밖에서 항상 기억 해라
+		}
+		
+		return new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, "", "success"), HttpStatus.OK);
+		
+	}
 	
 	
 }
