@@ -57,13 +57,16 @@ public class FileProcess {
 				
 				String thumbImgName = makeThumbNailImage(saveFilePath, newFileName);
 				
+				
 				// base64 문자열 encoding
 				//base64 문자열 : 이진수(binary) 데이터를 Text로 바꾸는 인코딩의 하나로써 이진수 데이터를 ASCII(아스키코드) 영역의 문자로만 이루어진 문자열로 바꾸는 인코딩 방식이다.
 				
 				// 장점 : 파일을 별도로 저장할 공간이 필요하지 않다. (하지만, 파일을 저장하는 것보다 크기가 더 크다.)
 				// 특징 : 파일을 별도로 저장할 공간이 필요하지 않다. (하지만, 문자열 저장해야 한다면 파일을 저장하는 것보다 크기가 더 크다.)
 				// 특징 : 인코딩 디코딩에 따른 부하가 걸린다.
-				String base64Str = makeBase64String(upfile);
+				// 옹량이 큰 이미지는 문자열로 만들지 못한ㄷ. -> 썸네일 이미지만 base64로 처리할 것!
+				
+				String base64Str = makeBase64String(saveFilePath + File.separator + thumbImgName);
 				System.out.println("======================================================================================================");
 				System.out.println(base64Str);
 				System.out.println("======================================================================================================");
@@ -73,7 +76,7 @@ public class FileProcess {
 						.newFileName(ymd[2] + File.separator + newFileName)
 						.originalFileName(ymd[2] + File.separator + originalFileName)
 						.size(fileSize)
-						.base64Img(base64Str)
+						.base64Img(base64Str)  //.base64Img(base64Str) 큰파일 때문에 VODTO 스트링을 버퍼로 바꿔서 
 						.thumbFileName(ymd[2] + File.separator + thumbImgName)
 						.build();
 				
@@ -98,9 +101,17 @@ public class FileProcess {
 		return result; //저장된 파일의 정보를 담은 객체
 	}
 	
-	private String makeBase64String(byte[] upfile) {
+	private String makeBase64String(String thumbNailFileName) throws IOException {
 		String result = null;
 				
+		//썸네일 파일의 경로로 File 객체 생성
+		File thumb = new File(thumbNailFileName);
+		
+		
+		// File 객체가 가리키는 파일을 읽어와 Byte[] 
+		byte[] upfile = FileUtils.readFileToByteArray(thumb);
+		
+		//인코딩
 				result = Base64.getEncoder().encodeToString(upfile); //이건 메모리에 있는 이미지를 변환한거다 즉 하드에 있는 이미지를 전환한게 아니다. 즉 하드가 아니니깐 예외가 없다. 예외정보는 마우스 올리면 있는 애들은 보인다. base64 개체에서 불러오고 여기서 인코더를 불러온다. Base64.getEncoder() 여기까지가 인코더
 				
 		return result;
@@ -119,6 +130,8 @@ public class FileProcess {
 		File saveThumbImg = new File(saveFilePath + File.separator + thumbImgName);
 		String ext = thumbImgName.substring(thumbImgName.lastIndexOf(".") + 1);
 		if (ImageIO.write(thumbNailImage, ext, saveThumbImg)) { // 부모는 모든 자식을 매개변수로 받을수 있음 지금 맨 처음자리에 렌더드 이미지를 줘야하는데 버퍼가 렌더이미지 자식이니 이곳에 올 수 있음
+			
+		
 			return thumbImgName;	
 		}else {
 			return null;
