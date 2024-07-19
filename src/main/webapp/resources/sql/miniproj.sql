@@ -171,6 +171,20 @@ select * from hboard where boardNo = 16;
 
 select * from boardUpfiles where boardno=13; -- 이건 두번이라 속도에는 조금 느릴수 있다 2번 처리되니깐 뷰단으로 각각 가져가야해서 아우터 조인으로 하면 한번에
 
+select * from member where userid = (select writer from hboard where boardNo = 16); -- 이렇게하면 맵 사용안하고 보드업파일스 맴버 조인 브이오를 채워서 사용 하는 버전에서는 이거 세개 사용
+
+-- 게시글과 첨부 파일,  작성자 정보까지 함께 출력해보자(  조인 테이블 3개 3 - 1개의 조인조건이 나와야 한다.
+select h.boardNo, h.title, h.content, h.writer, h.postdate, h.readCount
+, f.*, m.username, m.email 
+from hboard h left outer join boardupfiles f
+on h.boardNo = f.boardNo
+inner join member m
+on h.writer = m.userId
+where h.boardNo = 41;
+-- 참고로 여기서 select distinct h.boardNo, h.title, h.content, h.writer, h.postdate, h.readCount 이렇게 해도 중복은 제거 안된다.
+
+
+
 -- 게시판 상세 페이지에서 그 게시글을 작성한 유저의 정보까지 출력 해 보자...
 
 
@@ -213,3 +227,6 @@ where m.ename = 'king';
 select e.ename, e.sal, s.grade
 from emp e, salgrade s
 where e.sal > s.losal and e.sal < s.hisal; -- 오라클만 가능 ex 회원등급 얼마 팔았으면 골드 등급 사실 쓸데 많이 없다.
+
+-- 컬럼의 중복 제거 포인트 부여 여러번 했을때 
+select distinct from pointlog;
