@@ -232,6 +232,17 @@ public class HBoardController {
 		return new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, "", "success"), HttpStatus.OK);
 		
 	}
-	
+	@RequestMapping(value="/viewBoard")
+	public void viewBoard(@RequestParam("boardNo") int boardNo) {
+		System.out.println(boardNo);
+		
+		try {
+			service.read(boardNo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 }
