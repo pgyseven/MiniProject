@@ -1,6 +1,7 @@
 package com.miniproj.service.hboard;
 
 import java.util.List;
+import java.util.Map;
 
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
@@ -13,8 +14,8 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    // 게시판 글 작성 
    boolean saveBoard(HBoardDTO newBoard) throws Exception;
 
-   // 게시판 글 상세 조회
-   public void read(int boardNo) throws Exception;
+   // 게시판 글 상세 조회 / 오버라이딩 한거임 : 접근제어는 같거나 더 넓은 범위여야하고  default 같은 패키지 ... 확인하기, 반환값 타입 메서드 이름 매개변수 예외처리 갯수까지 다 같아야함
+   public Map<String, Object> read(int boardNo) throws Exception;
    
    // 게시판 글 수정
    

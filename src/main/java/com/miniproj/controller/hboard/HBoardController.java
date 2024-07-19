@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -95,6 +96,7 @@ public class HBoardController {
 		try {
 			if (service.saveBoard(boardDTO)) { // 게시글 저장에 성공했다면
 				redirectAttributes.addAttribute("status","success");
+				this.uploadFileList.clear(); //  잊전에 게시글에 업로드된 파일 리스트를 비워줌
 			}
 		} catch (Exception e) { // 게시글 저장에 실패했다면
 			e.printStackTrace();
@@ -234,10 +236,27 @@ public class HBoardController {
 		
 	}
 	@RequestMapping("/viewBoard")
-	public void viewBoard(@RequestParam("boardNo") int boardNo) throws Exception {
+	public String viewBoard(@RequestParam("boardNo") int boardNo, Model model) {
 
 		System.out.println(boardNo + "번 글을 조회하자");
-		service.read(boardNo);
+		
+		try {
+			Map<String, Object> resultMap = service.read(boardNo);
+			
+			// downcasting : upcasting 되었던 객체가 원래의 자기 자신의 객체로 하위 변환 되는 것.
+			  HBoardVO board = (HBoardVO)resultMap.get("board"); //object 타입으로 들어가 있던 객체를 downcasting 하면서 원래의 HBoardVO 타입으로 되돌림 / 다운캐스팅 : 업캐스팅 되었던 애가 자기 자신으로 돌아가는 것 /HBoardVO  자식이고 큰거에서 작은거로는 갈 수 있다. 즉 오브젝트에서 에이치보드 브이오로 명시적 변환하면 됨 이게 다운캐스팅 / (int)명시적 형변환 / int = (int)3.14
+			  List<BoardUpFilesVODTO> fileList = (List<BoardUpFilesVODTO>)resultMap.get("fileList"); //  업케스팅은 묵시적 형변환 된거임 왜냐면 자바가 알고 있음 그래서 괄호를 붙여도 안 붙여도 된다.
+			  
+			  //데이터 바인딩
+			  model.addAttribute("board", board);
+			  model.addAttribute("fileList", fileList);
+			  System.out.println("여기로 파일 리스트 오는지 확인" + fileList);
+			  
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		return "/hboard/viewBoard";
 	}
 	
 }

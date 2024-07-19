@@ -23,4 +23,7 @@ public interface HBoardDAO  {
 	
 	//글번호 게시글을 가져오는 쿼리문
 	HBoardVO selectBoardByBoardNo(int boardNo) throws Exception;
+	
+	//글번호로 게시글의 파일을 가져오는 쿼리문
+	List<BoardUpFilesVODTO> selectBoardUpFilesByBoardNo (int boardNo) throws Exception;
 }

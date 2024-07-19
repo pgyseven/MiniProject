@@ -4,18 +4,18 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miniproj.mapper.hboardmapper">  <!-- 여긴 다오단에서 부를 이름이니 대문자 M 이 아니여도 된다.패키지명 클래스명 -->
 
-	<!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
-	<select id="getAllHBoard"
-		resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
-		select * from hboard order by boardNo desc
-	</select>
+   <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
+   <select id="getAllHBoard"
+      resultType="HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
+      select * from hboard order by boardNo desc
+   </select>
 
-	<!-- 새로운 게시글을 저장하는 쿼리문 -->
-	<insert id= "saveNewBoard">
-		insert into hboard(title, content, writer) values(#{title}, #{content}, #{writer})
-	</insert>
-	
-	
+   <!-- 새로운 게시글을 저장하는 쿼리문 -->
+   <insert id= "saveNewBoard">
+      insert into hboard(title, content, writer) values(#{title}, #{content}, #{writer})
+   </insert>
+   
+   
 <!-- 저장된 글번호를 가져오는 쿼리문 -->
    <select id="getMaxNo" resultType="int">
       SELECT max(boardNo) FROM hboard
@@ -26,7 +26,13 @@
       INSERT INTO boardupfiles(newFileName, originalFileName, thumbFileName, ext, size, boardNo, base64Img) 
       VALUES(#{newFileName}, #{originalFileName}, #{thumbFileName}, #{ext}, #{size}, #{boardNo}, #{base64Img})
    </insert>
-	
-	
-	
+   
+   <!-- 글번호로 게시글을 가져오는 쿼리문 -->
+   <select id="selectBoardByBoardNo" resultType="HBoardVO">
+      select * from hboard where boardNo = #{boardNo}
+   </select>
+   <!-- 글번호 게시글의 첨부파일을 가져오는 쿼리문 -->
+   <select id="selectBoardUpFiles" resultType="BoardUpFilesVODTO"> <!-- 마이바티스 환경설정에서typeAlias 이거를 설정해둬서 클래스 네임만 쓰면된다. -->
+    	select * from boardUpfiles where boardno = #{boardNo}
+   </select>
 </mapper>
