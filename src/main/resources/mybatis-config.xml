@@ -6,5 +6,6 @@
   <configuration>
 <typeAliases>
          <typeAlias alias="HBoardVO" type="com.miniproj.model.HBoardVO"/>
+         <typeAlias alias="BoardUpFilesVODTO" type="com.miniproj.model.BoardUpFilesVODTO"/>
       </typeAliases>   <!-- 별칭 그리고 이곳은 마이바티스 환경 설정 하는곳-->
   </configuration>
