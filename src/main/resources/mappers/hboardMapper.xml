@@ -6,7 +6,7 @@
 
    <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
    <select id="getAllHBoard"
-      resultType="HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
+      resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
       select * from hboard order by boardNo desc
    </select>
 
@@ -27,50 +27,57 @@
       VALUES(#{newFileName}, #{originalFileName}, #{thumbFileName}, #{ext}, #{size}, #{boardNo}, #{base64Img})
    </insert>
    
-   <!-- 글번호로 게시글을 가져오는 쿼리문 -->
+   <!-- 글번호로 게시글을 가져오는 쿼리문
    <select id="selectBoardByBoardNo" resultType="HBoardVO">
       select * from hboard where boardNo = #{boardNo}
-   </select>
+   </select>  -->
    
    
-   
-   <resultMap type="BoardUpFilesVODTO" id="BoardUpFilesVODTO">
-    <result column="boardUpFileNo" property="boardUpFileNo"/>
-    <result column="newFileName" property="newFileName"/>
-    <result column="originalFileName" property="originalFileName"/>
-    <result column="thumbFileName" property="thumbFileName"/>
-    <result column="ext" property="ext"/>
-    <result column="size" property="size"/>
-    <result column="boardNo" property="boardNo"/>
-    <result column="base64Img" property="base64Img"/>
-</resultMap>
- 
- <resultMap type="MemberVO" id="MemberVO">
-    <result column="userName" property="userName"/>
-    <result column="email" property="email"/>
-</resultMap>
+   <!-- 게시글의 상세정보를 담기 위한 reulstmap 설정 (여기서 맵은 맵핑의 뜻 어떤것과 연결한다!) 
+   resultmap에서 colum은 디비에서 어떻게 나오는지 잘보고 셀렉트 문에서 나오는 호출명과 일치 그리고 컬렉션을 아래로 내려줘야 에러가 안난다.-->
+   <resultMap type="com.miniproj.model.BoardDetailInfo" id="boardDetailInfoMap">
  
  
-<resultMap type="HBoardVO" id="HBoardVO">
-    <result column="boardNo" property="boardNo"/>
-    <result column="title" property="title"/>
-    <result column="content" property="content"/>
-    <result column="writer" property="writer"/>
-    <result column="postDate" property="postDate"/>
-    <result column="readCount" property="readCount"/>
-    <result column="postDate" property="postDate"/>
-    <collection property="member" resultMap="MemberVO"/>
-    <collection property="boardupfiles" resultMap="BoardUpFilesVODTO"/>
+    <result column="boardNo" property="boardNo" javaType="int" />
+    <result column="title" property="title" javaType="String"/>
+    <result column="content" property="content" javaType="String"/>
+    <result column="writer" property="writer" javaType="String"/>
+    <result column="postDate" property="postDate" javaType="java.sql.Timestamp"/>
+    <result column="readCount" property="readCount" javaType="int"/>
+    
+    
+    
+        
+
+
+
+	<result column="userName" property="userName" javaType="String"/>
+    <result column="email" property="email" javaType="String"/>
+    
+    
+    
+    <collection property="fileList" ofType="com.miniproj.model.BoardUpFilesVODTO" javaType="java.util.ArrayList">
+    <result column="boardUpFileNo" property="boardUpFileNo" javaType="int"/>
+    <result column="newFileName" property="newFileName" javaType="String"/>
+    <result column="originalFileName" property="originalFileName" javaType="String"/>
+    <result column="thumbFileName" property="thumbFileName" javaType="String"/>
+    <result column="ext" property="ext" javaType="String"/>
+    <result column="size" property="size" javaType="long"/>
+    <result column="boardNo" property="boardNo" javaType="int"/>
+    <result column="base64Img" property="base64Img" javaType="String"/>
+    </collection>
+    
 </resultMap>
 
- <select id="selectBoardByBoardNo" parameterType="HBoardVO" resultMap="HBoardVO">
-select h.boardNo, h.title, h.content, h.writer, h.postdate, h.readCount
-, f.*, m.username, m.email 
+<!-- 게시글의 상세정보를 담는 조인 문 -->
+ <select id="selectBoardDetailInfoByBoardNo" resultMap="boardDetailInfoMap">
+select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount
+, f.*, m.userName, m.email 
 from hboard h left outer join boardupfiles f
 on h.boardNo = f.boardNo
 inner join member m
 on h.writer = m.userId
-where h.boardNo = 41;
+where h.boardNo = #{boardNo}
 </select>
    
    
