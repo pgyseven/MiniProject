@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproj.model.BoardDetailInfo;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
@@ -58,5 +59,14 @@ public class HBoardDAOImpl implements HBoardDAO {
 		
 		return ses.insert(NS + ".saveUpFile", upFile);
 	}
+
+
+	@Override
+	public List<BoardDetailInfo> selectBoardByBoardNo(int BoardNo) throws Exception {
+		return ses.selectList(NS + ".selectBoardDetailInfoByBoardNo", BoardNo);
+	}
+
+
+
 
 }
