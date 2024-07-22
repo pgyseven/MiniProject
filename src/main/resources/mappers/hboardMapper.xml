@@ -80,6 +80,30 @@ on h.writer = m.userId
 where h.boardNo = #{boardNo}
 </select>
    
+<!-- 게시글의 조회수를 증가하는 쿼리문 -->   
+   <update id="updateReadCount">
+	update hboard set readCount = readCount + 1
+where boardNo = #{boardNo}  
    
-   
+   </update>
+
+<!-- ipAddr의 유저가 boardNo글을 언제 조회했는지 날짜 차이를 얻어온다.(조회한 적이 없다면 -1 반환) -->
+
+<select id="selectBoardDateDiff" resultType="int">
+select ifnull(datediff(now(), (select readWhen from boardreadlog where readWho = #{readWho} and boardNo = #{boardNo})), -1) as datediff;
+</select>
+
+
+<!-- BoardReadLog 조회한 내역 저장 -->
+<insert id="saveBoardReadLog">
+insert into boardreadlog(readWho, boardNo) values(#{readWho}, #{boardNo})
+</insert>
+
+
+<!--  조회수 증가한 날짜로 조회 내역 update -->
+<update id="updateBoardReadLog">
+update boardreadlog set readWhen = now() where readWho = #{readWho} and boardNo = #{boardNo}
+</update>
+
+
 </mapper>

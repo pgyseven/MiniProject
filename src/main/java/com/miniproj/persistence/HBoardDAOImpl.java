@@ -1,6 +1,8 @@
 package com.miniproj.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,42 @@ public class HBoardDAOImpl implements HBoardDAO {
 	@Override
 	public List<BoardDetailInfo> selectBoardByBoardNo(int BoardNo) throws Exception {
 		return ses.selectList(NS + ".selectBoardDetailInfoByBoardNo", BoardNo);
+	}
+
+
+	@Override
+	public int updateReadCount(int boardNo) throws Exception {
+		return ses.update(NS + ".updateReadCount", boardNo);   
+	}
+
+
+	@Override
+	public int selectDateDiff(int boardNo, String ipAddr) throws Exception {
+		
+		// SqlSession temlplate의 메서드가 파라메터를 한개만 받을 수 있다.
+		// 지금 넘겨줘야 할 파라메터가 2개 이상이면.. Map을 사용하여 파라메터를 매핑하여 넘겨준다.
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("readWho", ipAddr);
+		params.put("boardNo", boardNo);
+		return ses.selectOne(NS + ".selectBoardDateDiff", params);
+	}
+
+
+	@Override
+	public int saveBoardReadLog(int boardNo, String ipAddr) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("readWho", ipAddr);
+		params.put("boardNo", boardNo);
+		return ses.insert(NS + ".saveBoardReadLog", params);
+	}
+
+
+	@Override
+	public int updateReadWhen(int boardNo, String ipAddr) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("readWho", ipAddr);
+		params.put("boardNo", boardNo);
+		return ses.update(NS + ".updateBoardReadLog", params);
 	}
 
 

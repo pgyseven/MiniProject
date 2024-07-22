@@ -47,48 +47,47 @@ public class HBoardServiceImpl implements HBoardService {
 	}
 
 	/*
-	 * 프로퍼게이션 전파 퍼저 나간다. 각각의 쿼리문에서 단일 작업이 아니라 하나의 논리적 작업 단위로 묶었지안냐 saveboard라는걸로
-	 * 그럼 커넥션 한번 클로즈를 한번 해줘야하지 안냐 그게 전파 속성이고reqired 필요하다면 오픈한걸 2~3번에서 전파해서 쓴다.
-	 * 프로퍼게이션 propagation transaction 검색하기 다른 속성 알 수 있다 리콰이어드나 리콰이어드 뉴를 제일 많이씀
+	 * 프로퍼게이션 전파 퍼저 나간다. 각각의 쿼리문에서 단일 작업이 아니라 하나의 논리적 작업 단위로 묶었지안냐 saveboard라는걸로 그럼
+	 * 커넥션 한번 클로즈를 한번 해줘야하지 안냐 그게 전파 속성이고reqired 필요하다면 오픈한걸 2~3번에서 전파해서 쓴다. 프로퍼게이션
+	 * propagation transaction 검색하기 다른 속성 알 수 있다 리콰이어드나 리콰이어드 뉴를 제일 많이씀
 	 * 
 	 * 이솔레이션 데이터 베이스에 데이터 화장실 1개인경우 이게 이솔레이션 속성 한사람이 다써야 다음 사람 쓴다 쓰는동안 화장실문이 닫힌거처럼
 	 * 락걸린거 디폴트는 게시판을글 누군가가 수정하고 있는데 그 하나의 데이터에 다른 사람이 댓글이나 다른 작업을 못하게 즉 커밋같은걸 못하게
-	 * 하나의 스레드가 뭔가를 작업할때 다른이가 못들어가게 다른 옵션으로는 커밋이 안되도 접근 가능하게 언커밋 데이터 불안대신 빠름
-	 * 안정성을 위해 거의 디폴트 쓴다 
-	 * 추가적으로 스레드 was thred 검색 공부 클라이언트 들어올때 스레드가 발생하며 여기에 소스코드 들어가고 메모리가 할당됨
-	 * 동시의 여러개의 스레드가 하나의 자원에 접근할때 그걸 어떻게 처리할건지가 이솔레이션 리드 언커밋은 나이키 100원 판매 이런거 다수가 들어와 경품 이벤트 근데 에러 많이 보일것
+	 * 하나의 스레드가 뭔가를 작업할때 다른이가 못들어가게 다른 옵션으로는 커밋이 안되도 접근 가능하게 언커밋 데이터 불안대신 빠름 안정성을 위해
+	 * 거의 디폴트 쓴다 추가적으로 스레드 was thred 검색 공부 클라이언트 들어올때 스레드가 발생하며 여기에 소스코드 들어가고 메모리가
+	 * 할당됨 동시의 여러개의 스레드가 하나의 자원에 접근할때 그걸 어떻게 처리할건지가 이솔레이션 리드 언커밋은 나이키 100원 판매 이런거
+	 * 다수가 들어와 경품 이벤트 근데 에러 많이 보일것
 	 * 
 	 * 
-	 * 롤백하면 생기는 아이콘은 제어가 끼어들어간다. 
-	 * rollbackFor 언제 롤백할거냐 익셉션 객체가 발생하면
-	 * 롤백을 한다. 진행하던게 예외 처리 나오면 객체 생성된거고 그 위에껄 롤백 3번재꺼가 그러면 위에 두개까지 롤백임 그리고 디비는 에러가
-	 * 없다 예외가 나는것이다.
+	 * 롤백하면 생기는 아이콘은 제어가 끼어들어간다. rollbackFor 언제 롤백할거냐 익셉션 객체가 발생하면 롤백을 한다. 진행하던게 예외
+	 * 처리 나오면 객체 생성된거고 그 위에껄 롤백 3번재꺼가 그러면 위에 두개까지 롤백임 그리고 디비는 에러가 없다 예외가 나는것이다.
 	 * 
 	 * 아래에서 에러가 보이면 내가 만든 파일명을 찾아라 스피링이 같이 돌아가기때문에 그게 에러라서 스프링도 에러난것
 	 */
 	@Override
-	@Transactional(propagation =Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)  
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveBoard(HBoardDTO newBoard) throws Exception {
-		boolean result = false; //지역변수는 항상 초기값 있어야 정상 작동
-		
+		boolean result = false; // 지역변수는 항상 초기값 있어야 정상 작동
+
 		// 1) newBoard를 ( 새로넘겨진 게시글) DAO 단을 통해 insert 해본다. -insert close
 		if (bDao.insertNewBoard(newBoard) == 1) {
-			//1-2) 위에서 저장된 게시글의 pk(boardNo)를 가져와야 한다.select
+			// 1-2) 위에서 저장된 게시글의 pk(boardNo)를 가져와야 한다.select
 			int newBoardNo = bDao.getMaxBoardNo();
-			//System.out.println("방금 저장된 글 번호 : " + newBoardNo);
-			//1-2) 첨부된 파일이 있다면... 첨부 파일 또한 저장한다...insert
-			for (BoardUpFilesVODTO file : newBoard.getFileList()) { // newBoard.getFileList() 사이즈가 0이면 즉 없으면 첨부된게 포문이 안도니깐 이프문 필요 없음
+			// System.out.println("방금 저장된 글 번호 : " + newBoardNo);
+			// 1-2) 첨부된 파일이 있다면... 첨부 파일 또한 저장한다...insert
+			for (BoardUpFilesVODTO file : newBoard.getFileList()) { // newBoard.getFileList() 사이즈가 0이면 즉 없으면 첨부된게 포문이
+																	// 안도니깐 이프문 필요 없음
 				file.setBoardNo(newBoardNo);
 				bDao.insertBoardUpFile(file); // 여기서도 여러개의 파일이 하나라도 안들어가면 트랜잭션이란 애로 롤백위에 한다고 했으니 롤백
-				
+
 			}
-			
+
 			// 2) 1)번에서 insert 가 성공했을 때 글 작성자의 point를 부여한다. -(select) close - insert close
 			// 참고로 commit은 데이터를 영구하게 저장하기 위함
 			if (pDao.insertPointLog(new PointLogDTO(newBoard.getWriter(), "글작성", 0)) == 1) {
 
 				// 3) 작성자의 userpoint 값 update 글작성한 것에 대한 기존 유저의 포인트를 플러스나 마이너스 하여 넣어줘야한다. close
-				if( mDao.updateUserPoint(newBoard.getWriter()) == 1 ) {
+				if (mDao.updateUserPoint(newBoard.getWriter()) == 1) {
 					result = true;
 				}
 			}
@@ -104,16 +103,44 @@ public class HBoardServiceImpl implements HBoardService {
 		return result;
 	}
 
+
 	@Override
-	public List<BoardDetailInfo> read(int boardNo) throws Exception {
-		List<BoardDetailInfo>boardInfo = bDao.selectBoardByBoardNo(boardNo);
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public List<BoardDetailInfo> read(int boardNo, String ipAddr) throws Exception {
+		List<BoardDetailInfo> boardInfo = bDao.selectBoardByBoardNo(boardNo);  //select
 //		for(BoardDetailInfo b: boardInfo) {
 //			System.out.println(b.toString());
 //		}
+
+		// 조회수 증가
+		if (boardInfo != null) {
+
+			int dateDiff = bDao.selectDateDiff(boardNo, ipAddr);  //select
+			if (dateDiff == -1) {
+				// ipAddr 유저가 boardNo글을 조회한적이 없다. 조회내역 증가 - > 조회수 증가
+				if (bDao.saveBoardReadLog(boardNo, ipAddr) == 1) { // 조회 내역 저장 / insert
+					updateReadCount(boardNo, boardInfo); //update     Propagation.REQUIRED 에 의해서 트랜잭션이 아래 호출하는 매서드 까지 확장
+				}
+
+			} else if (dateDiff >= 1) {
+				updateReadCount(boardNo, boardInfo); //update
+				bDao.updateReadWhen(boardNo, ipAddr); // 조회수 증가 한 날로 날짜 update
+			}
+		}
+
 		return boardInfo;
-		
+
 	}
 
+	private void updateReadCount(int boardNo, List<BoardDetailInfo> boardInfo) throws Exception {
+		if (bDao.updateReadCount(boardNo) == 1) {
+			for (BoardDetailInfo b : boardInfo) { // 컬렉션은 무조건 포문
+				b.setReadCount(b.getReadCount() + 1); // update 로 조회수를 올리고 나서 읽어온건 조회를 성공한지 모르고 일단 조회수 올린거니 논리적으로 맞지
+														// 않다. 그렇기에 읽어오고 업세디트 한거다.
+				// 여기서는 롤백할게 없다 위에서 셀럭트 문이기도 하니깐
 
+			}
+		}
+	}
 
 }

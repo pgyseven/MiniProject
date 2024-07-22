@@ -27,6 +27,7 @@ public class BoardDetailInfo {
 	private int readCount;
 	
 	private List<BoardUpFilesVODTO> fileList;
+	
 	private String userName;
 	private String email;
 	

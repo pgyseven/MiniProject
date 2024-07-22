@@ -27,5 +27,17 @@ public interface HBoardDAO  {
 
 	//게시글 상세정보를 읽어오는 메서드
 	List<BoardDetailInfo> selectBoardByBoardNo(int BoardNo) throws Exception;
+
+	//게시글의 조회수를 증가하는 메서드
+	int updateReadCount(int boardNo) throws Exception;
+
+	// ipAddr의 유저가 boardNo글을 언제 조회했는지 날짜 차이를 얻어온다.(조회한 적이 없다면 -1 반환)
+	int selectDateDiff(int boardNo, String ipAddr) throws Exception;
+	
+	//ipAddr의 유저가 boardNo 글을 현재 시간에 조회한다고 기록
+	int saveBoardReadLog(int boardNo, String ipAddr) throws Exception;
+
+	//조회수 증가한 날짜로 update  
+	int updateReadWhen(int boardNo, String ipAddr) throws Exception;
 	
 }
