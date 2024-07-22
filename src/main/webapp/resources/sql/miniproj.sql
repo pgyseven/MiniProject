@@ -174,8 +174,8 @@ select * from boardUpfiles where boardno=13; -- 이건 두번이라 속도에는
 select * from member where userid = (select writer from hboard where boardNo = 16); -- 이렇게하면 맵 사용안하고 보드업파일스 맴버 조인 브이오를 채워서 사용 하는 버전에서는 이거 세개 사용
 
 -- 게시글과 첨부 파일,  작성자 정보까지 함께 출력해보자(  조인 테이블 3개 3 - 1개의 조인조건이 나와야 한다.
-select h.boardNo, h.title, h.content, h.writer, h.postdate, h.readCount
-, f.*, m.username, m.email 
+select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount
+, f.*, m.userName, m.email 
 from hboard h left outer join boardupfiles f
 on h.boardNo = f.boardNo
 inner join member m
@@ -229,4 +229,34 @@ from emp e, salgrade s
 where e.sal > s.losal and e.sal < s.hisal; -- 오라클만 가능 ex 회원등급 얼마 팔았으면 골드 등급 사실 쓸데 많이 없다.
 
 -- 컬럼의 중복 제거 포인트 부여 여러번 했을때 
-select distinct from pointlog;
+select distinct 컬럼명 from pointlog;
+
+
+-- 게시글의 조회수 증가 쿼리문
+update hboard set readCount = readCount + 1
+where boardNo = ?;
+
+-- 게시판 조회수 증가를 위한 테이블 생성
+CREATE TABLE `pgy`.`boardreadlog` (
+  `boardReadLogNo` INT NOT NULL AUTO_INCREMENT,
+  `readWho` VARCHAR(130) NOT NULL,
+  `readWhen` DATETIME NULL DEFAULT now(),
+  `boardNo` INT NOT NULL,
+  PRIMARY KEY (`boardReadLogNo`))
+COMMENT = '게시글을 조회한 내역 기록';
+
+-- 1) readwho가 '0:0:0:0:0:0:0:1' 이고, boardNo가 ?번인 데이터가 있는지 조회
+select readWhen from boardreadlog where readwho = '0:0:0:0:0:0:0:1' and boardno = 40;
+
+-- 2 ) 1)번에서 나온 결과가 null 이면, insert
+insert into boardreadlog(readwho, boardNo) values('0:0:0:0:0:0:0:1', 40);
+insert into boardreadlog(readwho, boardNo) values(?, ?);
+-- 3) 1)번에서 나온 결과가 null이 아니면... 현재날짜 시간과 이전에 읽은 날짜 시간의 날짜 차이를 구해야 한다.
+-- 1)번 + 3)번의 내용 subquery와 함수를 이용하면 아래의 한 문장으로 해결할 수 있다.
+select ifnull(datediff(now(), (select readWhen from boardreadlog where readWho = '0:0:0:0:0:0:0:1' and boardNo = 40)), -1) as datediff;
+
+select ifnull(datediff(now(), (select readWhen from boardreadlog where readWho = ? and boardno = ?)), -1) as datediff;
+
+
+-- 4) 3번에서 나온 결과가 1이상이면 조회한 후 조회한 readWhen 을 현재 시간으로 update 시켜야 한다.
+update boardreadlog set readWhern = now() where readWho = ? and boardNo = ?;

@@ -75,6 +75,13 @@
 		</div>
 
 		</c:forEach>
+		
+		<div calss="btns">
+		<button type="button" class="btn btn-info" onclick="">답글달기</button>
+		<button type="button" class="btn btn-primary" onclick="location.href='/hboard/listAll';">글수정</button>
+		<button type="button" class="btn btn-danger" onclick="">글삭제</button>
+		<button type="button" class="btn btn-info" onclick="location.href='/hboard/listAll';">리스트페이지로</button>
+		</div>
 		<c:import url="../footer.jsp"></c:import>
 	</div>
 </body>
