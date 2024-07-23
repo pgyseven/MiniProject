@@ -45,6 +45,10 @@
     <result column="postDate" property="postDate" javaType="java.sql.Timestamp"/>
     <result column="readCount" property="readCount" javaType="int"/>
     
+    <result column="ref" property="ref" javaType="int"/>
+    <result column="step" property="step" javaType="int"/>
+    <result column="refOrder" property="refOrder" javaType="int"/>
+    
     
     
         
@@ -71,7 +75,7 @@
 
 <!-- 게시글의 상세정보를 담는 조인 문 -->
  <select id="selectBoardDetailInfoByBoardNo" resultMap="boardDetailInfoMap">
-select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount
+select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount, h.ref, h.step, h.refOrder
 , f.*, m.userName, m.email 
 from hboard h left outer join boardupfiles f
 on h.boardNo = f.boardNo
