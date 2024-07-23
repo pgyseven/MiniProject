@@ -105,5 +105,10 @@ insert into boardreadlog(readWho, boardNo) values(#{readWho}, #{boardNo})
 update boardreadlog set readWhen = now() where readWho = #{readWho} and boardNo = #{boardNo}
 </update>
 
+<!-- ref값을 boardNo로 update -->
+<update id="updateBoardRef">
+update hboard set ref = #{boardNo} where boardNo = #{boardNo};
+</update>
+
 
 </mapper>

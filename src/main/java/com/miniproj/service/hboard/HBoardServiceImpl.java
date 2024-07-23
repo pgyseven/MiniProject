@@ -74,6 +74,10 @@ public class HBoardServiceImpl implements HBoardService {
 			// 1-2) 위에서 저장된 게시글의 pk(boardNo)를 가져와야 한다.select
 			int newBoardNo = bDao.getMaxBoardNo();
 			// System.out.println("방금 저장된 글 번호 : " + newBoardNo);
+			
+			// 1-1-1) 위에서 가져온 글 번호를 ref 컬럼에 update
+			bDao.updateBoardRef(newBoardNo);
+			
 			// 1-2) 첨부된 파일이 있다면... 첨부 파일 또한 저장한다...insert
 			for (BoardUpFilesVODTO file : newBoard.getFileList()) { // newBoard.getFileList() 사이즈가 0이면 즉 없으면 첨부된게 포문이
 																	// 안도니깐 이프문 필요 없음
