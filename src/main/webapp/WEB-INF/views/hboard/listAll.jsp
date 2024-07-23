@@ -103,9 +103,9 @@
 								<th>writer</th>
 								<th>postDate</th>
 								<th>readCount</th>
-								<th>ref</th>
+<!-- 								<th>ref</th>
 								<th>step</th>
-								<th>refOrder</th>
+								<th>refOrder</th> -->
 							</tr>
 						</thead>
 						<tbody>
@@ -113,7 +113,7 @@
 								<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';" class="table-primary">
 									<td>${board.boardNo}</td>
 									<td>
-									<c:forEach var="i" begin="1" end="${board.step }">
+									<c:forEach var="i" begin="1" end="${board.step }"> <!-- step 이란걸 주면 증감의 정도도 설정 가능 -->
 									<img src="/resources/images/reply.png" />
 									</c:forEach>
 									${board.title}</td>
@@ -121,9 +121,9 @@
 									<td>${board.writer}</td>
 									<td class="postDate">${board.postDate}</td>
 									<td>${board.readCount}</td>
-									<td>${board.ref}</td>
+<%-- 									<td>${board.ref}</td>
 									<td>${board.step}</td>
-									<td>${board.refOrder}</td>
+									<td>${board.refOrder}</td> --%>
 								</tr>
 							</c:forEach>
 						</tbody>
