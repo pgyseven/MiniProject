@@ -103,16 +103,27 @@
 								<th>writer</th>
 								<th>postDate</th>
 								<th>readCount</th>
+								<th>ref</th>
+								<th>step</th>
+								<th>refOrder</th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach var="board" items="${boardList}">
 								<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';" class="table-primary">
 									<td>${board.boardNo}</td>
-									<td>${board.title}</td>
+									<td>
+									<c:forEach var="i" begin="1" end="${board.step }">
+									<img src="/resources/images/reply.png" />
+									</c:forEach>
+									${board.title}</td>
+									
 									<td>${board.writer}</td>
 									<td class="postDate">${board.postDate}</td>
 									<td>${board.readCount}</td>
+									<td>${board.ref}</td>
+									<td>${board.step}</td>
+									<td>${board.refOrder}</td>
 								</tr>
 							</c:forEach>
 						</tbody>
