@@ -6,6 +6,7 @@ import com.miniproj.model.BoardDetailInfo;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
+import com.miniproj.model.HReplyBoardDTO;
 
 public interface HBoardDAO  {
 	
@@ -42,5 +43,11 @@ public interface HBoardDAO  {
 
 	//글 번호를 ref 컬럼에 update
 	int updateBoardRef(int newBoardNo) throws Exception;
+	
+	//답글 데이터와 ref, step, refOrder 값을 저장
+	int insertReplyBoard(HReplyBoardDTO replyBoard) throws Exception;
+
+	// 자리 확보를 위해 기존 답글의 refOrder 값을 수정하는 메서드
+	void updateRefOrder(int refOrder, int ref) throws Exception;
 	
 }

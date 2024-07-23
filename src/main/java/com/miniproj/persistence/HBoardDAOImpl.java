@@ -12,6 +12,7 @@ import com.miniproj.model.BoardDetailInfo;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
+import com.miniproj.model.HReplyBoardDTO;
 
 @Repository //아래의 클래스가 DAO 객체임을 명시 빈스그래프에 뜨는지 확인 안뜨면 우클릭 스프링 들어가서 빈스그래프 뜨게 하면됨
 public class HBoardDAOImpl implements HBoardDAO {
@@ -109,6 +110,24 @@ public class HBoardDAOImpl implements HBoardDAO {
 	public int updateBoardRef(int newBoardNo) throws Exception {
 
 		return ses.update(NS + ".updateBoardRef", newBoardNo);
+	}
+
+
+	@Override
+	public int insertReplyBoard(HReplyBoardDTO replyBoard) throws Exception {
+		
+		return ses.insert(NS + ".insertReplyBoard", replyBoard);
+	}
+
+
+	@Override
+	public void updateRefOrder(int refOrder, int ref) throws Exception {
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("refOrder", refOrder);
+		params.put("ref", ref);
+		
+		ses.update(NS + ".updateBoardRefOrder", params);
 	}
 
 

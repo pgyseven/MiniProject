@@ -7,7 +7,7 @@
    <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
    <select id="getAllHBoard"
       resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
-      select * from hboard order by boardNo desc
+      select * from hboard order by ref desc, refOrder asc, postDate desc
    </select>
 
    <!-- 새로운 게시글을 저장하는 쿼리문 -->
@@ -113,6 +113,21 @@ update boardreadlog set readWhen = now() where readWho = #{readWho} and boardNo 
 <update id="updateBoardRef">
 update hboard set ref = #{boardNo} where boardNo = #{boardNo};
 </update>
+
+
+<!-- 답글 데이터와 함계 ref, step, refOrder 값 저장 -->
+<insert id="insertReplyBoard">
+insert into hboard(title, content, writer, ref, step, refOrder)
+values(#{title}, #{content}, #{writer}, #{ref}, #{step}, #{refOrder})
+</insert>
+
+<update id="updateBoardRefOrder">
+update hboard set refOrder = refOrder + 1
+where ref = #{ref} and refOrder > #{refOrder}
+</update>
+
+
+
 
 
 </mapper>

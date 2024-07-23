@@ -26,6 +26,7 @@ import com.miniproj.model.BoardDetailInfo;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
+import com.miniproj.model.HReplyBoardDTO;
 import com.miniproj.model.MyResponseWithoutData;
 import com.miniproj.service.hboard.HBoardService;
 import com.miniproj.util.FileProcess;
@@ -254,6 +255,33 @@ public class HBoardController {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	
+	@RequestMapping("/showReplyForm")
+	public String showReplyForm() {
+		return "/hboard/replyForm";
+	}
+	
+	@RequestMapping(value="/saveReply",  method=RequestMethod.POST)
+	public String saveReplyBoard(HReplyBoardDTO replyBoard, RedirectAttributes redirectAttributes) { // HBoardDTO 를사용해도 된다 첨부파일 리스트는  null로 되도 되니깐 
+		System.out.println(replyBoard + "답글로 저장하자");
+		
+		String returnPage = "redirect:/hboard/listAll"; //리다이렉트라서 답글 저장 성공도 뜬다.
+		
+		try {
+			if(service.saveReply(replyBoard)) {
+				redirectAttributes.addAttribute("status", "success");
+				
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			redirectAttributes.addAttribute("status", "fail");
+		}
+		
+		return returnPage;
 	}
 	
 }

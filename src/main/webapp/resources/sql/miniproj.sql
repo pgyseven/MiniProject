@@ -53,7 +53,7 @@ CREATE TABLE `pgy`.`hboard` (
   `writer` VARCHAR(8) NULL,
   `postDate` DATETIME NULL DEFAULT now(),
   `readCount` INT NULL DEFAULT 0,
-  `ref` INT NULL DEFAULT 0,
+  `ref` INT NULL DEFAULT 0, -- 부모글의 글번호
   `step` INT NULL DEFAULT 0,
   `refOrder` INT NULL DEFAULT 0,
   PRIMARY KEY (`boardNo`),
@@ -259,4 +259,19 @@ select ifnull(datediff(now(), (select readWhen from boardreadlog where readWho =
 
 
 -- 4) 3번에서 나온 결과가 1이상이면 조회한 후 조회한 readWhen 을 현재 시간으로 update 시켜야 한다.
-update boardreadlog set readWhern = now() where readWho = ? and boardNo = ?;
+update boardreadlog set readWhen = now() where readWho = ? and boardNo = ?;
+-- 복합키 프라이머리 키 두개이상 가능함 지금 위에서 계속 후랑 보드 넘버를 가져간다 이 두개를 복합키로! 복합키는 지우고 쓸때 리드후는 누구고 보드 넘은 누구다 이 두개가 항상 엔드로 묶여서 지우고 읽고 해야한다. 단 우리는 지금 테이블은 안고치겠다.
+
+
+------------------------------------------------------------------------ 계층형 게시판으로 만들기 ---------------------------------------------------------------------------
+
+-- 1) 기존 게시글의 ref 컬럽 값을 boardNo 값으로update(기존의 글들은 모두 부모글이기 때문)
+
+-- 2) 앞으로 정장될 게시글에도 ref 컬럼 값을 boardNo 값으로 update
+update hboard set ref = #{boardNo} where boardNo = #{boardNo};
+update hboard set ref = ? where boardNo = ?;
+
+
+-- 3) 부모글의 boardNo를 ref에, 부모글의 step +1 값을 step에, 부모글의 refOrder +1 값을 refOrder에 저장한다.
+insert into hboard(title, content, writer, ref, step, refOrder)
+values(?, ?, ?, ?, ?, ?);
