@@ -79,7 +79,7 @@
 
 		<div calss="btns">
 			<button type="button" class="btn btn-info"
-				onclick="location.href='/hboard/showReplyForm?boardNo=${board.boardNo}&ref=${board.boardNo}&step=${board.step}&refOrder=${board.refOrder}'">답글달기</button>
+				onclick="location.href='/hboard/showReplyForm?boardNo=${board.boardNo}&ref=${board.ref}&step=${board.step}&refOrder=${board.refOrder}'">답글달기</button>
 			<button type="button" class="btn btn-primary"
 				onclick="location.href='/hboard/listAll';">글수정</button>
 			<button type="button" class="btn btn-danger" onclick="">글삭제</button>
