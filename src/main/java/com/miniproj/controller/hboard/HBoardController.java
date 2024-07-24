@@ -66,7 +66,9 @@ public class HBoardController {
 			list = service.getAllBoard();
 			model.addAttribute("boardList", list);
 		} catch (Exception e) {
+			e.printStackTrace();
 			model.addAttribute("exception", "error");
+			
 		}
 
 //      for(HBoardVO b : list) {
@@ -221,21 +223,59 @@ public class HBoardController {
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
 		if(this.uploadFileList.size() > 0) { //new로 호출했기에 주소값은 있어서 널은 무조건 아니기에 널하고 비교 불가
 		
-			for (int i = 0; i < uploadFileList.size(); i++) { //반복문이 다돌면 파일이 다 삭제
-				fileProcess.removeFile(realPath + uploadFileList.get(i).getNewFileName());
-					
-				// 이미지 파일이면 썸네일 파일또한 삭제 해야함
-				if(uploadFileList.get(i).getThumbFileName() !=null || uploadFileList.get(i).getThumbFileName() != "") {
-		               fileProcess.removeFile(realPath + uploadFileList.get(i).getThumbFileName());
-		            }
-				
-			}
+			allUploadFileDelete(realPath, this.uploadFileList);
 		this.uploadFileList.clear(); // 리스트에 있는 모든 데이터 삭제  / 반복 횟수에 영향을 줄 수있는 행동이니 삭제는 이렇게 밖에서 항상 기억 해라
 		}
 		
 		return new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, "", "success"), HttpStatus.OK);
 		
 	}
+	
+	private void allUploadFileDelete(String realPath, List<BoardUpFilesVODTO> fileList) { //위에 재사용된 코드를 리팩토링 함
+		for (int i = 0; i < fileList.size(); i++) { //반복문이 다돌면 파일이 다 삭제
+			fileProcess.removeFile(realPath + fileList.get(i).getNewFileName());
+				
+			// 이미지 파일이면 썸네일 파일또한 삭제 해야함
+			if(fileList.get(i).getThumbFileName() !=null || fileList.get(i).getThumbFileName() != "") {
+		           fileProcess.removeFile(realPath + fileList.get(i).getThumbFileName());
+		        }
+			
+		}
+	}
+	
+	
+	
+	@RequestMapping("/removeBoard")
+	  public String removeBoard(@RequestParam("boardNo") int boardNo, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+			System.out.println(boardNo + "번들을 삭제 하자");
+			//DAO 단에서 해당 BoardNo번 글을 삭제 처리한 후 
+			try {
+				
+				List<BoardUpFilesVODTO> fileList = service.removeBoard(boardNo);
+				//빈파일 리스트를 확인한다고 fileList ==  null 이라고 하면 무조건 널이 아님이다 왜 냐면 비어있지만 객체즉 boardupfilevodto형태의 객체는 무조건 보내니깐 여기선 객체가 잇냐 없냐로 물어본거나 다름 없으니 무조건 널이 아님이다 객체는 꼭 돌려주니깐
+				
+				String realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
+				
+				//첨부파일이 있다면 , 첨부파일의 정보를 가져와 하드디스크에서도 첨부파일을 삭제 해야한다.
+				if(fileList.size() > 0) {
+					allUploadFileDelete(realPath, fileList);
+				}
+				
+				redirectAttributes.addAttribute("status", "success");
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				redirectAttributes.addAttribute("status", "fail");
+			}
+			return "redirect:/hboard/listAll";
+			
+			
+			
+			
+	  }
+
+
+	
 	@RequestMapping(value="/viewBoard")
 	public void viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest request) {
 		
@@ -283,5 +323,7 @@ public class HBoardController {
 		
 		return returnPage;
 	}
+	
+
 	
 }

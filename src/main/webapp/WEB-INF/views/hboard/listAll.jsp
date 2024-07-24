@@ -106,11 +106,15 @@
 <!-- 								<th>ref</th>
 								<th>step</th>
 								<th>refOrder</th> -->
+								<th>isDelete</th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach var="board" items="${boardList}">
-								<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';" class="table-primary">
+								
+								<c:choose>
+									<c:when test = "${board.isDelete == 'N'}">
+										<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';">
 									<td>${board.boardNo}</td>
 									<td>
 									<c:forEach var="i" begin="1" end="${board.step }"> <!-- step 이란걸 주면 증감의 정도도 설정 가능 -->
@@ -124,7 +128,27 @@
 <%-- 									<td>${board.ref}</td>
 									<td>${board.step}</td>
 									<td>${board.refOrder}</td> --%>
+									<td>${board.isDelete}</td>
 								</tr>
+								</c:when>
+								
+								<c:when test = "${board.isDelete == 'Y'}">
+								
+									<tr>
+									<td>${board.boardNo}</td>
+									<td>삭제된 글 입니다.</td>
+									<td></td>
+									<td class="postDate"></td>
+									<td></td>
+									<td>${board.isDelete}</td>
+								</tr>
+								
+								
+								
+								
+								</c:when>
+								</c:choose>
+							
 							</c:forEach>
 						</tbody>
 					</table>

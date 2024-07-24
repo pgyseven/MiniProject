@@ -39,6 +39,7 @@ public class HBoardServiceImpl implements HBoardService {
 	private MemberDAO mDao;
 
 	@Override
+	@Transactional(readOnly = true)  //이렇게 하면 성능 차이가 난다 이게 있다면 트랜잭션 메니저가 이건 안해도 괜찮다고 인식하고 넘어감 / 즉 트랜잭션 필요없는 건 이렇게 하기
 	public List<HBoardVO> getAllBoard() throws Exception {
 		logger.info("HBoardServiceImpl.........");
 
@@ -149,13 +150,14 @@ public class HBoardServiceImpl implements HBoardService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveReply(HReplyBoardDTO replyBoard) throws Exception {
 		
 		boolean result = false;
 		
 		
 		// 부모글에 대한 다른 답글이 있는 상태에서, 부모글의 답글이 추가되는 경우, (자리 확보를 위해)기존의 답글의 refOrder 값을 수정해야 한다.
-		bDao.updateRefOrder(replyBoard.getRefOrder(), replyBoard.getRef());
+		bDao.updateRefOrder(replyBoard.getRefOrder(), replyBoard.getRef()); //update
 		
 		
 		
@@ -172,6 +174,25 @@ public class HBoardServiceImpl implements HBoardService {
 		}
 		
 		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public List<BoardUpFilesVODTO> removeBoard(int boardNo) throws Exception {
+		//1) 실제 파일을 하드디스크에서도 삭제해야 하므로, 삭제 하기 전에 해당글의 첨부파일 정보를 불러와야 한다.
+		//Optional<List<BoardUpFilesVODTO>> fileList = bDao.selectBoardUpFiles(boardNo); //select 첨부 파일이 있는지 없는지 확인하는 또다른 방법
+		List<BoardUpFilesVODTO> fileList = bDao.selectBoardUpFiles(boardNo); //select
+		
+		// 2)boardNo 번 글의 첨부 파일이 있다면 첨부파일을 삭제해야 한다.
+		bDao.deleteBoardUpFiles(boardNo); //delete
+		// 3) boardNo 번글을 삭제 처리
+		if(bDao.deleteBoardByBoardNo(boardNo) == 1) { //update
+			return fileList;
+		}else {
+			return null;
+		}
+		
+		
 	}
 
 }

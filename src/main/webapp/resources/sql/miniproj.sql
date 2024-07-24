@@ -272,6 +272,35 @@ update hboard set ref = #{boardNo} where boardNo = #{boardNo};
 update hboard set ref = ? where boardNo = ?;
 
 
+-- 2-1) 부모글에 대한 다른 답글이 있는 상태에서, 부모글의 답글이 추가되는 경우, (자리 확보를 위해)기존의 답글의 refOrder 값을 수정해야 한다.
+update hboard set refOrder = refOrder + 1
+where ref = ? and refOrder > ? ;
+
 -- 3) 부모글의 boardNo를 ref에, 부모글의 step +1 값을 step에, 부모글의 refOrder +1 값을 refOrder에 저장한다.
 insert into hboard(title, content, writer, ref, step, refOrder)
 values(?, ?, ?, ?, ?, ?);
+
+------------------------------------------------------------------------ 계층판 삭제 작업 ---------------------------------------------------------------------------
+-- hboard테이블에서 삭제한 글인지를 포함할 수 있는 컬럼을 추가한다.
+ALTER TABLE `pgy`.`hboard` 
+ADD COLUMN `isDelete` CHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
+
+-- 1) 실제 파일을 하드디스크에서도 삭제해야 하므로, 삭제 하기 전에 해당글의 첨부파일 정보를 불러와야 한다.
+select * from boardupfiles where boardNo = ? ;
+
+-- 2)boardNo 번 글의 첨부 파일이 있다면 첨부파일을 삭제해야 한다.
+delete from boardupfiles where boardNo = ?
+
+-- 3) boardNo 번글을 삭제 처리 (delete 문을 ㅅ실행하면, 게층형 게시판 정렬을 위해 만들어 놓은  ref, step, refOrder 컬럼의 정보 또한 삭제 되기 떄문에
+-- 실제로는  update 문을 수행한다. 그리고 삭제 처리된 boardNo 번 글을 접근하지 못하도록 한다.
+update hboard set isDelete = 'Y', title = '', content=''
+where boardNo = ? 
+
+-- 4) view 단에서 지워진 파일에 접근 하지 못하도록 해야 한다.
+
+------------------------------------------------------------------------ 계층판 삭제 작업 ---------------------------------------------------------------------------
+-- 15번 글의 title,content 수정
+update hboard
+set title = ?, content = ?
+where boardNo = 15;
+

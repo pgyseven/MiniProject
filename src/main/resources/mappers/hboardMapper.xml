@@ -7,7 +7,7 @@
    <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
    <select id="getAllHBoard"
       resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
-      select * from hboard order by ref desc, refOrder asc, postDate desc
+      select * from hboard order by ref desc, refOrder asc
    </select>
 
    <!-- 새로운 게시글을 저장하는 쿼리문 -->
@@ -49,7 +49,7 @@
     <result column="step" property="step" javaType="int"/>
     <result column="refOrder" property="refOrder" javaType="int"/>
     
-    
+        <result column="isDelete" property="isDelete" javaType="String"/>
     
         
 
@@ -75,7 +75,7 @@
 
 <!-- 게시글의 상세정보를 담는 조인 문 -->
  <select id="selectBoardDetailInfoByBoardNo" resultMap="boardDetailInfoMap">
-select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount, h.ref, h.step, h.refOrder
+select h.boardNo, h.title, h.content, h.writer, h.postDate, h.readCount, h.ref, h.step, h.refOrder, h.isDelete
 , f.*, m.userName, m.email 
 from hboard h left outer join boardupfiles f
 on h.boardNo = f.boardNo
@@ -126,6 +126,22 @@ update hboard set refOrder = refOrder + 1
 where ref = #{ref} and refOrder > #{refOrder}
 </update>
 
+<!-- boardNo번 글의 첨부 파일 정보를 가져오는 쿼리문 -->
+<select id="selectBoardUpFiles" resultType="com.miniproj.model.BoardUpFilesVODTO">
+select * from boardupfiles where boardNo = #{boardNo};
+</select>
+
+<!-- boardno 번 글의 첨부파일을 삭제하는 쿼리문 -->
+<delete id="deleteBoardFiles">
+delete from boardupfiles where boardNo = #{boardNo}
+</delete>
+
+
+<!-- boardNo번 글을 삭제 처리 하는 쿼리문 -->
+<update id="deleteBoardByBoardNo">
+update hboard set isDelete = 'Y', title = '', content=''
+where boardNo = #{boardNo} 
+</update>
 
 
 

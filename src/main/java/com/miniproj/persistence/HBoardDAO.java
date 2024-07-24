@@ -50,4 +50,15 @@ public interface HBoardDAO  {
 	// 자리 확보를 위해 기존 답글의 refOrder 값을 수정하는 메서드
 	void updateRefOrder(int refOrder, int ref) throws Exception;
 	
+	// 게시글의 첨부 파일의 정보를 얻어오는 메서드
+	List<BoardUpFilesVODTO> selectBoardUpFiles(int boardNo) throws Exception;
+	
+	
+	// boardNo번 글의 첨부파일들을 삭제하는 메서드
+	void deleteBoardUpFiles(int boardNo) throws Exception;
+	
+	//boardNo 번 게시글의 삭제 처리 하는 메서드
+	int deleteBoardByBoardNo(int boardNo) throws Exception;
+	
+	
 }

@@ -131,6 +131,26 @@ public class HBoardDAOImpl implements HBoardDAO {
 	}
 
 
+	@Override
+	public List<BoardUpFilesVODTO> selectBoardUpFiles(int boardNo) throws Exception {
+		
+		return ses.selectList(NS + ".selectBoardUpFiles", boardNo);
+	}
+
+
+	@Override
+	public void deleteBoardUpFiles(int boardNo) throws Exception {
+		ses.delete(NS + ".deleteBoardFiles", boardNo);
+		
+	}
+
+
+	@Override
+	public int deleteBoardByBoardNo(int boardNo) throws Exception {
+		return ses.update(NS + ".deleteBoardByBoardNo", boardNo);
+		
+	}
+
 
 
 }
