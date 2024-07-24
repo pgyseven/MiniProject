@@ -4,7 +4,31 @@
 <%@ page session="false"%>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>상세보기</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+
+$(function(){
+	//모달창 닫기 버튼을 클릭하면...
+	$('.modalCloseBtn').click(function(){
+		$('#myModal').hide();
+	});
+	
+});
+
+function showRemoveModal() {
+	let boardNo = $('#boardNo').val();
+	$('.modal-body').html(boardNo + '글을 삭제 할까요?')
+	$('#myModal').show(500); /* 밀리세컨드 단위고 0.5초 속도로 천천히 보여줌 */
+}
+
+
+
+</script>
+
 </head>
 <body>
 	<div class="container">
@@ -82,12 +106,38 @@
 				onclick="location.href='/hboard/showReplyForm?boardNo=${board.boardNo}&ref=${board.ref}&step=${board.step}&refOrder=${board.refOrder}'">답글달기</button>
 			<button type="button" class="btn btn-primary"
 				onclick="location.href='/hboard/listAll';">글수정</button>
-			<button type="button" class="btn btn-danger" onclick="">글삭제</button>
+			<button type="button" class="btn btn-danger" onclick="showRemoveModal();">글삭제</button>
 			<button type="button" class="btn btn-info"
 				onclick="location.href='/hboard/listAll';">리스트페이지로</button>
 		</div>
 		</c:forEach>
 		</div>
+		
+						           <!-- The Modal -->
+						   <div class="modal" id="myModal" style="display: none;">
+							<div class="modal-dialog">
+							   <div class="modal-content">
+		  
+								  <!-- Modal Header -->
+								  <div class="modal-header">
+									 <h4 class="modal-title">MiniProject</h4>
+									 <button type="button" class="btn-close modalCloseBtn" data-bs-dismiss="modal"></button>
+								  </div>
+		  
+								  <!-- Modal body -->
+								  <div class="modal-body"></div>
+		  
+								  <!-- Modal footer -->
+								  <div class="modal-footer">
+								  	<button type="button" class="btn btn-info" onclick="location.href='/hboard/removeBoard?boardNo=${param.boardNo}';">삭제</button>
+									 <button type="button" class="btn btn-danger modalCloseBtn"
+										data-bs-dismiss="modal">취소</button>
+								  </div>
+		  
+							   </div>
+							</div>
+						 </div>
+		
 		<c:import url="../footer.jsp"></c:import>
 	</div>
 </body>
