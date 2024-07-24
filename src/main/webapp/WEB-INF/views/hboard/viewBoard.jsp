@@ -31,13 +31,21 @@ function showRemoveModal() {
 
 </head>
 <body>
+
 	<div class="container">
 		<c:import url="../header.jsp"></c:import>
 
 		<div class="content">
 			<h1>게시글 상세 페이지</h1>
 
+
+
 			<c:forEach var="board" items="${boardDetailInfo}">
+			
+			<c:if test="${board.isDelete == 'Y'}">
+				<c:redirect url="/hboard/listAll?status=wrongAccess" />
+			</c:if>
+			
 
 				<div class="boardInfo">
 					<div class="mb-3">
@@ -81,14 +89,17 @@ function showRemoveModal() {
 				</div>
 
 				
+				
 				<div class="fileList" style="padding: 15px">
 					<c:forEach var="file" items="${board.fileList}">
+					<c:if test="${file.boardUpFileNo != '0' }">
 						<c:choose>
 							<c:when test="${file.thumbFileName != null }">
 								<div>
 									<img src="/resources/boardUpFiles/${file.newFileName }" />
 								</div>
 							</c:when>
+							<c:when test="${file.thumbFileName == null }">
 							<c:otherwise>
 								<div>
 									<a href="/resources/boardUpFiles/${file.newFileName }"> <img
@@ -96,7 +107,11 @@ function showRemoveModal() {
 									</a>
 								</div>
 							</c:otherwise>
+							
+							</c:when>
 						</c:choose>
+						</c:if>
+						
 					</c:forEach>
 				</div>
 	
