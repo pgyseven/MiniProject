@@ -149,6 +149,15 @@ public class HBoardServiceImpl implements HBoardService {
 		}
 	}
 
+	
+	@Override
+	@Transactional(readOnly = true, rollbackFor=Exception.class)
+	public List<BoardDetailInfo> read(int boardNo) throws Exception {
+		List<BoardDetailInfo> boardInfo = bDao.selectBoardByBoardNo(boardNo);
+		return boardInfo;
+	}
+	
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveReply(HReplyBoardDTO replyBoard) throws Exception {
@@ -194,5 +203,6 @@ public class HBoardServiceImpl implements HBoardService {
 		
 		
 	}
+
 
 }

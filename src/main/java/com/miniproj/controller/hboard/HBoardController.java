@@ -275,26 +275,44 @@ public class HBoardController {
 	  }
 
 
-	
-	@RequestMapping(value="/viewBoard")
-	public void viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest request) {
+	// 아래의 viewBoard()는 /viewBoard(게시글 상세보기), /modifyBoard(게시글을 수정하기 위해 게시글을 불러오는)
+	//일때 2번 호출된다.
+	@RequestMapping(value={"/viewBoard", "/modifyBoard"})  //value 컨트롤 클릯해서 보면 String[] value() default {}; 이렇게 보이는데 배열 형태로 할 수 있단걸 알 수 있다.
+	public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest request) {
 		
 		String ipAddr = GetClientIPAddr.getClientIp(request);
 		
 		System.out.println(ipAddr + " 가 뒤에 번호 글 조회" + boardNo);
 		
-		try {
-			List<BoardDetailInfo> boardDetailInfo = service.read(boardNo, ipAddr);
-			
-			
-		model.addAttribute("boardDetailInfo", boardDetailInfo);
+		// System.out.println("uri : " + request.getRequestURI());
 		
-		System.out.println(boardDetailInfo.toString());
-		} catch (Exception e) {
-			
-			e.printStackTrace();
+	
+		
+		String returnViewPage= "";
+		
+		List<BoardDetailInfo> boardDetailInfo = null; // service.read(boardNo, ipAddr);
+		
+		try {
+			if (request.getRequestURI().equals("/hboard/viewBoard")) {
+				System.out.println("상세보기 호출...");
+				returnViewPage = "/hboard/viewBoard";
+				 boardDetailInfo = service.read(boardNo, ipAddr);
+			}else if (request.getRequestURI().equals("/hboard/modifyBoard")) {
+				System.out.println("수정하기 호출...");
+				returnViewPage = "/hboard/modifyBoard";
+				boardDetailInfo = service.read(boardNo);
+			}
+		} catch (Exception e1) {
+	
+			e1.printStackTrace();
+			returnViewPage = "redirect:/hboard/listAll?status=fail";
 		}
 		
+		model.addAttribute("boardDetailInfo", boardDetailInfo);
+		
+		 
+	
+		return returnViewPage;
 	}
 	
 	
@@ -324,6 +342,12 @@ public class HBoardController {
 		return returnPage;
 	}
 	
+//	@RequestMapping("/modifyBoard")
+//	public void modifyBoard(@RequestParam("boardNo") int boardNo, HttpServletRequest request) {
+//		
+//		System.out.println("uri : " + request.getRequestURI());
+//		
+//	}
 
 	
 }

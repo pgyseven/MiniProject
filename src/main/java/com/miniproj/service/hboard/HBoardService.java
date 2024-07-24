@@ -18,6 +18,9 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    
    // 게시판 상세 보기
    public List<BoardDetailInfo> read(int boardNo, String ipAddr) throws Exception;
+   
+   //read(int boardNo, String ipAddr) 오버로딩 했다
+   public List<BoardDetailInfo> read(int boardNo) throws Exception; // 게시글 수정을 위해 게시글을 불러오는 메서드
 
    
    // 게시글 답글 달기
@@ -25,6 +28,8 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    
    // 게시판 글 삭제
    public List<BoardUpFilesVODTO> removeBoard(int boardNo) throws Exception;
+
+
    
    
    // 게시판 글 수정
