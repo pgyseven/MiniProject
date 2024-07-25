@@ -80,9 +80,9 @@ function showRemoveModal() {
 
 					<div class="mb-3">
 						<label for="content" class="form-label">내용</label>
-						<textarea class="form-control" id="content" rows="5" readonly>
+						<div class="form-control" id="content" rows="5" readonly>
 						${board.content}
-						</textarea>
+						</div>
 					</div>
 
 
