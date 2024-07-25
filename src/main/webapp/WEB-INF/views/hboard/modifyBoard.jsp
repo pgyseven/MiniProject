@@ -8,7 +8,66 @@
 <title>상세보기</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
 
+	});
+
+	function removeFile(fileId) {
+		let removeFileArr = []; //배열 안써도 괜찮음
+
+		$('.fileCheck').each(function(i, item){
+            if($(item).is(':checked')){ // 파일을 삭제하겠다고 체크가 되어 있다면
+               let tmp = $(item).attr('id'); //선택된 파일의 id 값을 얻어옴
+			    removeFileArr.push(tmp); // id 값을 removeFileArr에 저장
+            }
+         });
+
+		 console.log("삭제될 파일  " + removeFileArr)
+
+		 $.each(removeFileArr, function(i, item) {
+			$.ajax({
+	         url : '/hboard/modifyRemoveFileCheck',            
+	         type : 'post',            
+	         dataType : 'json',        	
+			 data : {"removeFileNo" : item},								
+	         async : false, 
+	         success : function (data) {     
+	        	 console.log(data);
+	         
+	         }, error : function (data){
+	         }
+	            
+			});
+	      });
+	}
+	function removeFileCheck(fileId) {
+         // alert('check' + fileId); fileCheck
+         let chkCount = isCheckBoxChecked();
+         if(chkCount > 0) {
+            $('.removeUpFileBtn').removeAttr('disabled'); // .removeAttr('disalbed')
+            $('.removeUpFileBtn').val(chkCount + "개 파일을 삭제합니다!!!!");
+         } else if(chkCount == 0) {
+            $('.removeUpFileBtn').attr('disabled', true);
+            $('.removeUpFileBtn').val("선택된 파일 없음");
+         }
+         
+      }
+      
+      
+      function isCheckBoxChecked() {
+         let result = 0;
+         $('.fileCheck').each(function(i, item){
+            if($(item).is(':checked')){
+               result++;
+            }
+         });
+         console.log(result);
+         document.getElementsByClassName('fileCheck') // 클래스가 fileCheck인 것을 데려와서 배열로 만들어줌
+         return result;
+      }
+
+</script>
 
 </head>
 <body>
@@ -81,8 +140,7 @@
 								<c:if test="${file.boardUpFileNo != '0' }">
 									<tr>
 										<td>
-										<input class="form-check-input" type="checkbox" id="file_${file.boardUpFileNo }"
-											name="" value="" checked />
+											<input class="form-check-input fileCheck" type="checkbox" id=${file.boardUpFileNo} onclick="removeFileCheck(this.id);"/>
 											</td>
 											<td>
 										<c:choose>
@@ -110,7 +168,10 @@
 							</c:forEach>
 						</tbody>
 					</table>
+<div class="fileBtns">
+	<input type="button" class="btn btn-danger removeUpFileBtn" disabled value="선택한 파일 삭제" onclick="removeFile();" />
 
+</div>
 
 
 				</div>
