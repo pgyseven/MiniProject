@@ -81,7 +81,7 @@
 								<c:if test="${file.boardUpFileNo != '0' }">
 									<tr>
 										<td>
-										<input class="form-check-input" type="checkbox" id=""
+										<input class="form-check-input" type="checkbox" id="file_${file.boardUpFileNo }"
 											name="" value="" checked />
 											</td>
 											<td>
