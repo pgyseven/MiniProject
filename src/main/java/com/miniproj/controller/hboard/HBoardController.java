@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miniproj.model.BoardDetailInfo;
+import com.miniproj.model.BoardUpFileStatus;
 import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
@@ -313,15 +314,7 @@ public class HBoardController {
 				}
 				model.addAttribute("fileCount", fileCount);
 				
-		         System.out.println("====================================================================================");
-		         System.out.println("수정하기 호출 리스트에 있는 파일들");
-				for (BoardUpFilesVODTO file: this.modifyFileList) {
-					
-
-			    
-			            System.out.println(file.toString());
-			         }
-			         System.out.println("=====================================================================================");
+		         outputAny();
 				}
 			
 				
@@ -340,9 +333,21 @@ public class HBoardController {
 	
 		return returnViewPage;
 	}
+
+	private void outputAny() {
+		System.out.println("====================================================================================");
+		 System.out.println("수정하기 호출 리스트에 있는 파일들");
+		for (BoardUpFilesVODTO file: this.modifyFileList) {
+			
+
+		
+		        System.out.println(file.toString());
+		     }
+		     System.out.println("=====================================================================================");
+	}
 	
 	
-	@RequestMapping("/showReplyForm")
+	
 	public String showReplyForm() {
 		return "/hboard/replyForm";
 	}
@@ -373,7 +378,42 @@ public class HBoardController {
 //		
 //		System.out.println("uri : " + request.getRequestURI());
 //		
-//	}
+//	} 컨트롤러단에 메서드를 함께 썼기에 삭제
+	
+	
+	@RequestMapping(value = "/modifyRemoveFileCheck",  method=RequestMethod.POST,  produces = "application/json; charset=UTF-8;")
+	public ResponseEntity<MyResponseWithoutData> modifyRemoveFileCheck(@RequestParam("removeFileNo") int removedFilePK)  {
+		System.out.println(removedFilePK + " 파일을 삭제 처리 하자");
+		//아직 게시판이 최종 수정이 될지 안될지 모르는 상태이기 때문에 파일을 하드에서 삭제 할 수가 없다.
+		//삭제될 파일을 삭제한다고 체크만 해두고, 나중에 게시판이 최중 수정이되면 그때 실제 삭제처리 해야한다.
+		
+		for(BoardUpFilesVODTO file : this.modifyFileList) {
+			if(removedFilePK == file.getBoardUpFileNo()) {
+				file.setFileStatus(BoardUpFileStatus.DELETE);
+			}
+			
+		}
+		
+		 outputAny();
+		
+		 return new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, null, "success"), HttpStatus.OK);
+		 
+		 
+	}
+	
+	@RequestMapping(value = "/cancelRemoveFile",  method=RequestMethod.POST,  produces = "application/json; charset=UTF-8;")
+	public ResponseEntity<MyResponseWithoutData> cancelRemoveFile() {
+		System.out.println("파일리스트의 모든 파일을 삭제 취소 처리");
+	
+		for(BoardUpFilesVODTO file : this.modifyFileList) {
+			file.setFileStatus(null);
+			}
+		outputAny();
+		 return new ResponseEntity<MyResponseWithoutData>(new MyResponseWithoutData(200, null, "success"), HttpStatus.OK);
+		}
+	
+	}
+	
 
 	
-}
+	
