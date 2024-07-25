@@ -99,15 +99,16 @@ public class HBoardController {
 		try {
 			if (service.saveBoard(boardDTO)) { // 게시글 저장에 성공했다면
 				redirectAttributes.addAttribute("status","success");
-				this.uploadFileList.clear();
+				
 			}
 		} catch (Exception e) { // 게시글 저장에 실패했다면
 			e.printStackTrace();
 			redirectAttributes.addAttribute("status","fail");
+			
 		}
 		// VO는 리드 온리로서 디비에 꺼내온걸 저장해서 앞단까지 가져가는 것 즉 뷰단까지 즉 DTO와 VO가 다른거다 같이 쓰기도 하는데 앞단
 		// 뷰단은 자주 바뀔수 있다. 그래서 따로 쓰는게 좋다.
-		
+		this.uploadFileList.clear();
 		return returnPage; //게시글 전체 목록 페이지로 돌아감
 	}
 	
