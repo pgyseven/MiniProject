@@ -166,5 +166,12 @@ public class HBoardDAOImpl implements HBoardDAO {
 	}
 
 
+	@Override
+	public List<HBoardVO> selectPopBoards() throws Exception {
+		return ses.selectList(NS + ".selectPopBoards");
+		 
+	}
+
+
 
 }

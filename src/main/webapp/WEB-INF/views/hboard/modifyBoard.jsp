@@ -174,9 +174,11 @@ function cancelAddFile(obj) {
 .fileBtns input {
 	margin-left: 5px;
 }
+
 .btns {
 	display: flex;
 	justify-content: center;
+	margin-top: 20px; /* 버튼과 다른 요소들 사이의 간격을 조절 */
 }
 </style>
 </head>
@@ -191,118 +193,119 @@ function cancelAddFile(obj) {
 
 
 			<c:forEach var="board" items="${boardDetailInfo}">
-<form action="/hboard/modifyBoardSave" method="post" enctype="multipart/form-data">
+				<form action="/hboard/modifyBoardSave" method="post"
+					enctype="multipart/form-data">
 
-				<div class="boardInfo">
-					<div class="mb-3">
-						<label for="boardNo" class="form-label">글 번호</label> <input
-							type="text" class="form-control" id="boardNo" name="boardNo"
-							value="${board.boardNo}" readonly>
-					</div>
-					<div class="mb-3">
-						<label for="title" class="form-label">글 제목</label> <input
-							type="text" class="form-control" id="title" name="title"
-							value="${board.title}">
-					</div>
-					<div class="mb-3">
-						<label for="writer" class="form-label">작성자</label> <input
-							type="text" class="form-control" id="writer"
-							value="${board.writer}(${board.email})" readonly>
-					</div>
+					<div class="boardInfo">
+						<div class="mb-3">
+							<label for="boardNo" class="form-label">글 번호</label> <input
+								type="text" class="form-control" id="boardNo" name="boardNo"
+								value="${board.boardNo}" readonly>
+						</div>
+						<div class="mb-3">
+							<label for="title" class="form-label">글 제목</label> <input
+								type="text" class="form-control" id="title" name="title"
+								value="${board.title}">
+						</div>
+						<div class="mb-3">
+							<label for="writer" class="form-label">작성자</label> <input
+								type="text" class="form-control" id="writer"
+								value="${board.writer}(${board.email})" readonly>
+						</div>
 
-					<div class="mb-3">
-						<label for="writer" class="form-label">작성일</label> <input
-							type="text" class="form-control" id="postDate"
-							value="${board.postDate}" readonly>
-					</div>
+						<div class="mb-3">
+							<label for="writer" class="form-label">작성일</label> <input
+								type="text" class="form-control" id="postDate"
+								value="${board.postDate}" readonly>
+						</div>
 
-					<div class="mb-3">
-						<label for="writer" class="form-label">조회수</label> <input
-							type="text" class="form-control" id="readCount"
-							value="${board.readCount}" readonly>
-					</div>
-					<!-- readonly는 수정 불가 -->
+						<div class="mb-3">
+							<label for="writer" class="form-label">조회수</label> <input
+								type="text" class="form-control" id="readCount"
+								value="${board.readCount}" readonly>
+						</div>
+						<!-- readonly는 수정 불가 -->
 
 
-					<div class="mb-3">
-						<label for="content" class="form-label">내용</label>
-						<textarea class="form-control" id="content" rows="5" name="content">
+						<div class="mb-3">
+							<label for="content" class="form-label">내용</label>
+							<textarea class="form-control" id="content" rows="5"
+								name="content">
 						${board.content}
 						</textarea>
+						</div>
+
+
 					</div>
 
 
-				</div>
 
-
-
-				<div class="fileList" style="padding: 15px">
-					<table class="table table-hover fileListTable">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>uploadedFiles</th>
-								<th>fileName</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="file" items="${board.fileList}">
-								<c:if test="${file.boardUpFileNo != '0' }">
-									<tr>
-										<td><input class="form-check-input fileCheck"
-											type="checkbox" id="${file.boardUpFileNo}" <%-- "${file.boardUpFileNo"여기 따옴표 안해도 돌아가더라 --%>
+					<div class="fileList" style="padding: 15px">
+						<table class="table table-hover fileListTable">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>uploadedFiles</th>
+									<th>fileName</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="file" items="${board.fileList}">
+									<c:if test="${file.boardUpFileNo != '0' }">
+										<tr>
+											<td><input class="form-check-input fileCheck"
+												type="checkbox" id="${file.boardUpFileNo}"
+												<%-- "${file.boardUpFileNo"여기 따옴표 안해도 돌아가더라 --%>
 											onclick="removeFileCheck(this.id);" /></td>
-										<td><c:choose>
-												<c:when test="${file.thumbFileName != null }">
-													<!-- 이미지파일 이라면 -->
-													<img src="/resources/boardUpFiles/${file.newFileName }"
-														width="40px" />
+											<td><c:choose>
+													<c:when test="${file.thumbFileName != null }">
+														<!-- 이미지파일 이라면 -->
+														<img src="/resources/boardUpFiles/${file.newFileName }"
+															width="40px" />
 
 
-												</c:when>
+													</c:when>
 
-												<c:when test="${file.newFileName == null}">
-													<a href="/resources/boardUpFiles/${file.newFileName }">
-														<img src="/resources/images/noimage.png" />
-														${file.newFileName }
-													</a>
-												</c:when>
-											</c:choose></td>
-										<td>${file.newFileName }</td>
-									</tr>
+													<c:when test="${file.newFileName == null}">
+														<a href="/resources/boardUpFiles/${file.newFileName }">
+															<img src="/resources/images/noimage.png" />
+															${file.newFileName }
+														</a>
+													</c:when>
+												</c:choose></td>
+											<td>${file.newFileName }</td>
+										</tr>
 
 
-								</c:if>
-							</c:forEach>
-							<tr>
-								<td colspan="3" style="text-align:center">
-								<img src="/resources/images/add.png" onclick="addRows(this);"/>
-								</td>  <!-- 콜스판 병함 -->
-							
-							
-							</tr>
-							
-							
-						</tbody>
-					</table>
-					<div class="fileBtns">
-						<input type="button" class="btn btn-danger removeUpFileBtn"
-							disabled value="선택한 파일 삭제" onclick="removeFile();" /> <input
-							type="button" class="btn btn-info cancelRemove" value="파일 삭제 취소"
-							onclick="cancelRemFile();" />
+									</c:if>
+								</c:forEach>
+								<tr>
+									<td colspan="3" style="text-align: center"><img
+										src="/resources/images/add.png" onclick="addRows(this);" /></td>
+									<!-- 콜스판 병함 -->
+
+
+								</tr>
+
+
+							</tbody>
+						</table>
+						<div class="fileBtns">
+							<input type="button" class="btn btn-danger removeUpFileBtn"
+								disabled value="선택한 파일 삭제" onclick="removeFile();" /> <input
+								type="button" class="btn btn-info cancelRemove" value="파일 삭제 취소"
+								onclick="cancelRemFile();" />
+						</div>
+
+
 					</div>
 
 
-				</div>
+					<div class="btns">
+						<button type="submit" class="btn btn-primary">저장</button>
+						<button type="button" class="btn btn-info">취소</button>
+					</div>
 
-
-				<div calss="btns">
-					<button type="submit" class="btn btn-primary"
-						onclick="">저장</button>
-						<button type="button" class="btn btn-info"
-						onclick="">취소</button>
-				</div>
-				
 				</form>
 			</c:forEach>
 		</div>

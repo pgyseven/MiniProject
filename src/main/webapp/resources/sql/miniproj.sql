@@ -307,5 +307,13 @@ where boardNo = 15;
 ------------------------------------------------------------------------ 게시글 수정 ---------------------------------------------------------------------------
 
 -- 게시글 update 하는 쿼리문
-update hboard set title = ? , content = ?
+update hboard set title = ?, content = ?
 where boardNo = ?;
+
+-- 첨부파일을 pk로 삭제하는 메서드
+delete from boardupfiles where boardUpFileNo = ?
+
+-------------------------------------------------------------------------  인기글 5개 가져오기 ---------------------------------------------------------------------------
+use pgy;
+-- 삭제되지 않은 글 중에서 조회수가 높은순, 최신글 순 5개 가져오기
+select * from hboard where isDelete = 'N' order by readCount desc, boardNo desc limit 5;

@@ -49,16 +49,10 @@
     <result column="step" property="step" javaType="int"/>
     <result column="refOrder" property="refOrder" javaType="int"/>
     
-        <result column="isDelete" property="isDelete" javaType="String"/>
+    <result column="isDelete" property="isDelete" javaType="String"/>
     
-        
-
-
-
 	<result column="userName" property="userName" javaType="String"/>
     <result column="email" property="email" javaType="String"/>
-    
-    
     
     <collection property="fileList" ofType="com.miniproj.model.BoardUpFilesVODTO" javaType="java.util.ArrayList">
     <result column="boardUpFileNo" property="boardUpFileNo" javaType="int"/>
@@ -154,6 +148,10 @@ update hboard set title = #{title}, content = #{content} where boardNo = #{board
 delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
 </delete>
 
+<!-- 인기글 5개 가져오기 -->
+<select id="selectPopBoards" resultType="com.miniproj.model.HBoardVO">
+select boardNo, title, postDate from hboard where isDelete = 'N' order by readCount desc, boardNo desc limit 5
+</select>
 
 
 </mapper>

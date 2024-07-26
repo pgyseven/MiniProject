@@ -66,5 +66,6 @@ public interface HBoardDAO  {
 	// boardUpfileNo번 첨부파일을 삭제하는 메서드
 	void deleteBoardUpFile(int boardUpFileNo) throws Exception;
 	
-	
+	// 인기글 5개 가져오기
+	List<HBoardVO> selectPopBoards() throws Exception;
 }
