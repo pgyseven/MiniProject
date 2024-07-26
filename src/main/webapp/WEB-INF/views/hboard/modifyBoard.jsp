@@ -107,27 +107,46 @@
 		let rowCnt = $('.fileListTable tr').length; // fileListTable (공백):뒤 자식을 가르킴 바디에 나온 tr의 숫자만 헤아림 즉 헤드껀 제외
 		console.log(rowCnt);
 		let row = $(obj).parent().parent();
-        let inputFileTag = `<tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' onchange='showPreview(this)' /></td><td><input
-							type="button" class="btn btn-info cancelRemove" value="파일 저장 취소"
-							onclick="cancelAddFile(this);" /></td></tr>`; // 자바에서는 여기서 실행시키지 마라 하면 백틱안에 든 변수 표시로 알아먹는다 이클립스에서 할때는 역슬레시 반드시
-		
+        let inputFileTag = `<tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' onchange='showPreview(this);' /></td>
+                     <td><input type="button" class="btn btn-info cancelRemove" value="cancel" onclick="cancelAddFile(this);"/></td></tr>`; 
+							// 자바에서는 여기서 실행시키지 마라 하면 백틱안에 든 변수 표시로 알아먹는다 이클립스에서 할때는 역슬레시 반드시 / 여기서  파일 올리는 기능은 여러개 한번에 올릴 수 있는 멀티플 쓸 수도 있어서 유저들이 잘 몰라서 안쓰는 편이다. 
+							// <tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' onchange='showPreview(this)' multiple/>  이건 아래서 .each를 사용한다.
 		$(inputFileTag).insertBefore(row); // cloneRow를  row의 위로 추가
 
 	}
 
 
 	function showPreview(obj) {
-		// 이미지 파일 이라면
 		console.log(obj.files[0]);
-        let reader = new FileReader(); //자바에만 있는데 아니다 FileReader 객체 생성
+		//파일 타입 확인
+		let imageType  =  ["image/jpeg", "image/png", "image/gif"];
+
+		let fileType = obj.files[0].type;
+        
+		let fileName = obj.files[0].name;
+		if (imageType.indexOf(fileType) != -1 ) {//incluede를 사용해도 된다.
+		// 이미지 파일 이라면
+		
+		let reader = new FileReader(); //자바에만 있는데 아니다 FileReader 객체 생성
         reader.onload = function(e) { 
             // reader 객체에 의해 파일을 읽기 완료하면 실행되는 콜백 함수
-			let imgTag = `<div style='padding : 10px;'><img src='\${e.target.result}' width='100px' /></div>`; // 자바에서 실행하지 말고 자바스크립트에서 실행되라는 의미로 역슬레시
+			let imgTag =  `<div style='padding:6px;'><img src='\${e.target.result}' width='40px' /><span>\${fileName}</span></div>`; 
+			// 자바에서 실행하지 말고 자바스크립트에서 실행되라는 의미로 역슬레시
 			$(imgTag).insertAfter(obj); 
         }
-        reader.readAsDataURL(obj.files[0]); //업로드된 파일을 읽어온다. 여기서 읽은 애가 위에 e에 들어간다.
 
-		//이미지 파일이 아닐때	
+		reader.readAsDataURL(obj.files[0]); //업로드된 파일을 읽어온다. 여기서 읽은 애가 위에 e에 들어간다.
+
+		}else {
+			//이미지 파일이 아닐때	
+		let imgTag =   `<div style='padding:6px;'><img src='/resources/images/noimage.png' width='40px' /><span>\${fileName}</span></div>`;
+
+		$(imgTag).insertAfter(obj);
+		}
+        
+        
+
+		
 	}
 
 
@@ -219,8 +238,7 @@ function cancelAddFile(obj) {
 								<c:if test="${file.boardUpFileNo != '0' }">
 									<tr>
 										<td><input class="form-check-input fileCheck"
-											type="checkbox" id=${file.boardUpFileNo
-											}
+											type="checkbox" id="${file.boardUpFileNo}" <%-- "${file.boardUpFileNo"여기 따옴표 안해도 돌아가더라 --%>
 											onclick="removeFileCheck(this.id);" /></td>
 										<td><c:choose>
 												<c:when test="${file.thumbFileName != null }">
