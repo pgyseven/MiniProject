@@ -107,7 +107,7 @@
 		let rowCnt = $('.fileListTable tr').length; // fileListTable (공백):뒤 자식을 가르킴 바디에 나온 tr의 숫자만 헤아림 즉 헤드껀 제외
 		console.log(rowCnt);
 		let row = $(obj).parent().parent();
-        let inputFileTag = `<tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' onchange='showPreview(this);' /></td>
+        let inputFileTag = `<tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' name='modifyNewFile'  onchange='showPreview(this);' /></td>
                      <td><input type="button" class="btn btn-info cancelRemove" value="cancel" onclick="cancelAddFile(this);"/></td></tr>`; 
 							// 자바에서는 여기서 실행시키지 마라 하면 백틱안에 든 변수 표시로 알아먹는다 이클립스에서 할때는 역슬레시 반드시 / 여기서  파일 올리는 기능은 여러개 한번에 올릴 수 있는 멀티플 쓸 수도 있어서 유저들이 잘 몰라서 안쓰는 편이다. 
 							// <tr><td colspan='2'><input class='form-control' type='file' id='newFile_\${rowCnt}' onchange='showPreview(this)' multiple/>  이건 아래서 .each를 사용한다.
@@ -117,6 +117,14 @@
 
 
 	function showPreview(obj) {
+		if (obj.files[0].size > 1024*1024*10){ // 10MB
+			alert("10MB 이하의 이미지만 업로드할 수 있습니다.");
+			obj.value = ""; //선택한 파일 초기화
+			return; // 10MB 이하가 아니면 return;
+
+
+		} 
+
 		console.log(obj.files[0]);
 		//파일 타입 확인
 		let imageType  =  ["image/jpeg", "image/png", "image/gif"];
@@ -166,6 +174,10 @@ function cancelAddFile(obj) {
 .fileBtns input {
 	margin-left: 5px;
 }
+.btns {
+	display: flex;
+	justify-content: center;
+}
 </style>
 </head>
 <body>
@@ -179,17 +191,17 @@ function cancelAddFile(obj) {
 
 
 			<c:forEach var="board" items="${boardDetailInfo}">
-
+<form action="/hboard/modifyBoardSave" method="post" enctype="multipart/form-data">
 
 				<div class="boardInfo">
 					<div class="mb-3">
 						<label for="boardNo" class="form-label">글 번호</label> <input
-							type="text" class="form-control" id="boardNo"
+							type="text" class="form-control" id="boardNo" name="boardNo"
 							value="${board.boardNo}" readonly>
 					</div>
 					<div class="mb-3">
 						<label for="title" class="form-label">글 제목</label> <input
-							type="text" class="form-control" id="title"
+							type="text" class="form-control" id="title" name="title"
 							value="${board.title}">
 					</div>
 					<div class="mb-3">
@@ -214,7 +226,7 @@ function cancelAddFile(obj) {
 
 					<div class="mb-3">
 						<label for="content" class="form-label">내용</label>
-						<textarea class="form-control" id="content" rows="5">
+						<textarea class="form-control" id="content" rows="5" name="content">
 						${board.content}
 						</textarea>
 					</div>
@@ -285,9 +297,13 @@ function cancelAddFile(obj) {
 
 
 				<div calss="btns">
-					<button type="button" class="btn btn-info"
-						onclick="location.href='/hboard/listAll';">리스트페이지로</button>
+					<button type="submit" class="btn btn-primary"
+						onclick="">저장</button>
+						<button type="button" class="btn btn-info"
+						onclick="">취소</button>
 				</div>
+				
+				</form>
 			</c:forEach>
 		</div>
 

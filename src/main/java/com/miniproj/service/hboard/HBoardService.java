@@ -28,12 +28,17 @@ public interface HBoardService   //클래스와 동급이다 클래스를 디자
    
    // 게시판 글 삭제
    public List<BoardUpFilesVODTO> removeBoard(int boardNo) throws Exception;
-
-
-   
    
    // 게시판 글 수정
+   public boolean modifyBoard(HBoardDTO modifyBoard) throws Exception;
+
+   // 게시판 페이징
+   
+   // 게시글 검색
    
    
-   // 게시판 글 삭제
+  
+   
+   
+ 
 }

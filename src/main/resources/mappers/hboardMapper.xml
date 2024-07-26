@@ -132,7 +132,7 @@ select * from boardupfiles where boardNo = #{boardNo};
 </select>
 
 <!-- boardno 번 글의 첨부파일을 삭제하는 쿼리문 -->
-<delete id="deleteBoardFiles">
+<delete id="deleteAllBoardFiles">
 delete from boardupfiles where boardNo = #{boardNo}
 </delete>
 
@@ -143,6 +143,16 @@ update hboard set isDelete = 'Y', title = '', content=''
 where boardNo = #{boardNo} 
 </update>
 
+
+<!-- boardNo번의 게시글을 수정하는 쿼리문 -->
+<update id="updateBoardByBoardNo">
+update hboard set title = #{title}, content = #{content} where boardNo = #{boardNo};
+</update>
+
+<!-- 게시글의 첨부파일을 pk 로 삭제하는 쿼리문 -->
+<delete id="deleteBoardUpFileByPK">
+delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
+</delete>
 
 
 

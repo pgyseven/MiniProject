@@ -54,11 +54,17 @@ public interface HBoardDAO  {
 	List<BoardUpFilesVODTO> selectBoardUpFiles(int boardNo) throws Exception;
 	
 	
-	// boardNo번 글의 첨부파일들을 삭제하는 메서드
-	void deleteBoardUpFiles(int boardNo) throws Exception;
+	// boardNo번 글의 첨부파일들을 모두 삭제하는 메서드
+	void deleteAllBoardUpFiles(int boardNo) throws Exception;
 	
 	//boardNo 번 게시글의 삭제 처리 하는 메서드
 	int deleteBoardByBoardNo(int boardNo) throws Exception;
+	
+	// 게시글 자체를 수정하는 메서드 
+	int updateBoardByBoardNo(HBoardDTO modifyBoard) throws Exception;
+
+	// boardUpfileNo번 첨부파일을 삭제하는 메서드
+	void deleteBoardUpFile(int boardUpFileNo) throws Exception;
 	
 	
 }
