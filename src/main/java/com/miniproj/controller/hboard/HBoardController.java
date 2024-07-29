@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +30,8 @@ import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
 import com.miniproj.model.MyResponseWithoutData;
+import com.miniproj.model.PagingInfo;
+import com.miniproj.model.PagingInfoDTO;
 import com.miniproj.service.hboard.HBoardService;
 import com.miniproj.util.FileProcess;
 //import java.lang.* //생략 java lang패키지는 기본 패키지
@@ -60,15 +63,28 @@ public class HBoardController {
 	private List<BoardUpFilesVODTO> modifyFileList;
 
 	// 게시판 전체 목록 리스트를 출력하는 메서드
+	// defaultValue : pageNo 쿼리스트링 값이 생략되어 호출된다면 그 값이 1로 초기값이 부여되도록 함.(400 에러 방지 참고로 제대로된 파라미터를 안줄때 400 에러가 뜸 그래서 디폴트 벨류준거)
 	@RequestMapping("/listAll")
-	public void listAll(Model model) {
-		logger.info("HBoardController.listAll()~");
+	public void listAll(Model model, @RequestParam(value="pageNo", defaultValue = "1") int pageNo, @RequestParam(value="pagingSize", defaultValue = "10") int pagingSize) {
+		logger.info(pageNo + "번 페이지 출력.....HBoardController.listAll()~");
 
+		PagingInfoDTO dto = PagingInfoDTO.builder()
+		.pageNo(pageNo)
+		.pagingSize(pagingSize)
+		.build();
+		
 		// 서비스 단 호출
 		List<HBoardVO> list = null;
+		Map<String, Object> result = null;
 		try {
-			list = service.getAllBoard();
+			result = service.getAllBoard(dto);
+			
+			PagingInfo pi = (PagingInfo)result.get("pagingInfo"); // 명시적 변환 다운 캐스팅
+			
+			list = (List<HBoardVO>)result.get("boardList");
+			
 			model.addAttribute("boardList", list);
+			model.addAttribute("pagingInfo",pi);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", "error");

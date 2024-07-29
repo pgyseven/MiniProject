@@ -28,7 +28,7 @@
           <a class="nav-link" href="javascript:void(0)">댓글형 게시판</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)">회원가입</a>
+          <a class="nav-link" href="/member/register">회원가입</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/weather">오늘의 날씨</a>
@@ -42,6 +42,7 @@
                  <li class="nav-item">
           <a class="nav-link" href="/news">뉴스 api(연습,xml)</a>
         </li>
+        
       </ul>
       <form class="d-flex">
         <input class="form-control me-2" type="text" placeholder="Search">

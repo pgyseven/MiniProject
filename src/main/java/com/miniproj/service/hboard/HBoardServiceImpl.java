@@ -1,7 +1,9 @@
 package com.miniproj.service.hboard;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,8 @@ import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
+import com.miniproj.model.PagingInfo;
+import com.miniproj.model.PagingInfoDTO;
 import com.miniproj.model.PointLogDTO;
 import com.miniproj.persistence.HBoardDAO;
 import com.miniproj.persistence.MemberDAO;
@@ -42,12 +46,34 @@ public class HBoardServiceImpl implements HBoardService {
 
 	@Override
 	@Transactional(readOnly = true)  //이렇게 하면 성능 차이가 난다 이게 있다면 트랜잭션 메니저가 이건 안해도 괜찮다고 인식하고 넘어감 / 즉 트랜잭션 필요없는 건 이렇게 하기
-	public List<HBoardVO> getAllBoard() throws Exception {
+	public Map<String, Object> getAllBoard(PagingInfoDTO dto) throws Exception {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		logger.info("HBoardServiceImpl.........");
 
+		PagingInfo pi = makePagingInfo(dto);
+		
 		// DAO 단 호출
-		List<HBoardVO> lst = bDao.selectAllBoard();
-		return lst;
+		List<HBoardVO> lst = bDao.selectAllBoard(pi);
+		resultMap.put("pagingInfo", pi);
+		resultMap.put("boardList", lst);
+		return resultMap;
+	}
+
+	private PagingInfo makePagingInfo(PagingInfoDTO dto) throws Exception {
+		PagingInfo pi = new PagingInfo(dto);
+		pi.setTotalPostCnt(bDao.getTotalPostCnt()); //전체 데이터 수 세팅
+		pi.setTotalPageCnt(); //전체 페이지 수 세팅
+		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 rowIndex
+		
+		//페이징 블럭 만들기
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBlock();
+		pi.setEndPageNoCurBlock();
+		
+		
+		System.out.println(pi.toString());
+		return pi;
 	}
 
 	/*

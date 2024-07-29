@@ -7,7 +7,7 @@
    <!-- 게시판의 모든 게시글을 번호 내림차순 정렬하여 가져오는 쿼리문 -->
    <select id="getAllHBoard"
       resultType="com.miniproj.model.HBoardVO">  <!-- list는 자바가 알고 있어서 안써도 됌 -->
-      select * from hboard order by ref desc, refOrder asc
+      select * from hboard order by ref desc, refOrder asc limit #{startRowIndex}, #{viewPostCntPerPage}
    </select>
 
    <!-- 새로운 게시글을 저장하는 쿼리문 -->
@@ -153,5 +153,8 @@ delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
 select boardNo, title, postDate from hboard where isDelete = 'N' order by readCount desc, boardNo desc limit 5
 </select>
 
-
+<!-- 전체 데이터의 개수 가져오기 -->
+<select id="selectTotalCount" resultType="int">
+select count(*) from hboard
+</select>
 </mapper>

@@ -10,17 +10,55 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 	$(function(){
-
+		
+		
+		// 현재 페이지 번호를 가져와 그 페이지 번호의 pagination의 li태그에 active라는 클래스 부여 
+		/* let pageNo = '${param.pageNo}';
+		if (pageNo == ''){
+			pageNo = 1;
+		}else{
+			pageNo = parseInt(pageNo);
+		}
+		$(`#\${pageNo}`).addClass('active'); */ // 여기서 백슬러시는 이엘 표현식이 아니란걸 표현하기 위한거다 template literals
+	
+		
+		
 		showModalAccordingToStatus();
 
 		timediffPostDate(); // 함수 호출
 
+		let pagingSize = '${param.pagingSize}'
+			if (pagingSize == ''){
+				pagingSize = 10;
+			}else{
+				pagingSize = parseInt(pagingSize);
+			}
+			$('#pagingSize').val(pagingSize);
+		
+		
 		// 클래스가 modalCloseBtn 태그를 클릭하면 실행되는 함수  
 		    $('.modalCloseBtn').click(function(){  // onclick과 같은 함수 click
 		    	$("#myModal").hide(); //태그를 화면에서 감춤
 		    }); // 클릭하면 이 함수가 실행된다. 
 
-		
+		    //
+		$('.pagingSize').change(function(){
+			console.log($(this).val());
+			
+			let pageNo = '${param.pageNo}';
+			if (pageNo == ''){
+				pageNo = 1;
+			}else{
+				pageNo = parseInt(pageNo);
+			}
+			
+			
+			location.href = '/hboard/listAll?pagingSize=' + $(this).val() + '&pageNo=' + pageNo;
+			
+			
+		});
+		    
+		    
 
 
 	}); // 웹 문서가 로딩 완료되면 현재의 함수를 실행하도록 한다 window.onload = function 웹브라우즈 로딩이 완료되면 실행해라라는 즉 웹문서 로딩이 완료후 실행되어라
@@ -91,7 +129,14 @@
 
 		<div class="content">
 			<h1>계층형 게시판 전체 리스트 페이지</h1>
-
+	<div class="boardControl">
+	<select class="form-select pagingSize" id="pagingSize">
+	<option value="10">10개씩</option>
+	<option value="20">20개씩</option>
+	<option value="40">40개씩</option>
+	<option value="80">80개씩</option>
+	</select>
+	</div>
 			<!-- choose if와 else 합친거랑 생각해라 when 이 if -->
 			<c:choose>
 				<c:when test="${boardList != null}">
@@ -191,7 +236,33 @@
 			<button type="button" class="btn btn-primary"
 				onclick="location.href='/hboard/saveBoard';">글 저장</button>
 		</div>
+		
+			${pagingInfo}
+	<div class="pagination">
 
+	<ul class="pagination justify-content-center" style="margin:20px 0">
+	<c:if test="${param.pageNo > 1 }">
+  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo - 1 }">Previous</a></li>
+  </c:if>
+  <c:forEach var="i" begin="${pagingInfo.startPageNoCurBlock }" end="${pagingInfo.endPageNoCurBlock }">
+  
+<c:choose>
+	<c:when test="${param.pageNo == i}">
+	 <li class="page-item active" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }">${i }</a></li>
+	</c:when>
+	
+	<c:otherwise>
+	 <li class="page-item" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }">${i }</a></li>
+	</c:otherwise>
+	
+</c:choose>
+ 
+    </c:forEach>
+	<c:if test="${param.pageNo < pagingInfo.totalPageCnt }">
+  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo + 1 }">Next</a></li>
+ </c:if>
+</ul>
+	</div>
 				           <!-- The Modal -->
 						   <div class="modal" id="myModal" style="display: none;">
 							<div class="modal-dialog">

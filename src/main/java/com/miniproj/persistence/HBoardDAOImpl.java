@@ -13,6 +13,7 @@ import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
+import com.miniproj.model.PagingInfo;
 
 @Repository //아래의 클래스가 DAO 객체임을 명시 빈스그래프에 뜨는지 확인 안뜨면 우클릭 스프링 들어가서 빈스그래프 뜨게 하면됨
 public class HBoardDAOImpl implements HBoardDAO {
@@ -27,10 +28,10 @@ public class HBoardDAOImpl implements HBoardDAO {
 	
 	// throws : 현재 메서드에서 예외가 발생하면 현재 메서드를 호출한 곳에서 예외처리를 하도록 미뤄두는 키워드
 	@Override
-	public List<HBoardVO> selectAllBoard() throws Exception {
+	public List<HBoardVO> selectAllBoard(PagingInfo pi) throws Exception {
 		System.out.println("여기는 HBoard DaoImpl ...................");
 		
-		List<HBoardVO> list = ses.selectList(NS + ".getAllHBoard");
+		List<HBoardVO> list = ses.selectList(NS + ".getAllHBoard", pi);
 		
 //		for(HBoardVO b : list) {
 //			System.out.println(b.toString());
@@ -170,6 +171,13 @@ public class HBoardDAOImpl implements HBoardDAO {
 	public List<HBoardVO> selectPopBoards() throws Exception {
 		return ses.selectList(NS + ".selectPopBoards");
 		 
+	}
+
+
+	@Override
+	public int getTotalPostCnt() throws Exception {
+		
+		return ses.selectOne(NS + ".selectTotalCount");
 	}
 
 
