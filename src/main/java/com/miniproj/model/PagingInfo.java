@@ -12,6 +12,7 @@ public class PagingInfo { // 모두 디비에서 가져온 정보만은 아니�
 	private int viewPostCntPerPage; // 1페이지당 보여줄 글의 갯수
 	
 	private int totalPostCnt; // 전체 글(데이터)의 갯수
+	
 	private int totalPageCnt; //전체 페이지 수
 	private int startRowIndex; //현재 페이지에서 보여주기 시잘할 글의 index 번호 / 토탈 페이지를 알아야함
 	// -----------------------------
