@@ -31,6 +31,7 @@ function getAddr(){
 			}else{
 				if(jsonStr != null){
 					makeListJson(jsonStr);
+					 $("#list").css('display', 'block');
 				}
 			}
 		}
@@ -42,38 +43,22 @@ function getAddr(){
 
 function makeListJson(jsonStr){
 	var htmlStr = "";
-	htmlStr += "<table>";
+	htmlStr += "<table><tr><th>도로명</th><th>지번주소</th><th>우편번호</th></tr>";
 	$(jsonStr.results.juso).each(function(){
-		htmlStr += "<tr>";
+		htmlStr += "<tr onclick='selectAddress(\"" + this.roadAddr + "\")'>";
 		htmlStr += "<td>"+this.roadAddr+"</td>";
-		htmlStr += "<td>"+this.roadAddrPart1+"</td>";
-		htmlStr += "<td>"+this.roadAddrPart2+"</td>";
 		htmlStr += "<td>"+this.jibunAddr+"</td>";
-		htmlStr += "<td>"+this.engAddr+"</td>";
 		htmlStr += "<td>"+this.zipNo+"</td>";
-		htmlStr += "<td>"+this.admCd+"</td>";
-		htmlStr += "<td>"+this.rnMgtSn+"</td>";
-		htmlStr += "<td>"+this.bdMgtSn+"</td>";
-		htmlStr += "<td>"+this.detBdNmList+"</td>";
-		/** API 서비스 제공항목 확대 (2017.02) **/
-		htmlStr += "<td>"+this.bdNm+"</td>";
-		htmlStr += "<td>"+this.bdKdcd+"</td>";
-		htmlStr += "<td>"+this.siNm+"</td>";
-		htmlStr += "<td>"+this.sggNm+"</td>";
-		htmlStr += "<td>"+this.emdNm+"</td>";
-		htmlStr += "<td>"+this.liNm+"</td>";
-		htmlStr += "<td>"+this.rn+"</td>";
-		htmlStr += "<td>"+this.udrtYn+"</td>";
-		htmlStr += "<td>"+this.buldMnnm+"</td>";
-		htmlStr += "<td>"+this.buldSlno+"</td>";
-		htmlStr += "<td>"+this.mtYn+"</td>";
-		htmlStr += "<td>"+this.lnbrMnnm+"</td>";
-		htmlStr += "<td>"+this.lnbrSlno+"</td>";
-		htmlStr += "<td>"+this.emdNo+"</td>";
 		htmlStr += "</tr>";
 	});
 	htmlStr += "</table>";
 	$("#list").html(htmlStr);
+}
+
+function selectAddress(address) {
+    $("#address").val(address);
+    $("#list").css('display', 'none')
+
 }
 
 //특수문자, 특정문자열(sql예약어의 앞뒤공백포함) 제거
@@ -116,7 +101,6 @@ function enterSearch() {
 	} 
 }
 </script>
-	
 	
 	
 <title>회원 가입 페이지</title>
@@ -173,6 +157,47 @@ function enterSearch() {
 					
 					
 			</div>
+			
+			<form name="form" id="form" method="post">
+<input
+					type="hidden" class="form-control" id="currentPage"
+					placeholder="현재 페이지 번호를 입력하세요..." name="currentPage" value="1" />
+		
+
+		<input
+					type="hidden" class="form-control" id="countPerPage"
+					placeholder="페이지당 출력할 개수를 입력하세요..." name="countPerPage" value="10" />
+			
+
+		<input
+					type="hidden" class="form-control" id="resultType"
+					placeholder="검색결과 형식을 입력하세요..." name="resultType" value="json" />
+		
+
+			<input
+					type="hidden" class="form-control" id="confmKey"
+					placeholder="승인키를 입력하세요..." name="confmKey" value="devU01TX0FVVEgyMDI0MDcyOTE2MzQxMTExNDk3Mjg="/>
+
+			<div class="mb-3 mt-3">
+				<label for="keyword" class="form-label">주소: </label> <input
+					type="text" class="form-control" id="keyword"
+					placeholder="키워드를 입력하세요..." name="keyword" onkeydown="enterSearch();"/>
+			</div>
+
+
+	
+		 <div class="mb-3 mt-3">
+				<input type="button" onClick="getAddr();" value="주소검색하기"/>
+			</div>
+	
+	<div class="mb-3 mt-3">
+				<label for="userAdress" class="form-label">상세 주소</label> 
+				<input type="text" class="form-control" id="address" name="address" />
+			</div>
+	
+	<div id="list" ></div><!-- 검색 결과 리스트 출력 영역 -->
+</form>
+			
 
 
 			<div class="form-check">
@@ -189,45 +214,6 @@ function enterSearch() {
 	
 	
 	
-<form name="form" id="form" method="post">
-<div class="mb-3 mt-3">
-				<label for="currentPage" class="form-label">현재 페이지: </label> <input
-					type="text" class="form-control" id="currentPage"
-					placeholder="현재 페이지 번호를 입력하세요..." name="currentPage" value="1" />
-			</div>
-
-			<div class="mb-3 mt-3">
-				<label for="countPerPage" class="form-label">페이지당 출력 개수: </label> <input
-					type="text" class="form-control" id="countPerPage"
-					placeholder="페이지당 출력할 개수를 입력하세요..." name="countPerPage"  value="10" />
-			</div>
-
-			<div class="mb-3 mt-3">
-				<label for="resultType" class="form-label">검색결과 형식: </label> <input
-					type="text" class="form-control" id="resultType"
-					placeholder="검색결과 형식을 입력하세요..." name="resultType" value="json" />
-			</div>
-
-			<div class="mb-3 mt-3">
-				<label for="confmKey" class="form-label">승인키: </label> <input
-					type="text" class="form-control" id="confmKey"
-					placeholder="승인키를 입력하세요..." name="confmKey" value="devU01TX0FVVEgyMDI0MDcyOTE2MzQxMTExNDk3Mjg="/>
-			</div>
-
-			<div class="mb-3 mt-3">
-				<label for="keyword" class="form-label">키워드: </label> <input
-					type="text" class="form-control" id="keyword"
-					placeholder="키워드를 입력하세요..." name="keyword" onkeydown="enterSearch();"/>
-			</div>
-
-
-	
-		 <div class="mb-3 mt-3">
-				<input type="button" onClick="getAddr();" value="주소검색하기"/>
-			</div>
-	
-	<div id="list" ></div><!-- 검색 결과 리스트 출력 영역 -->
-</form>
 
 
 </div>
