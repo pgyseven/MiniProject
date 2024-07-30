@@ -14,6 +14,7 @@ import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
 import com.miniproj.model.PagingInfo;
+import com.miniproj.model.SearchCriteriaDTO;
 
 @Repository //아래의 클래스가 DAO 객체임을 명시 빈스그래프에 뜨는지 확인 안뜨면 우클릭 스프링 들어가서 빈스그래프 뜨게 하면됨
 public class HBoardDAOImpl implements HBoardDAO {
@@ -178,6 +179,28 @@ public class HBoardDAOImpl implements HBoardDAO {
 	public int getTotalPostCnt() throws Exception {
 		
 		return ses.selectOne(NS + ".selectTotalCount");
+	}
+
+
+	@Override // 지금 여기서는 오버로딩 안써도 된다 이미 오버라이딩으로 알아서 하지만 인터페이스에 있으니 오버 라이드 했다 치는거
+	public int getTotalPostCnt(SearchCriteriaDTO sc) throws Exception {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("searchType",sc.getSearchType());
+		params.put("searchWord","%" + sc.getSearchWord() + "%");
+		
+		return ses.selectOne(NS + ".selectTotalCountWithSearchCriteria", params);
+	}
+
+
+	@Override
+	public List<HBoardVO> selectAllBoard(PagingInfo pi, SearchCriteriaDTO searchCriteria) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("searchType", searchCriteria.getSearchType());
+		params.put("searchWord","%" + searchCriteria.getSearchWord() + "%");
+		params.put("startRowIndex", pi.getStartRowIndex());
+		params.put("viewPostCntPerPage", pi.getViewPostCntPerPage());
+		
+		return ses.selectList(NS + ".getSeasrchBoardWithPaging", params);
 	}
 
 

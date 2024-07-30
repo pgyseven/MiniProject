@@ -8,6 +8,7 @@ import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
 import com.miniproj.model.PagingInfo;
+import com.miniproj.model.SearchCriteriaDTO;
 
 public interface HBoardDAO  {
 	
@@ -71,6 +72,12 @@ public interface HBoardDAO  {
 	List<HBoardVO> selectPopBoards() throws Exception;
 	
 	
-	// 게시판의 전체 글 수를 얻어오는 메서드
+	// 게시판의 전체 글 수를 얻어오는 메서드(검색어가 없을 때)
 	int getTotalPostCnt() throws Exception;
+	
+	//게시판의 전체 글 수를 얻어오는 메서드(검색어가 있을 때) 오버로드
+	int getTotalPostCnt(SearchCriteriaDTO sc) throws Exception;
+	
+	// 검색어가 있는 경우 검색된 글을 페이징 하여 가져오는 메서드
+	List<HBoardVO> selectAllBoard(PagingInfo pi, SearchCriteriaDTO searchCriteria) throws Exception;
 }

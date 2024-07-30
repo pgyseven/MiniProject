@@ -317,3 +317,92 @@ delete from boardupfiles where boardUpFileNo = ?
 use pgy;
 -- 삭제되지 않은 글 중에서 조회수가 높은순, 최신글 순 5개 가져오기
 select * from hboard where isDelete = 'N' order by readCount desc, boardNo desc limit 5;
+
+
+-- ----------------------------------------------------------- 페이징 -------------
+-- 페이징(paging) : 많은 데이터를 일정 단위로 끊어서 출력하는 기법
+-- 페이징은 단순히 유저에게 데이터를 끊어서 보여주는 의미가 아니라, 많은 데이터를 한꺼번에 출력하지 않고 데이터를 끊어서 출력한다는 의미가 있다.
+
+-- 최종적으로 mysql에서 페이징을 위해 필요한 쿼리문
+SELECT * FROM hboard order by ref desc, refOrder asc limit 보여주기시작할rowIndex번호, 1페이징에보여줄글의갯수;
+
+-- 1) 게시판의 전체 데이터 수를 출력하는 쿼리문
+use webkgy;
+SELECT COUNT(*) FROM hboard; -- 337
+
+-- 2) 전체 페이지 수
+-- 만약 1페이지당 보여줄 데이터의 갯수가 10개라고 가정한다면
+-- 1)번에서 나온 결과를 10으로 나누었을 때 몫이 페이지 수가 되는데, 나머지가 나온다면 +1을 한다.
+-- 전체 페이지 수 : 337/10 = 33.7 -> 전체 페이지수 34 페이지
+-- 전체 페이지 수 : 전체 데이터 수 / 1페이지 당 보여줄 글의 갯수 => 나누어 떨어진다면 몫 .... 나누어떨어지지 않는다면 몫+1
+
+
+-- 3) ?번 페이지에서 보여주기 시작할 글의 index번호를 구하는 것이 핵심
+-- 1페이지 번호 : 0 / 2페이지 번호 : 10 / 3페이지 번호 : 20
+-- (현재 페이지 번호 - 1) * 한 페이지 당 보여줄 글의 갯수 => ?번 페이지에서 보여주기 시작할 글의 index 번호
+
+-------------------------------------------- 페이징 블록 만들기 ---------------------------------------------
+-- 1) 1개 페이징 블럭에서 보여줄 페이지 수 : 10
+
+-- 1-1) 현재 페이지가 속한 페이징 블록의 번호
+-- 현재 페이지 번호 / 1개의 페이징 블록에서 보여줄 페이지 수
+-- 나누어 떨어지지 않으면 올림(+1)
+-- 나누어 떨어지면 그 값
+
+-- ex) 7 / 10 => 나누어 떨어지지 않으므로 1번 블록
+-- ex) 14 / 10 => 나누어 떨어지지 않으므로 2번 블록
+-- ex) 30 / 10 => 나누어 떨어지므로 3번 블록
+
+-- 2) 현재 페이징 블록에서 출력 시작할 페이지 번호 : 
+-- => (현재 페이징 블록 번호 - 1) * 1개 페이징 블럭에서 보여줄 페이지 수 + 1;
+-- 7 페이지라면 -> (1 - 1) * 10 + 1 = 1
+-- 14 페이지라면 -> (2 - 1) * 10 + 1 = 11
+-- 30 페이지라면 -> (3 - 1) * 10 + 1 = 21
+
+-- 3) 2)번에서 나온 값 + 1개 페이징 블럭에서 보여줄 페이지 수 - 1 
+
+--------------------------------------게시물 검색 기능 구현----------------------------------
+
+use pgy;
+
+-- like 검색과 함께 사용하는 와일드 카드
+-- 1) % : 몇자라도~
+-- 2) _ : 한글자
+-- sql 디벨로퍼
+ -- job이 manager 인 모든 사원 정보를 검색 잡의 정보는 다 대문자이다.
+ select from emp where job = 'MANAGER'; -- 소문자면 안나온다 아니면 upper('manager'); 이렇게 써야할거다 이게 대문자 바꿔주는거 반대는 lower
+  select from emp where lower(job) = 'manaer'; --이렇게 컬럼 전체를 소문자로 바꿀수도 있다.
+  
+  select * form emmp where job like 'M%';
+  
+  
+  SELECT * FROM OrderDetails where orderId like '%7_'; -- 끝에서 두번째 자리 가 7인 글자 (w3school 에서 해봄 https://www.w3schools.com/mysql/trymysql.asp?filename=trysql_select_all)
+  
+  -- like 검색을 이요하여 2월에 입5사한 사람을 검색
+  select * from emp
+  where hiredata like '___02%';
+
+
+-- 검색어가 있을때 게시물 데이터 수를 얻어오는 쿼리문
+-- 제목으로 검색
+select count(*) from hboard where title like '%data%';
+
+-- 작성자로 검색
+select count(*) from hboard where writer like '%do%';
+
+-- 내용으로 검색
+select count(*) from hboard where content like '%금산%';
+
+
+
+----------------
+-- 제목으로 검색
+select * from hboard where title like '%data%' order by ref desc, refOrder asc limit 0, 10;
+
+
+
+-- 작성자로 검색
+select * from hboard where writer like '%do%' order by ref desc, refOrder asc limit 0, 10;
+
+-- 내용으로 검색
+select * from hboard where content like '%금산%' order by ref desc, refOrder asc limit 0, 10;

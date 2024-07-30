@@ -53,7 +53,7 @@
 			}
 			
 			
-			location.href = '/hboard/listAll?pagingSize=' + $(this).val() + '&pageNo=' + pageNo;
+			location.href = '/hboard/listAll?pagingSize=' + $(this).val() + '&pageNo=' + pageNo + '&searchType=${param.searchType}&searchWord=${param.searchWord}';
 			
 			
 		});
@@ -286,24 +286,24 @@
 
 	<ul class="pagination justify-content-center" style="margin:20px 0">
 	<c:if test="${param.pageNo > 1 }">
-  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo - 1 }">Previous</a></li>
+  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo - 1 }&pagingSize=${param.pagingSize}&searchType=${search.searchType}&searchWord=${search.searchWord}">Previous</a></li>
   </c:if>
   <c:forEach var="i" begin="${pagingInfo.startPageNoCurBlock }" end="${pagingInfo.endPageNoCurBlock }">
   
 <c:choose>
 	<c:when test="${param.pageNo == i}">
-	 <li class="page-item active" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }">${i }</a></li>
+	 <li class="page-item active" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }&pagingSize=${param.pagingSize}&searchType=${search.searchType}&searchWord=${search.searchWord}">${i }</a></li>
 	</c:when>
 	
 	<c:otherwise>
-	 <li class="page-item" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }">${i }</a></li>
+	 <li class="page-item" id="${i }"><a class="page-link" href="/hboard/listAll?pageNo=${i }&pagingSize=${param.pagingSize}&searchType=${search.searchType}&searchWord=${search.searchWord}">${i }</a></li>
 	</c:otherwise>
 	
 </c:choose>
  
     </c:forEach>
 	<c:if test="${param.pageNo < pagingInfo.totalPageCnt }">
-  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo + 1 }">Next</a></li>
+  <li class="page-item"><a class="page-link" href="/hboard/listAll?pageNo=${param.pageNo + 1 }&pagingSize=${param.pagingSize}&searchType=${search.searchType}&searchWord=${search.searchWord}">Next</a></li>
  </c:if>
 </ul>
 	</div>
