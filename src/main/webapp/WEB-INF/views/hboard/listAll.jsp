@@ -119,6 +119,28 @@
 
 		});
 	}
+	
+	function isValid() {
+		//검색 버튼을 눌렀을떄 searchType == -1 이거나, searchword 에 ''이면 검색어가 제대로 입력되지 않았으므로 백엔드 단으로 데이터를 넘기면 안된다.
+	let result=false;
+		
+		if($('#searchType').val() == -1 || $('#searchWord').val() == '' ) {
+			
+			alert('검색 조건과 검색어를 입력해주세요')
+			$('#searchTyoe').foucs()
+			return result;
+			
+		}else{
+			result = true;
+		}
+		
+		
+		
+		
+		return result;
+	
+	
+	}
 </script>
 </head>
 <body>
@@ -232,10 +254,32 @@
 
 
 		</div>
-		<div>
-			<button type="button" class="btn btn-primary"
-				onclick="location.href='/hboard/saveBoard';">글 저장</button>
-		</div>
+		
+<div style="float : right; margin-right:5px;">
+         <button type="button" class="btn btn-info"
+            onclick="location.href='/hboard/saveBoard';">글 쓰기</button>
+      </div>""
+
+      <form class="searchBar" style="clear:right; display:flex; flex-direction: row; align-items: center; justify-content: center;" 
+      action="/hboard/listAll" method="post">
+            <div class="input-group mt-3 mb-3" style="width:60%;">
+              <select class="form-select" name="searchType" id="searchType">
+              <option value="-1">--검색조건--</option> <!-- value 속성을 안쓰면 안쪽 내용이 벨류가 된다 그리고 지금 벨류 -1는 지금 검색 조건을 안골랐다는 의미를 준거 -->
+              <option value="title">제목</option>
+              <option value="writer">작성자</option>
+              <option value="content">내용</option>
+              
+              
+              </select>
+               <input type="text" class="form-control" name="searchWord" id="searchWord" placeholder="검색어를 입력하세요.">
+           	<input type="hidden" name="pageNo" value="${param.pageNo }">
+           	<input type="hidden" name="pagingSize" value="${param.pagingSize }">
+            </div>
+         <div>
+            <button type="submit" class="btn btn-primary" onclick="return isValid();">검색</button>
+           </form>
+
+      </div>
 		
 			${pagingInfo}
 	<div class="pagination">
