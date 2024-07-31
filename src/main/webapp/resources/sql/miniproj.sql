@@ -406,3 +406,12 @@ select * from hboard where writer like '%do%' order by ref desc, refOrder asc li
 
 -- 내용으로 검색
 select * from hboard where content like '%금산%' order by ref desc, refOrder asc limit 0, 10;
+
+
+
+
+--------------------------  회원 가입 기능 구현 ------------------------------
+
+
+-- 회원 아이디가 중복되는 여부
+select userId from member where userId = ?

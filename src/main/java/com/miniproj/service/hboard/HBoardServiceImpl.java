@@ -34,7 +34,7 @@ import com.mysql.cj.util.StringUtils;
 // 2) DB 작업 이라면 DAO단 호출 ...
 // 3) DAO 단에서 반환된 값을 Controller 단으로 넘겨줌
 
-@Service // 아래의 클래스가 서비스 객체임을 컴파일러에 공지 (알려준다)
+@Service // 제일 먼저 할일 어노테이션 그리고 루트다시 컨택스트에 빈스 그래프에 올라왔는지 확인 아래의 클래스가 서비스 객체임을 컴파일러에 공지 (알려준다)
 public class HBoardServiceImpl implements HBoardService {
 
 	private static Logger logger = LoggerFactory.getLogger(HBoardServiceImpl.class);
