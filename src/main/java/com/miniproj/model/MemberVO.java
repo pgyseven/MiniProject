@@ -23,6 +23,7 @@ public class MemberVO {
 		private String userId;
 		private String userPwd;
 		private String userName;
+		private String gender;
 		private String mobile;
 		private String email;
 		private Timestamp registerDate;
