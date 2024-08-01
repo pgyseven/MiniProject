@@ -26,6 +26,7 @@ public class MemberVO {
 		private String gender;
 		private String mobile;
 		private String email;
+		private String[] hobby;
 		private Timestamp registerDate;
 		private String userImg;
 		private int userPoint;

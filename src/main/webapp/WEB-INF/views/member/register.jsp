@@ -9,6 +9,10 @@
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <title>회원 가입 페이지</title>
 <script>
+
+
+
+
    function outputError(msg, obj) {
         let errorTag = `<div class='error'>\${msg}</div>`;
       $(errorTag).insertAfter(obj);
@@ -92,24 +96,34 @@
    });
 
    function isValid() {
-      // 아래의 조건에 만족할 때 회원가입이 진행 되도록(return true), 만족하지 않으면 회원가입이 되지 않도록 (return false)
-      // 1) 아이디 : 필수이고, 4~8자, 아이디는 중복된 아이디가 없어야 함
-      // 2) 비밀번호 : 필수이고, 4~8자, 비밀번호확인과 동일해야 한다.
+       // 아래의 조건에 만족할 때 회원가입이 진행 되도록(return true), 만족하지 않으면 회원가입이 되지 않도록 (return false)
+       // 1) 아이디 : 필수이고, 4~8자, 아이디는 중복된 아이디가 없어야 함
+       // 2) 비밀번호 : 필수이고, 4~8자, 비밀번호확인과 동일해야 한다.
 
+       let idCheck = idValid();
+       let pwdCheck = pwdValid();
+       let genderCheck = genderValid();
+       let emailCheck = emailValid();
+       let mobileCheck = mobileValid();
+       let imgCheck = imgValid();
 
-      let idCheck = idValid();
-      let pwdCheck = pwdValid();
-      let genderCheck = genderValid();
-      let emailCheck = emailValid();
-      let mobileCheck = mobileValid();
-
-      if (idCheck && pwdCheck && genderCheck && emailCheck && mobileCheck) {
-            return true;
-        } else {
-            return false;
+       if (idCheck && pwdCheck && genderCheck && emailCheck && mobileCheck && imgCheck) {
+         return true;
+       } else {
+         return false;
+       }
+     }
+     
+     function imgValid() {
+        let result = false;
+        let userImg = $('#userImg').val();
+        if ($('#imgCheck').val() == 'checked' || userImg == '' || userImg == null ) {
+           result = true;
         }
+        
+        return result;
+     }
 
-   }
    
    function mobileValid() {
 		let result = false;
@@ -135,6 +149,13 @@
 		if (!emailRegExp.test(tmpUserEmail)) {
 			outputError('이메일 주소 형식이 아닙니다!', $('#userEmail'));
 		}else {
+			// 이메일 주소 형식이다.
+			// 유저가 입력한 이메일 주소로 인증 코드 발송(back end)
+			// 인증코드를 유저에게 입력 받음
+			// 유저가 입력한 인증코드와 백엔드에서 만든 인증 코드가 같은지 비교
+			// 같다면, 유효성 검사 통과
+			
+			
 			clearError($('#userEmail'));
 			result = true;
 		}
@@ -184,6 +205,46 @@
 
       return result;
    }
+   
+   function showPreview(obj) {
+	      // 조건 : 이미지 파일이거나, 파일을 등록하지 않았다면 통과
+	        
+	      if (obj.files[0].size > 1024 * 1024 * 10) {
+	         alert("10MB 이하의 파일만 업로드할 수 있습니다.");
+	         obj.value = ""; // 선택한 파일 초기화
+	            return;  // 10MB 이하의 파일만 업로드할 수 있도록 return
+	      }
+	      console.log(obj.files[0]);
+	      let imageType = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+	      // 파일 타입 확인
+	      let fileType = obj.files[0].type;
+	      console.log(fileType);  // file type : 
+
+	      let fileName = obj.files[0].name;
+	      if (imageType.indexOf(fileType) != -1) {  // 이미지 파일이다.
+	         let reader = new FileReader();  // FileReader 객체 생성
+	           reader.onload = function(e) { 
+	               // reader객체에 의해 파일을 읽기 완료하면 실행되는 콜백함수
+	            let imgTag = `<div style='padding : 6px;'><img src='\${e.target.result}' width='40px' /><span>\${fileName}</span></div>`;
+	            $(imgTag).insertAfter(obj);
+	           }
+	           reader.readAsDataURL(obj.files[0]);  // 업로드된 파일을 읽어온다.
+	           
+	           clearError(obj);
+	        
+	           $('#imgCheck').val('checked');
+	           
+	      } else {
+	         outputError("이미지 파일만 올릴 수 있습니다", obj);
+	         $(obj).val('');
+	         // $('#imgCheck').val('noImage');
+	      }
+	   }
+
+   
+   
+   
+   
 </script>
 <style>
    .error {
@@ -193,6 +254,12 @@
       border : 1px solid #990000;
       border-radius: 5px;
       margin: 5px 0px;
+     
+   }
+   .hobbies {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
    }
 </style>
 </head>
@@ -255,11 +322,27 @@
                type="text" class="form-control" id="mobile"
                placeholder="전화번호를 입력하세요..." name="mobile" />
          </div>
+         
+         
+         <div class="form-check">
+     <div>취미 :</div>
+     <div class="hobbies"> <!-- 베엔드단에서는 리퀘스트파람 벨류? 로 배열로 받아갈거다. -->
+  	<span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="sleep" checked>낮잠</span>
+   
+    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="reading" >독서</span>
+
+    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="coding" >코딩</span>
+
+    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="game" >게임</span>
+  </div>
+</div>
+
 
          <div class="mb-3 mt-3">
             <label for="userImg" class="form-label">회원 프로필: </label> <input
                type="file" class="form-control" id="userImg"
-               name="userImg" />
+               name="userProfile" onchange="showPreview(this);"/>
+               <input type="hidden" id="imgCheck" />
 
          </div>
 
@@ -274,6 +357,12 @@
          <input type="submit" class="btn btn-success" value="회원가입" onclick="return isValid();" /> 
          <input type="reset" class="btn btn-danger" value="취소" />
       </form>
+      
+               <div class="form-check"> <!-- 온클릭 만들어서 신발 사이즈 옆에 스판 만들어서 온클릭마다 스판에 사이즈 줘서 알 수 있게 -->
+            <label for="customRange" class="form-label">신발사이즈</label>
+            <input type="range" class="form-range" id="customRange" min="210" max="300" step="5">
+
+         </div>
 
    </div>
 

@@ -420,3 +420,9 @@ select count(*) from member where userId = 'dooly';
 -- 회원 테이블 수정
 ALTER TABLE `pgy`.`member` 
 ADD COLUMN `gender` VARCHAR(1) NOT NULL AFTER `userName`;
+
+ALTER TABLE `pgy`.`member` 
+CHANGE COLUMN `userImg` `userImg` VARCHAR(45) NULL DEFAULT 'avatar.png' ;
+
+ALTER TABLE `pgy`.`member` 
+ADD COLUMN `hobby` VARCHAR(60) NULL AFTER `email`;
