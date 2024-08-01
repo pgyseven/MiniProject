@@ -100,15 +100,47 @@
       let idCheck = idValid();
       let pwdCheck = pwdValid();
       let genderCheck = genderValid();
-      
+      let emailCheck = emailValid();
+      let mobileCheck = mobileValid();
 
-      if (idCheck && pwdCheck && genderCheck) {
+      if (idCheck && pwdCheck && genderCheck && emailCheck && mobileCheck) {
             return true;
         } else {
             return false;
         }
 
    }
+   
+   function mobileValid() {
+		let result = false;
+		let tmpUserMobile = $('#mobile').val();
+		let mobileRegExp =  /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+		if (!mobileRegExp.test(tmpUserMobile)) {
+			outputError('휴대폰 번호 형식이 아입니다!', $('#mobile'));
+		}else {
+			clearError($('#mobile'));
+           result = true;
+		}
+
+		return result;
+	}
+   
+   function emailValid() {
+		// 1) 이메일 주소 형식이면..(정규 표현식을 이용한다)
+		// 2) 이메일 주소 형식이면..인증문자를 이메일로 보내고, 인증문자를 다시 입력받아 검증
+		let result = false;
+		
+		let tmpUserEmail = $('#userEmail').val();
+		let emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i; // new RegExp(source, flags) 이런식으로 생성자 만들어서도 가능함 mdn 에서 검색해서 더 공부
+		if (!emailRegExp.test(tmpUserEmail)) {
+			outputError('이메일 주소 형식이 아닙니다!', $('#userEmail'));
+		}else {
+			clearError($('#userEmail'));
+			result = true;
+		}
+		
+		return result;
+	}
    
    function genderValid() { //자바 스크립트로도 더 간단히 가능 이건 각자 공부~~~
       // 성별을 남성, 여성 중 하나를 반드시 선택해야 한다.
@@ -215,19 +247,19 @@
    
          <div class="mb-3 mt-3">
             <label for="userEmail" class="form-label">이메일: </label> <input
-               type="text" class="form-control" id="userEmail" name="userEmail" />
+               type="text" class="form-control" id="userEmail" name="email" />
          </div>
 
          <div class="mb-3 mt-3">
             <label for="mobile" class="form-label">휴대전화: </label> <input
                type="text" class="form-control" id="mobile"
-               placeholder="전화번호를 입력하세요..." name="userMobile" />
+               placeholder="전화번호를 입력하세요..." name="mobile" />
          </div>
 
          <div class="mb-3 mt-3">
-            <label for="memberProfile" class="form-label">회원 프로필: </label> <input
-               type="file" class="form-control" id="userProfile"
-               name="memberProfile" />
+            <label for="userImg" class="form-label">회원 프로필: </label> <input
+               type="file" class="form-control" id="userImg"
+               name="userImg" />
 
          </div>
 
