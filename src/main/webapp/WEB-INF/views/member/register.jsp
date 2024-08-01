@@ -262,6 +262,110 @@
    justify-content: space-between;
    }
 </style>
+
+
+<script language="javascript">
+function getAddr(){
+	// 적용예 (api 호출 전에 검색어 체크) 	
+	if (!checkSearchedWord(document.form.keyword)) {
+		return ;
+	}
+
+	$.ajax({
+		 url :"https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do"  //인터넷망
+		,type:"post"
+		,data:$("#form").serialize()
+		,dataType:"jsonp"
+		,crossDomain:true
+		,success:function(jsonStr){
+			$("#list").html("");
+			var errCode = jsonStr.results.common.errorCode;
+			var errDesc = jsonStr.results.common.errorMessage;
+			if(errCode != "0"){
+				alert(errCode+"="+errDesc);
+			}else{
+				if(jsonStr != null){
+					makeListJson(jsonStr);
+					 $("#list").css('display', 'block');
+				}
+			}
+		}
+	    ,error: function(xhr,status, error){
+	    	alert("에러발생");
+	    }
+	});
+}
+
+function makeListJson(jsonStr){
+	var htmlStr = "";
+	htmlStr += "<table><tr><th>도로명</th><th>지번주소</th><th>우편번호</th></tr>";
+	$(jsonStr.results.juso).each(function(){
+		htmlStr += "<tr onclick='selectAddress(\"" + this.roadAddr + "\")'>";
+		htmlStr += "<td>"+this.roadAddr+"</td>";
+		htmlStr += "<td>"+this.jibunAddr+"</td>";
+		htmlStr += "<td>"+this.zipNo+"</td>";
+		htmlStr += "</tr>";
+	});
+	htmlStr += "</table>";
+	$("#list").html(htmlStr);
+}
+
+function selectAddress(address) {
+    $("#address").val(address);
+    $("#list").css('display', 'none')
+
+}
+
+//특수문자, 특정문자열(sql예약어의 앞뒤공백포함) 제거
+function checkSearchedWord(obj){
+	if(obj.value.length >0){
+		//특수문자 제거
+		var expText = /[%=><]/ ;
+		if(expText.test(obj.value) == true){
+			alert("특수문자를 입력 할수 없습니다.") ;
+			obj.value = obj.value.split(expText).join(""); 
+			return false;
+		}
+		
+		//특정문자열(sql예약어의 앞뒤공백포함) 제거
+		var sqlArray = new Array(
+			//sql 예약어
+			"OR", "SELECT", "INSERT", "DELETE", "UPDATE", "CREATE", "DROP", "EXEC",
+             		 "UNION",  "FETCH", "DECLARE", "TRUNCATE" 
+		);
+		
+		var regex;
+		for(var i=0; i<sqlArray.length; i++){
+			regex = new RegExp( sqlArray[i] ,"gi") ;
+			
+			if (regex.test(obj.value) ) {
+			    alert("\"" + sqlArray[i]+"\"와(과) 같은 특정문자로 검색할 수 없습니다.");
+				obj.value =obj.value.replace(regex, "");
+				return false;
+			}
+		}
+	}
+	return true ;
+}
+
+function enterSearch() {
+	var evt_code = (window.netscape) ? ev.which : event.keyCode;
+	if (evt_code == 13) {    
+		event.keyCode = 0;  
+		getAddr(); //jsonp사용시 enter검색 
+	} 
+}
+</script>
+<style>
+.error {
+	color: #990000;
+	font-size: .8em;
+	padding: 5px;
+	border: 1px solid black;
+	border-radius: 5px;
+	margin: 5px 0px;
+}
+</style>
 </head>
 <body>
    <c:import url="../header.jsp" />
@@ -363,6 +467,45 @@
             <input type="range" class="form-range" id="customRange" min="210" max="300" step="5">
 
          </div>
+
+
+
+		<form name="form" id="form" method="post">
+			<input type="hidden" class="form-control" id="currentPage"
+				placeholder="현재 페이지 번호를 입력하세요..." name="currentPage" value="1" /> <input
+				type="hidden" class="form-control" id="countPerPage"
+				placeholder="페이지당 출력할 개수를 입력하세요..." name="countPerPage" value="10" />
+
+
+			<input type="hidden" class="form-control" id="resultType"
+				placeholder="검색결과 형식을 입력하세요..." name="resultType" value="json" /> <input
+				type="hidden" class="form-control" id="confmKey"
+				placeholder="승인키를 입력하세요..." name="confmKey"
+				value="devU01TX0FVVEgyMDI0MDcyOTE2MzQxMTExNDk3Mjg=" />
+
+			<div class="mb-3 mt-3">
+				<label for="keyword" class="form-label">주소: </label> <input
+					type="text" class="form-control" id="keyword"
+					placeholder="키워드를 입력하세요..." name="keyword"
+					onkeydown="enterSearch();" />
+			</div>
+
+
+
+			<div class="mb-3 mt-3">
+				<input type="button" onClick="getAddr();" value="주소검색하기" />
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="userAdress" class="form-label">상세 주소</label> <input
+					type="text" class="form-control" id="address" name="address" />
+			</div>
+
+			<div id="list"></div>
+			<!-- 검색 결과 리스트 출력 영역 -->
+		</form>
+
+
 
    </div>
 
