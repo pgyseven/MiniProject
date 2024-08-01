@@ -411,7 +411,12 @@ select * from hboard where content like '%금산%' order by ref desc, refOrder a
 
 
 --------------------------  회원 가입 기능 구현 ------------------------------
-
+use pgy;
 
 -- 회원 아이디가 중복되는 여부
-select userId from member where userId = ?
+select count(*) from member where userId = 'dooly';
+
+
+-- 회원 테이블 수정
+ALTER TABLE `pgy`.`member` 
+ADD COLUMN `gender` VARCHAR(1) NOT NULL AFTER `userName`;
