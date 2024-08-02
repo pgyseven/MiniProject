@@ -19,18 +19,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 public class SendMailService {
-	@Autowired
-	ResourceLoader resourceLoader;
 	
 	private String username; //네이버 아이디
 	private String password; // 네이버 2단계 인증에서 받아온 것
 	
-	public void sendMail(String eamilAddr, String activationCode) throws AddressException, MessagingException {
+	@Autowired
+	ResourceLoader resourceLoader;
+	
+
+	
+	public void sendMail(String eamilAddr, String activationCode) throws AddressException, MessagingException, IOException {
 		String subject = "miniproject.com 에서 보내는 회원가입 이메일 인증번호 입니다.!";
 		String message = "회원 가입을 환영 인증번호 :" + activationCode + "를 입력하시고 인증하세요";
 		
 		//naver 이메일서버의 메일 서버 환경 설정
-		
 		//prop 키와 발류로 설정한다. properties 부모가  map(dictionary) 인터페이스임 / 쉽게 파일로 저장하거나 읽을 수 있다.
 		Properties props = new Properties();
 		
@@ -43,7 +45,7 @@ public class SendMailService {
 		props.put("mail.smtp.auth", "true"); // 인증 과정을 거치겠다.
 		
 		
-		
+		getAccount();
 		
 		Session mailSession = Session.getInstance(props, new Authenticator() { //Authenticator추상메서드라 내가 구체화 해야함
 
@@ -84,8 +86,8 @@ public class SendMailService {
 		 Properties account = new Properties();
 				 
 				 account.load(new FileReader("D:\\lecture\\spring\\MiniProject\\src\\main\\webapp\\WEB-INF\\config.properties"));
-				 this.username = (String)account.get(username);
-				 this.password = (String)account.get(password);
+				 this.username = (String)account.get("username");
+				 this.password = (String)account.get("password");
 			
 	}
 }
