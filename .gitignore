@@ -155,4 +155,7 @@ $RECYCLE.BIN/
 # csv 파일
 *.csv
 
+#cofig.properties 제외
+config.properties
+
 # End of https://www.gitignore.io/api/git,java,maven,windows,eclipse

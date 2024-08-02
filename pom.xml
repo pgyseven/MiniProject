@@ -194,7 +194,12 @@ DAO 단의 JDBC 작업이 수행되는 과정을 로그로 남겨주는 라이�
     <version>2.17.1</version>
 </dependency>
 
-
+<!-- https://mvnrepository.com/artifact/javax.mail/mail 로그4제이에 의존성은 있지만 포함은 안한다라고 정의되어 있어서 여기서 추가함 메일 보내는 기능 mail 1.4.7 메이븐 디펜던시에 추가됨 -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
 
 
 

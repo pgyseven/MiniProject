@@ -27,6 +27,15 @@
    }
 
    $(function(){
+      //
+      $('#userEmail').focus(function(){
+         if ($('#emailValid').val() == 'checked'){
+         return;
+
+         }
+
+      });
+
       // 이메일 주소 입력을 완료하고  blur 되었을 때
       $('#userEmail').blur(function(){
          emailValid();
@@ -114,8 +123,11 @@
        let emailCheck = emailValid();
        let mobileCheck = mobileValid();
        let imgCheck = imgValid();
+       
+       // 가입자 동의
+       let agreeCheck = $('#agree').is(':checked');
 
-       if (idCheck && pwdCheck && genderCheck && emailCheck && mobileCheck && imgCheck) {
+       if (idCheck && pwdCheck && genderCheck && emailCheck && mobileCheck && imgCheck && agreeCheck) {
          return true;
        } else {
          return false;
@@ -132,92 +144,110 @@
         return result;
      }
 
-   
-   function mobileValid() {
-		let result = false;
-		let tmpUserMobile = $('#mobile').val();
-		let mobileRegExp =  /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
-		if (!mobileRegExp.test(tmpUserMobile)) {
-			outputError('휴대폰 번호 형식이 아입니다!', $('#mobile'));
-		}else {
-			clearError($('#mobile'));
+     function mobileValid() {
+       let result = false;
+       let tmpUserMobile = $("#mobile").val();
+       let mobileRegExp = /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+       if (!mobileRegExp.test(tmpUserMobile)) {
+         outputError("휴대폰 번호 형식이 아입니다!", $("#mobile"));
+       } else {
+         clearError($("#mobile"));
+         result = true;
+       }
+
+       return result;
+     }
+
+     function emailValid() {
+       // 1) 이메일 주소 형식이면..(정규 표현식을 이용한다)
+       // 2) 이메일 주소 형식이면..인증문자를 이메일로 보내고, 인증문자를 다시 입력받아 검증
+       let result = false;
+
+       let tmpUserEmail = $("#userEmail").val();
+       let emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+       if (!emailRegExp.test(tmpUserEmail)) {
+         outputError("이메일 주소 형식이 아닙니다!", $("#userEmail"));
+       } else {
+         // 이메일 주소 형식이다...
+         // 유저가 입력한 이메일 주소로 인증 코드 발송(back end) - timer(3분)
+         // 인증코드를 유저에게 입력 받음
+         // 유저가 입력한 인증코드와 백엔드에서 만든 인증코드가 같은지 비교
+         // 같고, 인증시간 안에 인증 완료 통과...
+
+         if ($('#emailValid').val() == 'checked') {
            result = true;
-		}
-
-		return result;
-	}
-   
-   function emailValid() {
-		// 1) 이메일 주소 형식이면..(정규 표현식을 이용한다)
-		// 2) 이메일 주소 형식이면..인증문자를 이메일로 보내고, 인증문자를 다시 입력받아 검증
-		let result = false;
-		
-		let tmpUserEmail = $('#userEmail').val();
-		let emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i; // new RegExp(source, flags) 이런식으로 생성자 만들어서도 가능함 mdn 에서 검색해서 더 공부
-		if (!emailRegExp.test(tmpUserEmail)) {
-			outputError('이메일 주소 형식이 아닙니다!', $('#userEmail'));
-		}else {
-			// 이메일 주소 형식이다.
-			// 유저가 입력한 이메일 주소로 인증 코드 발송(back end)
-			// 인증코드를 유저에게 입력 받음
-			// 유저가 입력한 인증코드와 백엔드에서 만든 인증 코드가 같은지 비교
-			// 같다면, 유효성 검사 통과
-			
-
-         showAuthenticateDiv(); // 인증 코드를 입력하는 div창을 보여주기
-         callSendMail(); // 이메일 발송 하고
-       
-         startTimer();   // 타이머 동작 시키기
+         } else {
+           showAuthenticateDiv();  // 인증 코드를 입력하는 div창을 보여주기
+           callSendMail();// 이메일 발송 하고
+           startTimer(); // 타이머 동작 시키기..
+           clearError($("#userEmail"));
          
-         
-         
+           
+         }
+       }
+       return result;
+     }
 
+     function callSendMail() {
+       $.ajax({
+             url: "/member/callSendMail", // 데이터가 송수신될 서버의 주소
+             type: "post", // 통신 방식 : GET, POST, PUT, DELETE, PATCH
+             dataType: "text", // 수신 받을 데이터의 타입 (text, xml, json)
+             data: {
+               "tmpUserEmail" : $("#userEmail").val()
+             },
+             success: function (data) {
+               // 비동기 통신에 성공하면 자동으로 호출될 callback function
+               console.log(data);
+               if (data == 'success') {
+                 alert("이메일로 인증코드를 발송했습니다..");
+                 $('#userAuthCode').focus();
+               }
+             },
+             error: function (data) {
+               console.log(data);
+             },
+           });
+     }
 
+     function showAuthenticateDiv() {
+       alert("이메일로 인증코드를 발송했습니다!\n 인증코드를 입력해주세요~");
+       $('#userAuthCode').focus();
+       let authDiv = "<div id='authenticateDiv'>";
+       authDiv += `<input type="text" class="form-control" id="userAuthCode" placeholder="인증코드입력..." />`;
+       authDiv += `<span class='timer'>3:00</span>`;
+       authDiv += `<button type="button" id="authBtn" class="btn btn-primary" onclick="checkAuthCode()">인증</button>`;
+       authDiv += "</div>";
 
+       $(authDiv).insertAfter($("#userEmail"));
+     }
 
+     function checkAuthCode() {
+       let userAuthCode = $("#userAuthCode").val();
+       $.ajax({
+         url: "/member/checkAuthCode", // 데이터가 송수신될 서버의 주소
+         type: "post", // 통신 방식 : GET, POST, PUT, DELETE, PATCH
+         dataType: "text", // 수신 받을 데이터의 타입 (text, xml, json)
+         data: {
+           "tmpUserAuthCode" : userAuthCode
+         },    
+         success: function (data) {
+               // 비동기 통신에 성공하면 자동으로 호출될 callback function
+               console.log(data);
+               if (data == 'success') {
+                 alert("인증 성공!");
+                 $('#userEmail').attr("readonly", true);
+                 $('#authenticateDiv').remove();
+                 $('#emailValid').val("checked");
 
-			
-			clearError($('#userEmail'));
-			result = true;
-		}
-	
-		return result;
-	}
+               } else if (data == 'fail')  {
+                 alert("인증에 실패 했습니다!");
+                 $('#emailValid').val("");
+               }
+         }
+       });
+     }
 
-   function callSendMail() {
-        $.ajax({
-              url: "/member/callSendMail", // 데이터가 송수신될 서버의 주소
-              type: "post", // 통신 방식 : GET, POST, PUT, DELETE, PATCH
-              dataType: "json", // 수신 받을 데이터의 타입 (text, xml, json)
-              data: {
-                "tmpUserEmail" : $("#userEmail").val(), //콤마는 다음번에 또다른게 있을때 근데 마지막이라도 해도 괜찮음
-              },
-              success: function (data) {
-                // 비동기 통신에 성공하면 자동으로 호출될 callback function
-                console.log(data);
-                
-              },
-              error: function (data) {
-                console.log(data);
-              },
-            });
-      }
-
-   function showAuthenticateDiv() {
-         alert("이메일로 인증코드를 발송했습니다!\n 인증코드를 입력해주세요~"); //여기는 웹이 아니라서 br 이 안먹는다 윈도우 쪽이라서 \n 해야함
-         $('#userAuthCode').focus();
-         let authDiv = "<div id='authenticateDiv'>";
-        authDiv += `<input type="text" class="form-control" id="userAuthCode" placeholder="인증코드입력..." />`;
-        authDiv += `<span class='timer'>3:00</span>`;
-        authDiv += `<button type="button" id="authBtn" class="btn btn-primary" onclick="checkAuthCode()">인증</button>`;
-        authDiv += "</div>";
-
-        $(authDiv).insertAfter($("#userEmail"));
-      }
-
-
-
-   
    function genderValid() { //자바 스크립트로도 더 간단히 가능 이건 각자 공부~~~
       // 성별을 남성, 여성 중 하나를 반드시 선택해야 한다.
       let genders = document.getElementsByName("gender");
@@ -315,6 +345,11 @@
    display: flex;
    flex-direction: row;
    justify-content: space-between;
+   }
+   .timer {
+      color : oranged;
+      font-weight: bold;
+      font-size: 0.8em;
    }
 </style>
 
@@ -474,6 +509,7 @@ function enterSearch() {
          <div class="mb-3 mt-3">
             <label for="userEmail" class="form-label">이메일: </label> <input
                type="text" class="form-control" id="userEmail" name="email" />
+               <input type="hidden" id="emailValid"  />
          </div>
 
          <div class="mb-3 mt-3">
