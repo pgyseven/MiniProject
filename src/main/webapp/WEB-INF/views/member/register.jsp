@@ -165,9 +165,12 @@
 			
 
          showAuthenticateDiv(); // 인증 코드를 입력하는 div창을 보여주기
-         // 이메일 발송 하고
-         // 타이머 동작 시키기
-         startTimer();
+         callSendMail(); // 이메일 발송 하고
+       
+         startTimer();   // 타이머 동작 시키기
+         
+         
+         
 
 
 
@@ -181,7 +184,24 @@
 		return result;
 	}
 
-
+   function callSendMail() {
+        $.ajax({
+              url: "/member/callSendMail", // 데이터가 송수신될 서버의 주소
+              type: "post", // 통신 방식 : GET, POST, PUT, DELETE, PATCH
+              dataType: "json", // 수신 받을 데이터의 타입 (text, xml, json)
+              data: {
+                "tmpUserEmail" : $("#userEmail").val(), //콤마는 다음번에 또다른게 있을때 근데 마지막이라도 해도 괜찮음
+              },
+              success: function (data) {
+                // 비동기 통신에 성공하면 자동으로 호출될 callback function
+                console.log(data);
+                
+              },
+              error: function (data) {
+                console.log(data);
+              },
+            });
+      }
 
    function showAuthenticateDiv() {
          alert("이메일로 인증코드를 발송했습니다!\n 인증코드를 입력해주세요~"); //여기는 웹이 아니라서 br 이 안먹는다 윈도우 쪽이라서 \n 해야함

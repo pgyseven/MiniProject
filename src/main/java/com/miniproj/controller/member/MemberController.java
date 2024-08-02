@@ -66,9 +66,15 @@ public class MemberController {
 		return result;
 	}
 	
-	
-	
-	
+	//스프링은 지가 혼자 알아서 싱글톤으로 객체 하나만 가지고 돌려 쓸 수 있도록 해줌 회사가서 스프링 같은거 안쓰는데서 new 다오 임플 이런거 하면 안됨
+	@RequestMapping("/callSendMail")
+	public void sendMailAuthCode(@RequestParam("tmpUserEmail") String tmpUserEmail, HttpSession session) {
+		String authCode = UUID.randomUUID().toString();
+		System.out.println(tmpUserEmail + "로 " + authCode + "를 보내자~");
+		
+		
+		
+	}
 	
 	
 	
