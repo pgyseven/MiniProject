@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <script
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   <script src="/resources/js/timer.js"></script>
 <title>회원 가입 페이지</title>
 <script>
 
@@ -26,6 +27,13 @@
    }
 
    $(function(){
+      // 이메일 주소 입력을 완료하고  blur 되었을 때
+      $('#userEmail').blur(function(){
+         emailValid();
+
+      });
+
+
       
       // 패스워드1을 입력하고 blur 되었을때
       $('#userPwd1').blur(function (){
@@ -155,13 +163,40 @@
 			// 유저가 입력한 인증코드와 백엔드에서 만든 인증 코드가 같은지 비교
 			// 같다면, 유효성 검사 통과
 			
+
+         showAuthenticateDiv(); // 인증 코드를 입력하는 div창을 보여주기
+         // 이메일 발송 하고
+         // 타이머 동작 시키기
+         startTimer();
+
+
+
+
+
 			
 			clearError($('#userEmail'));
 			result = true;
 		}
-		
+	
 		return result;
 	}
+
+
+
+   function showAuthenticateDiv() {
+         alert("이메일로 인증코드를 발송했습니다!\n 인증코드를 입력해주세요~"); //여기는 웹이 아니라서 br 이 안먹는다 윈도우 쪽이라서 \n 해야함
+         $('#userAuthCode').focus();
+         let authDiv = "<div id='authenticateDiv'>";
+        authDiv += `<input type="text" class="form-control" id="userAuthCode" placeholder="인증코드입력..." />`;
+        authDiv += `<span class='timer'>3:00</span>`;
+        authDiv += `<button type="button" id="authBtn" class="btn btn-primary" onclick="checkAuthCode()">인증</button>`;
+        authDiv += "</div>";
+
+        $(authDiv).insertAfter($("#userEmail"));
+      }
+
+
+
    
    function genderValid() { //자바 스크립트로도 더 간단히 가능 이건 각자 공부~~~
       // 성별을 남성, 여성 중 하나를 반드시 선택해야 한다.
@@ -431,13 +466,13 @@ function enterSearch() {
          <div class="form-check">
      <div>취미 :</div>
      <div class="hobbies"> <!-- 베엔드단에서는 리퀘스트파람 벨류? 로 배열로 받아갈거다. -->
-  	<span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="sleep" checked>낮잠</span>
+  	<span><input class="form-check-input" type="checkbox" name="hobby" value="sleep" checked>낮잠</span>
    
-    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="reading" >독서</span>
+    <span><input class="form-check-input" type="checkbox" name="hobby" value="reading" >독서</span>
 
-    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="coding" >코딩</span>
+    <span><input class="form-check-input" type="checkbox" name="hobby" value="coding" >코딩</span>
 
-    <span><input class="form-check-input" type="checkbox" id="check1" name="hobby" value="game" >게임</span>
+    <span><input class="form-check-input" type="checkbox" name="hobby" value="game" >게임</span>
   </div>
 </div>
 
