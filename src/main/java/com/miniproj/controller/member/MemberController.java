@@ -1,5 +1,6 @@
 package com.miniproj.controller.member;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miniproj.model.MemberVO;
 import com.miniproj.model.MyResponseWithoutData;
 import com.miniproj.service.member.MemberService;
+import com.miniproj.util.FileProcess;
 import com.miniproj.util.SendMailService;
 import com.mysql.cj.util.StringUtils;
 
@@ -31,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService mService;
-	
+	private final FileProcess fp;
 	@RequestMapping("/register")
 	public void showRegisterForm() {
 		
@@ -39,23 +42,18 @@ public class MemberController {
 	
 	
 	@RequestMapping(value="/register", method = RequestMethod.POST)
-	   public void registerMember(MemberVO registMember, @RequestParam("userProfile") MultipartFile userProfile) {
+	   public String registerMember(MemberVO registMember, @RequestParam("userProfile") MultipartFile userProfile, 
+			   RedirectAttributes rediAttributes, HttpServletRequest request) {
 	      
 	      System.out.println(userProfile.getOriginalFilename());
 	      
-	      // 1) 회원 데이터를 db에 저장(프로필 파일이름 : 유저아이디.유저가 올린 파일의 확장자)
-	      // 2) 가입한 회원에게 100포인트 부여
-	      // 3) 업로드한 프로필 사진이 있다면 파일 저장
-	      // (게시판 첨부 파일 : 저장경로에 년월일 폴더를 생성 ->  중복된이름인지 검사해서 새로운 파일이름
-	      // -> 이미지인지 아닌짐 검사 이미지면 base64, 썸네일 저장
-	      // 회원 프로필 파일 : 저장경로에 -> 파일 이름 : 유저아이디.유저가 올린 파일의 확장자(이러면 유니크할거다) -> 저장 -> base64, 썸네일 저장
-	      
-	      
-	      // 4) 홈으로 이동
+	      String resultPage = "redirect:/"; // 성공했을 경우 index로
+	      String realPath = request.getSession().getServletContext().getRealPath("/resources/userimg");
+	      System.out.println("실제 파일 저장 경로 : " + realPath);
 	      
 	      //(프로필 파일이름 : 유저아이디.유저가 올린 파일의 확장자) - 유저가 프로필 파일을 업로드 했을 떄
 	      String tmpUserProfileName = userProfile.getOriginalFilename();
-	      if(StringUtils.isNullOrEmpty(tmpUserProfileName)) {
+	      if(!StringUtils.isNullOrEmpty(tmpUserProfileName)) {
 	    	  String ext = tmpUserProfileName.substring(tmpUserProfileName.lastIndexOf(".") + 1);
 		      registMember.setUserImg(registMember.getUserId() + "." + ext);
 		      
@@ -64,8 +62,35 @@ public class MemberController {
 	      System.out.println("회원가입 진행~~~~~~~~~~~~~~~~" + registMember.toString());
 	      
 	      
-	      mService.saveMember(registMember);
-	      
+	      try {
+			if(mService.saveMember(registMember)) {
+				rediAttributes.addAttribute("status","success");
+				
+				// 프로필을 올렸는지 확인
+				if(!StringUtils.isNullOrEmpty(tmpUserProfileName)) { // - 유저가 프로필 파일을 업로드 했을 떄
+					fp.saveUserProfileFile(userProfile.getBytes(), realPath, registMember.getUserImg());
+			      }
+				
+				
+			}
+		} catch (Exception e) { //IOException(파일 처리시 발생한 예외) , SQLException ( DB 작업시 발생한 예외)
+			
+			e.printStackTrace();
+			
+			if(e instanceof IOException) {
+				rediAttributes.addAttribute("status","fileFail");
+				
+				// DB에 방금전 회원 가입한 유저(registMember.getUserId()회원가입 취소 처리
+				// service -> dao() 호출
+				
+			}else {
+				rediAttributes.addAttribute("status","fail");
+			}
+			
+			resultPage = "redirect:/member/register"; //실패한 경우 다시 회원 가입 페이지로 이동
+			
+		}
+	      return resultPage;
 	   }
 	
 	
