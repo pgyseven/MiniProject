@@ -20,6 +20,15 @@ import com.miniproj.model.BoardUpFilesVODTO;
 @Component    // 스프링 컨테이너에게 객체를 만들어 관리하도록 하는 어노테이션 루트다시 컨텍스트 확인
 public class FileProcess {
 	
+	// 회원 가입시 업로드된 유저 프로필 이미지를 저장하는 메서드
+	public void saveUserProfileFile(byte[] upfile, String realPath, String fileName) throws IOException {
+		
+		
+		File saveFile = new File(realPath + File.separator + fileName);
+		FileUtils.writeByteArrayToFile(saveFile, upfile); // 실제 파일 저장 
+		
+	}
+	
 	// file을 realpath에 저장하는 메소드
 	public BoardUpFilesVODTO saveFileToRealPath(byte[] upfile, String realPath, String contentType, String originalFileName, long fileSize) throws IOException  {
 		BoardUpFilesVODTO result = null;
