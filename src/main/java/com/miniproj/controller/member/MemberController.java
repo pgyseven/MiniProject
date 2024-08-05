@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.miniproj.model.LoginDTO;
 import com.miniproj.model.MemberVO;
 import com.miniproj.model.MyResponseWithoutData;
 import com.miniproj.service.member.MemberService;
@@ -173,4 +174,14 @@ public class MemberController {
 	      
 	      return new ResponseEntity<String>("success", HttpStatus.OK);
 	   }
+	@RequestMapping("/login")
+	public void loginGET() {
+		
+	}
+	
+	
+	@RequestMapping(value = "/login",  method = RequestMethod.POST)
+	public void loginPOST(LoginDTO loginDTO) {
+		System.out.println(loginDTO.toString() + "으로 로그인 한다.");
+	}
 }

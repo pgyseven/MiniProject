@@ -426,3 +426,15 @@ CHANGE COLUMN `userImg` `userImg` VARCHAR(45) NULL DEFAULT 'avatar.png' ;
 
 ALTER TABLE `pgy`.`member` 
 ADD COLUMN `hobby` VARCHAR(60) NULL AFTER `email`;
+member
+
+-- 멤버 테이블에 회원 가입 -- userImg 멤버가 값이 null이 아닐때
+-- 프로필 파일을 올렸을때
+insert into member(userId, userPwd, userName, gender, mobile, email, hobby, userImg)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?, ?)
+-- 프로필 파일을 올리지 않았을 때 -- userImg 멤버가 값이 null
+insert into member(userId, userPwd, userName, gender, mobile, email, hobby)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?)
+
+
+--------------------------  로그인 기능 구현 ------------------------------

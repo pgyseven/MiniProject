@@ -28,6 +28,9 @@
           <a class="nav-link" href="javascript:void(0)">댓글형 게시판</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="/member/login">로그인</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/member/register">회원가입</a>
         </li>
         <li class="nav-item">
