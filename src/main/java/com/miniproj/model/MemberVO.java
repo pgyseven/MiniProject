@@ -27,6 +27,7 @@ public class MemberVO {
 		private String mobile;
 		private String email;
 		private String[] hobby;
+		private String hobbies;
 		private Timestamp registerDate;
 		private String userImg;
 		private int userPoint;
