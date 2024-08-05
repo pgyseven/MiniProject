@@ -431,10 +431,19 @@ member
 -- 멤버 테이블에 회원 가입 -- userImg 멤버가 값이 null이 아닐때
 -- 프로필 파일을 올렸을때
 insert into member(userId, userPwd, userName, gender, mobile, email, hobby, userImg)
-values(?, sha1(md5(?)), ?, ?, ?, ?, ?, ?)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?, ?);
 -- 프로필 파일을 올리지 않았을 때 -- userImg 멤버가 값이 null
 insert into member(userId, userPwd, userName, gender, mobile, email, hobby)
-values(?, sha1(md5(?)), ?, ?, ?, ?, ?)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?);
 
 
 --------------------------  로그인 기능 구현 ------------------------------
+-- 로그인 : 이사림이 이 권한을 실행할 때 필요한 자격이 있는지 없는지를 구분하는 일종의 인증작업
+
+-- 게시판 글 작성, 수정, 삭제, 답글달기, 댓글 달기, 좋아요, 사용자 페이지... 는 로그인 한 유저만 가능하다.
+
+-- 로그인시 필요한 쿼리문
+select count(*) from member where userId = 'douner' and userPwd = sha1(md5('1234'));
+-- 이건 인터셉터를 이용할때 로그인 한 유저의 정보를 세션(session)객체에 저장하기 위해 모든 컬럼을 조회함
+select * from member where userId = 'douner' and userPwd = sha1(md5('1234'));
+
