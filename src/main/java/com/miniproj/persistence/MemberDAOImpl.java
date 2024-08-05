@@ -4,6 +4,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproj.model.MemberVO;
+
 @Repository
 public class MemberDAOImpl implements MemberDAO {
 
@@ -24,6 +26,12 @@ public class MemberDAOImpl implements MemberDAO {
 	public int selectDuplicateId(String tmpUserId) throws Exception {
 		
 		return ses.selectOne(NS + ".selectUserId", tmpUserId);
+	}
+
+	@Override
+	public int insertMember(MemberVO registMember) throws Exception {
+		
+		return ses.insert(NS + ".insertMember", registMember);
 	}
 
 }

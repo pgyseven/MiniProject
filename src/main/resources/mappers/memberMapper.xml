@@ -16,5 +16,17 @@
 	select count(*) userId from member where userId = #{tmpUserId}
 	</select>
 	
+	<!-- 회원 가입하는 쿼리문 if 두개 안쓰려면 choose when otherwise mybatis dynamic sql 참고하기 -->
+	<insert id ="insertMember">
+		<if test="userImg != null">
+		insert into member(userId, userPwd, userName, gender, mobile, email, hobby, userImg)
+		values(#{userId}, sha1(md5(#{userPwd})), #{userName}, #{gender}, #{mobile}, #{email}, #{hobbies}, #{userImg})
+		</if>
+		<if test="userImg == null">
+		insert into member(userId, userPwd, userName, gender, mobile, email, hobby)
+		values(#{userId}, sha1(md5(#{userPwd})), #{userName}, #{gender}, #{mobile}, #{email}, #{hobbies})
+		</if>
+	</insert>
+	
 	
 </mapper>
