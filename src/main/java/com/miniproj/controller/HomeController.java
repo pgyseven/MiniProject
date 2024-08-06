@@ -113,4 +113,11 @@ public class HomeController {
 		return result;
 	}
 	
+	
+	@RequestMapping("/sampleInterceptor")
+	public void sampleInterceptor() {
+		//interceptor 의 prehandle 동작
+		System.out.println("샘플 인터셉터 호출");
+		// sampleInterceptor.jsp 를 찾아서 response 해주는게 얘의 역할임 근데 인터셉터가 가로채니깐~
+	}
 }
