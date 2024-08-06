@@ -37,12 +37,25 @@
 		class="com.miniproj.interceptor.interceptorExample">
 		</beans:bean>
 	
+	
+		<beans:bean id="loginInterceptor"
+		class="com.miniproj.interceptor.LoginInterceptor">
+		</beans:bean>
+	
+	
+	
 	<!-- 인터셉터가 동작하는 매핑 주소 설정 -->
 	<interceptors>
 		<interceptor> <!-- /sampleInterceptor  uri로 매핑이 들어오면 sampleInterceptor 객체가 동작하도록 -->
 			<mapping path="/sampleInterceptor"/>
 			<beans:ref bean="sampleInterceptor"/> <!-- 객체를 참조한다. -->
 		</interceptor>
+		
+		<interceptor> 
+			<mapping path="/member/login"/>
+			<beans:ref bean="loginInterceptor"/> 
+		</interceptor>
+		
 	</interceptors>
 	
 	
