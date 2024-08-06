@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -177,11 +178,35 @@ public class MemberController {
 	@RequestMapping("/login")
 	public void loginGET() {
 		
+		//로그인 기능 구현시 필요한 인터셉터
+		// LoginInterceptor -> 직겁 로그인을 하는 동작과정을 인터셉터로 만듦 (유저가 로그인 페이지로 가서 로그인 할떄)
+		// AuthInterceptor -> 로그인을 한 유저만 사용할 수 있도록 되어 있는 페이지에서... 현재 유저가 로그인 한 유저인지 아닌지 검사하는 인터셉터
+		
+		// /member/login.jsp 응답
+		
 	}
 	
 	
 	@RequestMapping(value = "/login",  method = RequestMethod.POST)
-	public void loginPOST(LoginDTO loginDTO) {
+	public void loginPOST(LoginDTO loginDTO, Model model) {
 		System.out.println(loginDTO.toString() + "으로 로그인 한다.");
+	
+		try {
+			MemberVO loginMember = mService.login(loginDTO);
+			
+			if(loginMember != null) {
+				System.out.println("MemberController - 로그인 성공");
+				model.addAttribute("loginMember", loginMember);
+				// 홈으로 이동
+				
+				
+			} else {
+				System.out.println("MemberController - 로그인 실패!!!");
+				
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
