@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.miniproj.model.LoginDTO;
 import com.miniproj.model.MemberVO;
 import com.miniproj.model.PointLogDTO;
 import com.miniproj.persistence.MemberDAO;
@@ -54,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 		// 1) 회원 데이터를 db에 저장
 	    if(mDao.insertMember(registMember) == 1) {
 	    	// 2) 가입한 회원에게 100포인트 부여 (로그 기록) 즉 업데이트만 할 필요가 없다.
-	    	if(pDao.insertPointLog(new PointLogDTO(registMember.getUserId(), "회원가입", 100)) ==1) {
+	    	if(pDao.insertPointLog(new PointLogDTO(registMember.getUserId(), "회원가입")) ==1) {
 	    		result = true;
 	    	}
 	    }
@@ -63,6 +64,31 @@ public class MemberServiceImpl implements MemberService {
 	    
 		
 
+	}
+
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public MemberVO login(LoginDTO loginDTO) throws Exception {
+		PointLogDTO pointLogDTO = new PointLogDTO(loginDTO.getUserId(), "로그인");
+		// 1) 로그인 시도 select
+	 	MemberVO loginMember = mDao.login(loginDTO);
+		if(loginMember != null ) {
+			// 2) 1번에서 로그인 성공시 PointLog에 insert
+			if(pDao.insertPointLog(pointLogDTO) == 1) {
+				// 3) Member 테이블에 userpoin update
+				mDao.updateUserPoint(pointLogDTO);
+				
+				
+			}
+			
+			
+			
+			
+		}
+		
+		
+		return loginMember;
 	}
 
 }

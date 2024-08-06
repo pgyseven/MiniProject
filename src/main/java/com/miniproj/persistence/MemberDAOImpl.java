@@ -4,7 +4,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproj.model.LoginDTO;
 import com.miniproj.model.MemberVO;
+import com.miniproj.model.PointLogDTO;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
@@ -17,9 +19,9 @@ public class MemberDAOImpl implements MemberDAO {
 	//static은 공유 그클래스에서 만들어진 객체들이 다 공유한다는 의미에서
 	
 	@Override
-	public int updateUserPoint(String userId) throws Exception {
+	public int updateUserPoint(PointLogDTO pointLogDTO) throws Exception {
 		
-		return ses.insert(NS + ".updateUserPoint", userId);
+		return ses.insert(NS + ".updateUserPoint", pointLogDTO);
 	}
 
 	@Override
@@ -32,6 +34,12 @@ public class MemberDAOImpl implements MemberDAO {
 	public int insertMember(MemberVO registMember) throws Exception {
 		
 		return ses.insert(NS + ".insertMember", registMember);
+	}
+
+	@Override
+	public MemberVO login(LoginDTO loginDTO) throws Exception {
+		
+		return ses.selectOne(NS + ".loginWithLoginDTO", loginDTO);
 	}
 
 }
