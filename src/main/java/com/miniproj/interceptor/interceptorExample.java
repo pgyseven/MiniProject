@@ -44,7 +44,7 @@ public class interceptorExample extends HandlerInterceptorAdapter {
 	// 해당 interceptor의 preHandle, postHandle 의 전 과정이 끝난 후에(view 단이 렌더링된 후) request와 response를 빼앗아 와서 동작
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
+			throws Exception { //이건 대부분 익셉션 객체를 공동으로 처리할때 많이 쓴다 그래서 우린 거의 쓸 일 없다.
 
 		// 위의 두개가 끝난 후(view 단이 렌더링된 후) 여기가 작동함
 		System.out.println("인터셉터 afterCompletion 동작!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
