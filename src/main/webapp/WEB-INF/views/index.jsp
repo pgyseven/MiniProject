@@ -102,8 +102,9 @@
 </head>
 <body>
    <div class="container">  <!-- 여백에 조정 될거임 -- header 좌우 여백 생김 --> 
-      <c:import url="./header.jsp" /> <!-- 경로에 있는 파일을 가져와서 넣어라 그리고 상대적 경로니깐 같은 위치에 있는 헤더 가져오는거라 -->
-
+      <%-- <c:import url="./header.jsp" /> <!-- 경로에 있는 파일을 가져와서 넣어라 그리고 상대적 경로니깐 같은 위치에 있는 헤더 가져오는거라 --> --%>
+		<jsp:include page="./header.jsp"></jsp:include>
+		
       <div class="content">
          <h1>귀멸의 칼날의 홈</h1>
          <div>
@@ -141,7 +142,8 @@
          </div>
       </div>
 
-      <c:import url="./footer.jsp" /> <!--  ./ 현재 경로의  -->
+      <%-- <c:import url="./footer.jsp" /> <!--  ./ 현재 경로의  --> --%>
+      <jsp:include page="./footer.jsp"></jsp:include>
    </div>
 </body>
 </html>

@@ -10,7 +10,8 @@
 <body>
 	<div class="container">
 		
-		<c:import url="../header.jsp" />
+		<%-- <c:import url="../header.jsp" /> --%>
+		<jsp:include page="../header.jsp"></jsp:include>
 		
 
 		<div class="content">
@@ -41,7 +42,9 @@
 		
       </div>
 
-      <c:import url="../footer.jsp" />
+    <%--   <c:import url="../footer.jsp" /> 이건 서블릿을 거쳐와야해서 리스폰스 샌드 리다이렉트로 호출해도 에러가 없다.--%>
+      	<jsp:include page="../footer.jsp"></jsp:include>
+      
    </div>
 
 </body>
