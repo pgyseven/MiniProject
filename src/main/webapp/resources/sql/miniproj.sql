@@ -444,6 +444,6 @@ values(?, sha1(md5(?)), ?, ?, ?, ?, ?);
 
 -- 로그인시 필요한 쿼리문
 select count(*) from member where userId = 'douner' and userPwd = sha1(md5('1234'));
--- 이건 인터셉터를 이용할때 로그인 한 유저의 정보를 세션(session)객체에 저장하기 위해 모든 컬럼을 조회함
+-- 이건 인터셉터를 이용할때 로그인 한 유저의 정보를 세션(session)객체에 저장하기 위해 유저의 모든 컬럼을 조회함
 select * from member where userId = 'douner' and userPwd = sha1(md5('1234'));
 
