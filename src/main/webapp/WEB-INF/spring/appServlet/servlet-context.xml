@@ -32,7 +32,7 @@
 	</beans:bean>
 	
 	
-	<!-- 인처셉터(interceptor) 설정 : 필요한 인터셉터 객체를 만들고 관리하도록 / </beans:bean> 서블릿이 관리하는 객체를 만들어 준다. 클래스는 객체가 되어야한다.파일 프로세스에 @컴포넌트 한거도 똑같이 관리한다 스프링이 그건 빈스그래프에 뜬다.-->
+	
 	<beans:bean id="sampleInterceptor"
 		class="com.miniproj.interceptor.interceptorExample">
 		</beans:bean>
@@ -42,6 +42,11 @@
 		class="com.miniproj.interceptor.LoginInterceptor">
 		</beans:bean>
 	
+	<!-- 로그인 인증이 필요한 페이지 (글작성, 글수정, 글삭제, 댓글작성, 답(댓)글작성/수정/삭제,관리자 페이지) -->
+	<beans:bean id="authInterceptor" class="com.miniproj.interceptor.AuthInterceptor"> <!-- 객체 만듦 -->
+	
+	
+	</beans:bean>
 	
 	
 	<!-- 인터셉터가 동작하는 매핑 주소 설정 -->
@@ -54,6 +59,15 @@
 		<interceptor> 
 			<mapping path="/member/login"/>
 			<beans:ref bean="loginInterceptor"/> 
+		</interceptor>
+		<interceptor>
+		<!-- 로그인 인증이 필요한 페이지 (글작성, 글수정, 글삭제, 댓글작성, 답(댓)글작성/수정/삭제,관리자 페이지) -->
+			<mapping path="/hboard/saveBoard" /> <!-- 글작성 -->
+			<mapping path="/hboard/modifyBoard" /> <!-- 글(답글)수정 -->
+			<mapping path="/hboard/removeBoard" /> <!-- 글(답글)삭제 -->
+			<mapping path="/hboard/showReplyForm" /> <!-- 답글 작성 -->
+			
+			<beans:ref bean="authInterceptor" />
 		</interceptor>
 		
 	</interceptors>
