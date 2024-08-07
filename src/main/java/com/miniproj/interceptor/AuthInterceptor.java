@@ -4,8 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.miniproj.persistence.HBoardDAO;
 import com.miniproj.util.DestinationPath;
 
 // 로그인 인증이 필요한 페이지에서 클라이언트가 현재 로그인 되어 있는지 아닌지 검사한다.\
@@ -39,7 +41,8 @@ import com.miniproj.util.DestinationPath;
  	*) 글수정, 글삭제, 댓글 수정, 댓글 삭제는 로그인 되어 있어야 할 뿐 아니라 그 글(댓글)의 주인인지 확인 해야한다.
  */
 public class AuthInterceptor extends HandlerInterceptorAdapter {
-
+	@Autowired
+	private HBoardDAO dao;
 	
 	/**
 	 * @작성자 : 802-01
@@ -68,7 +71,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			
 			
 			
-		} else { //로그인을 했다.
+		} else { //로그인을 했다. 여기서 글의 주인을 확인 즉 db를 본다.
 			System.out.println("[AuthInterceptor] : 로그인 OK 되어있다.!");
 			goOriginPath = true;
 		}

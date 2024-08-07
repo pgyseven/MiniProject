@@ -217,6 +217,7 @@ public class MemberController {
 		if(session.getAttribute("loginMember") != null) {
 			//세션에 저장했던 값들을 지우고,
 		session.removeAttribute("loginMember");
+		session.removeAttribute("destPath");
 		
 			//세션 무효화
 		session.invalidate();

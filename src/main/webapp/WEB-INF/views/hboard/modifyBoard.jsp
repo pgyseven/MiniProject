@@ -303,7 +303,7 @@ function cancelAddFile(obj) {
 
 					<div class="btns">
 						<button type="submit" class="btn btn-primary">저장</button>
-						<button type="button" class="btn btn-info">취소</button>
+						<button type="button" class="btn btn-info" onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';">취소</button>
 					</div>
 
 				</form>
