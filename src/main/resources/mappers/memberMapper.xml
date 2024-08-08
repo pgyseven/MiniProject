@@ -34,4 +34,11 @@
 		select * from member where userId = #{userId} and userPwd = sha1(md5(#{userPwd}))
 	</select>
 	
+	<!-- 자동 로그인 정보를 저장하는 쿼리문 -->
+	<update id="updateAutoLoginInfo">
+		update member set sesid=#{sesid} , allimit=#{allimit} where userId=#{userId}
+	</update>
+	
+	
+	
 </mapper>

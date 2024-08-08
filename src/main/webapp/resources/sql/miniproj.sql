@@ -452,3 +452,14 @@ select * from member where userId = 'douner' and userPwd = sha1(md5('1234'));
 select writer from hboard where boardNo = ?
 
 ------------------------ 자동 로그인 기능 구현 -----------------------------
+-- 자동 로그인을 체크한 유저의 경우에 아래의 두 컬럼에 자동 로그인을 체크 했을때의 세션값과 만료 시간을 저장
+-- 향후에 쿠키에 있는 자동 로그인 정보와 db의 아래 컬럼에 있는 자동 로그인 정보와 비교하여 맞을 때만 자동로그인 시켜야
+ALTER TABLE `pgy`.`member` 
+ADD COLUMN `sesid` VARCHAR(40) NULL AFTER `userPoint`,
+ADD COLUMN `allimit` DATETIME NULL AFTER `sesid`;
+
+-- 자동 로그인 정보를 db에 저장하는 쿼리문
+update member set sesid=? , allimit=? where userId=?
+
+-- 쿠키에 자동 로그인 한다고 저장되어 있을때 자동 로그인하는 쿼리문
+select * from member where sesId = '쿠키에 저장된 sesId' and allimit > now();

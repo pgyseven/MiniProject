@@ -4,6 +4,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproj.model.AutoLoginInfo;
 import com.miniproj.model.LoginDTO;
 import com.miniproj.model.MemberVO;
 import com.miniproj.model.PointLogDTO;
@@ -40,6 +41,12 @@ public class MemberDAOImpl implements MemberDAO {
 	public MemberVO login(LoginDTO loginDTO) throws Exception {
 		
 		return ses.selectOne(NS + ".loginWithLoginDTO", loginDTO);
+	}
+
+	@Override
+	public int updatAutoLoginInfo(AutoLoginInfo autoLoginInfo) throws Exception {
+		
+		return ses.update(NS + ".updateAutoLoginInfo", autoLoginInfo);
 	}
 
 }
