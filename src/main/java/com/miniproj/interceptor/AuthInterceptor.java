@@ -47,10 +47,13 @@ import lombok.RequiredArgsConstructor;
 	페이지로 돌아가게 해야한다.
  	*) 글수정, 글삭제, 댓글 수정, 댓글 삭제는 로그인 되어 있어야 할 뿐 아니라 그 글(댓글)의 주인인지 확인 해야한다.
  */
-@RequiredArgsConstructor
+
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 	
-	private final HBoardService service;
+	@Autowired // 생성자 없이 자동 주입해주기에 서블릿 다시 컨텍스트에 에러 없음 근데 final 하게 만들면 생성자를 
+	// 롬복에게 만들라고 즉 서비스 주입하라고 하는 생성자를 만듦 final로 하고 싶은면 생성자를 만들때 넣으라는 root-context에 있는 <constructor-arg ref="sqlSessionFactory"></constructor-arg> 이런식으로 서블릿 컨텍스트에도 추가해줘야 한다.
+	
+	private HBoardService service;
 	/**
 	 * @작성자 : 802-01
 	 * @작성일 : 2024. 8. 7.

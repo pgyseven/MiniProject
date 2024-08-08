@@ -2,6 +2,7 @@ package com.miniproj.interceptor;
 
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,6 +45,17 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				// 세션에 로그인한 유저의 정보를 넣어주었다..
 				HttpSession ses = request.getSession();
 				ses.setAttribute("loginMember", loginMember);
+				//만약 자동 로그인을 체크한 유저라면...
+				
+				/*
+				 * 1)login.jsp에서 체크박스 클릭시 : alert() 띄운다.
+				 * 2) 로그인 성공 했다면, 자동 로그인 체크 한 유저인지 검사한다.
+				 * 3) 
+				 */
+				if(request.getParameter("remember") !=null ) { //스프링 프레임워크가 해주는게 갯파람해서 있으면 트로 없으면false 준다.
+					saveAutoLoginInfo(request, response);
+					
+				}
 				//홈
 				//response.sendRedirect("/"); // 이건 그닥 좋은 방법이 아니다. 이건 뷰만 호출하는 형식이다 즉 리다이렉트라는 이름과 다르게 포워딩이 아니라 컨트롤러단을 거치지 않고 이동시킴 그럼 c:이 문법 자체를 못이해해서 에러남
 
@@ -60,6 +72,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				response.sendRedirect("/member/login?status=fail"); // 시스템 아웃보다 우선 순위가 높다
 			} 
 		}
+	}
+
+	private void saveAutoLoginInfo(HttpServletRequest request, HttpServletResponse response) {
+		//
+		Cookie autoLoginCookie = new Cookie("al",request.getSession().getId()); 
+		autoLoginCookie.setMaxAge(60*60*24*7); //일주일동안 쿠키 유지 (자동 로그인 쿠키)
+		autoLoginCookie.setPath("/"); //쿠키가 저장될 경로 설정(해당 경로일때 쿠키 확인이 가능)
+		response.addCookie(autoLoginCookie);
+		
+		
 	}
 	
 }

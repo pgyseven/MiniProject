@@ -42,7 +42,8 @@
 		class="com.miniproj.interceptor.LoginInterceptor">
 		</beans:bean>
 	
-	<!-- 로그인 인증이 필요한 페이지 (글작성, 글수정, 글삭제, 댓글작성, 답(댓)글작성/수정/삭제,관리자 페이지) -->
+	<!-- 로그인 인증이 필요한 페이지 (글작성, 글수정, 글삭제, 댓글작성, 답(댓)글작성/수정/삭제,관리자 페이지) 
+	<bean id="authInterceptor" class="com.miniproj.interceptor.AuthInterceptor"> -->
 	<beans:bean id="authInterceptor" class="com.miniproj.interceptor.AuthInterceptor"> <!-- 객체 만듦 -->
 	
 	
