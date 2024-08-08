@@ -31,7 +31,8 @@ public class MemberVO {
 		private Timestamp registerDate;
 		private String userImg;
 		private int userPoint;
-		
+		private String sesid;
+		private Timestamp allimit;
 	}
 
 

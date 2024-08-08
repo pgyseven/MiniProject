@@ -190,6 +190,8 @@ public class MemberController {
 	@RequestMapping(value = "/login",  method = RequestMethod.POST)
 	public void loginPOST(LoginDTO loginDTO, Model model) {
 		System.out.println(loginDTO.toString() + "으로 로그인 한다.");
+		
+		
 	
 		try {
 			MemberVO loginMember = mService.login(loginDTO);

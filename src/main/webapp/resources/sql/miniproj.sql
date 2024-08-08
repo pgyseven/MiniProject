@@ -448,4 +448,7 @@ select count(*) from member where userId = 'douner' and userPwd = sha1(md5('1234
 select * from member where userId = 'douner' and userPwd = sha1(md5('1234'));
 
 
+-- ?번글의 작성자 얻어오는 쿼리문
+select writer from hboard where boardNo = ?
 
+------------------------ 자동 로그인 기능 구현 -----------------------------
