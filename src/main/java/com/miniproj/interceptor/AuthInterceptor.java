@@ -1,5 +1,7 @@
 package com.miniproj.interceptor;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -7,8 +9,13 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.miniproj.model.BoardDetailInfo;
+import com.miniproj.model.MemberVO;
 import com.miniproj.persistence.HBoardDAO;
+import com.miniproj.service.hboard.HBoardService;
 import com.miniproj.util.DestinationPath;
+
+import lombok.RequiredArgsConstructor;
 
 // 로그인 인증이 필요한 페이지에서 클라이언트가 현재 로그인 되어 있는지 아닌지 검사한다.\
 // 로그인 인증이 필요한 페이지 (글작성, 글수정, 글삭제, 댓글작성, 답(댓)글작성/수정/삭제,관리자 페이지)
@@ -40,10 +47,10 @@ import com.miniproj.util.DestinationPath;
 	페이지로 돌아가게 해야한다.
  	*) 글수정, 글삭제, 댓글 수정, 댓글 삭제는 로그인 되어 있어야 할 뿐 아니라 그 글(댓글)의 주인인지 확인 해야한다.
  */
+@RequiredArgsConstructor
 public class AuthInterceptor extends HandlerInterceptorAdapter {
-	@Autowired
-	private HBoardDAO dao;
 	
+	private final HBoardService service;
 	/**
 	 * @작성자 : 802-01
 	 * @작성일 : 2024. 8. 7.
@@ -72,9 +79,27 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			
 			
 		} else { //로그인을 했다. 여기서 글의 주인을 확인 즉 db를 본다.
-			System.out.println("[AuthInterceptor] : 로그인 OK 되어있다.!");
+			System.out.println("[AuthInterceptor] : 로그인 OK 되어있다.![그 글에 대한 수정/삭제 권한(본인글)이 있는지 검사]");
 			goOriginPath = true;
-		}
+			
+			// 만약 글(답글)수정, 글(답글) 삭제의 페이지에서 왔다면 그 글에 대한 수정/삭제 권한(본인글)이 있는지?
+			String uri = request.getRequestURI();
+			if(uri.contains("modify") || uri.contains("remove")) {
+				int boardNo = Integer.parseInt(request.getParameter("boardNo"));
+				System.out.println(boardNo + "이 글에 대한 수정/삭제 권한 (본인글) 이 있는지 검사하자");
+				
+				List<BoardDetailInfo> board = service.read(boardNo);
+				// 로그인한 유저의 정보
+				MemberVO loginMember = (MemberVO)ses.getAttribute("loginMember");
+				
+				
+				if(!board.get(0).getWriter().equals(loginMember.getUserId())) {
+					System.out.println("작성자와 로그인한 유저의 아이디가 다르므로 돌려보냄");
+					response.sendRedirect("/hboard/viewBoard?status=authFail&boardNo=" + boardNo);
+				}
+			}
+			goOriginPath = true;
+		} 
 		
 		return goOriginPath;
 	}
