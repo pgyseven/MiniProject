@@ -185,7 +185,8 @@ function cancelAddFile(obj) {
 <body>
 
 	<div class="container">
-		<c:import url="../header.jsp"></c:import>
+		<%-- <c:import url="../header.jsp"></c:import> --%>
+		<jsp:include page="../header.jsp"></jsp:include>
 
 		<div class="content">
 			<h1>게시글 수정 페이지</h1>
@@ -336,8 +337,8 @@ function cancelAddFile(obj) {
 				</div>
 			</div>
 		</div>
-
-		<c:import url="../footer.jsp"></c:import>
+		<jsp:include page="../footer.jsp"></jsp:include>
+		<%-- <c:import url="../footer.jsp"></c:import> --%>
 	</div>
 </body>
 </html>
