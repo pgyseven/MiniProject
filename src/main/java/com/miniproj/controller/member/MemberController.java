@@ -187,7 +187,7 @@ public class MemberController {
 	}
 	
 	
-	@RequestMapping(value = "/login",  method = RequestMethod.POST)
+	@RequestMapping(value = "/loginPOST",  method = RequestMethod.POST)
 	public void loginPOST(LoginDTO loginDTO, Model model) {
 		System.out.println(loginDTO.toString() + "으로 로그인 한다.");
 		
@@ -202,10 +202,8 @@ public class MemberController {
 				// 홈으로 이동
 				
 				
-			} else {
-				System.out.println("MemberController - 로그인 실패!!!");
-				
-			}
+			} 
+			return; //loginPOST.jsp로 가지 않고, Logininterceptor의 posthandle이 수행되도록...  loginPost 여기서 메서드 끝내라 즉 포스트 핸들로해서 거기서 지정한 데스트 패스로 이동하라
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
