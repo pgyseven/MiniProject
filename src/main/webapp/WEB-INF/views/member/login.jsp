@@ -30,7 +30,7 @@
 			<h1>회원 로그인 페이지</h1>
 		
 		
-		<form action="/member/login" method="post">
+		<form action="/member/loginPOST" method="post">
   <div class="mb-3 mt-3">
     <label for="userId" class="form-label">아이디</label>
     <input type="text" class="form-control" id="userId" placeholder="Enter userId" name="userId">
