@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.WebUtils;
 
 import com.miniproj.model.AutoLoginInfo;
 import com.miniproj.model.MemberVO;
@@ -29,15 +30,87 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	private MemberService service;
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-	
-		System.out.println("loginIntercepror 의 prehandel호출 ~~~~~~~~~~~~~");
-		// 이미 로그인이 되어있는 경우에는 로그인 페이지를 보여줄 필요가 없다.
-		// 로그인이 되어 있지 않은 경우에만 로그인 페이지를 보여줘야 한다.
-		return super.preHandle(request, response, handler);
-	}
+	   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	         throws Exception {
+	      
+	      boolean isLoginPageShow = false;
+	      
+	      if (request.getMethod().toUpperCase().equals("GET")) { // 요청이 GET 방식일때만 수행한다.
+	         System.out.println("[LoginInterceptor...preHandle() 호출]");
+	         
+	         // 이미 로그인이 되어있는 경우에는 로그인 페이지를 보여줄 필요가 없다.
+	         // 로그인이 되어있지 않은 경우에만 로그인 페이지를 보여줘야 한다.
+	         
+	         Cookie autoLoginCookie = WebUtils.getCookie(request, "al");
+	         
+	         // 쿠키를 검사하여 자동로그인 쿠키가 존재한다면
+	         if (autoLoginCookie != null) {
+	        	 System.out.println("로그인 인터셉 쿠키 있을때");
+	            // 쿠키가 있을 때
+	            String savedCookieSesId = autoLoginCookie.getValue();
+	            
+	            // -> DB에 다녀와서 자동로그인을 체크한 유저를 자동로그인 시켜야 한다. -> 로그인 페이지X
+	            MemberVO autoLoginUser = service.checkAutoLogin(savedCookieSesId);
+	            
+	            HttpSession ses = request.getSession();
+	            
+	            ses.setAttribute("loginMember", autoLoginUser);
+	            
+	            Object dp = ses.getAttribute("destPath");
+	            response.sendRedirect((dp != null) ? (String)dp : "/");
+	            
+	         } else {//쿠키가 없고, 로그인 하지 않은 경우 로그인 페이지를 보여준다.
+	            if (request.getSession().getAttribute("loginMember") == null) {
+	        	 System.out.println("로그인 인터셉 쿠키 없을때");
+	            isLoginPageShow = true;
+	            }else {//쿠키가 없고, 로그인 한 경우 페이지를 보여주지 않는다.
+	            	isLoginPageShow = false;
+	            }
+	         }
+	         
+	         
+	         // 쿠키가 존재하지 않는다면 수동으로 로그인할 수 있도록 로그인 페이지를 보여줘야 한다.
+	      }else  if (request.getMethod().toUpperCase().equals("POST")) {
+	    	  isLoginPageShow = true;
+	      }
+	      
+	      return isLoginPageShow;
+	   }
 
+	/*이렇게 하면 loginPost도 그냥 login으로 바꿔도 될듯
+	 * @Override public boolean preHandle(HttpServletRequest request,
+	 * HttpServletResponse response, Object handler) throws Exception { if
+	 * (request.getMethod().toUpperCase().equals("GET") ||
+	 * request.getMethod().toUpperCase().equals("POST")) { // 기존 로직 유지 boolean
+	 * isLoginPageShow = false; Cookie autoLoginCookie = WebUtils.getCookie(request,
+	 * "al"); if (autoLoginCookie != null) { String savedCookieSesId =
+	 * autoLoginCookie.getValue(); MemberVO autoLoginUser =
+	 * service.checkAutoLogin(savedCookieSesId); if (autoLoginUser != null) {
+	 * HttpSession ses = request.getSession(); ses.setAttribute("loginMember",
+	 * autoLoginUser); Object dp = ses.getAttribute("destPath");
+	 * response.sendRedirect((dp != null) ? (String) dp : "/"); return false; // 요청
+	 * 처리를 중단합니다. } } else { isLoginPageShow = true; } return isLoginPageShow; }
+	 * return true; // GET과 POST 외의 요청에 대해 계속 처리합니다. }
+	 */
+	
+	
+	
+	/*
+	 * 포스트에서 검증
+	 * 
+	 * @Override public void postHandle(HttpServletRequest request,
+	 * HttpServletResponse response, Object handler, ModelAndView modelAndView)
+	 * throws Exception { if (request.getMethod().toUpperCase().equals("POST")) {
+	 * Map<String, Object> model = modelAndView.getModel(); MemberVO loginMember =
+	 * (MemberVO) model.get("loginMember"); if (loginMember != null) { HttpSession
+	 * ses = request.getSession(); ses.setAttribute("loginMember", loginMember); if
+	 * (request.getParameter("remember") != null) { saveAutoLoginInfo(request,
+	 * response); } Object tmp = ses.getAttribute("destPath");
+	 * response.sendRedirect((tmp == null) ? "/" : (String) tmp); } else {
+	 * response.sendRedirect("/member/login?status=fail"); } } }
+	 */
+	
+	
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
@@ -77,6 +150,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 //				}
 				
 				Object tmp = ses.getAttribute("destPath");
+				System.out.println((String)tmp + "이건 데스트 패스 입니다.");
 				response.sendRedirect((tmp == null) ? "/" : (String)tmp);
 			} else {
 				System.out.println("[loginIntercepror... postHandle() : 로그인 실패]");
@@ -84,6 +158,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			} 
 		}
 	}
+	
+	
+	
 
 	private void saveAutoLoginInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 자동 로그인을 체크한 유저의 컬럼에 세션값과 만료일 DB에 저장
@@ -105,7 +182,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			// 쿠키가 gmt 인지 utc 인지 체크한다. 지금같은 경우 크롬 저장된거 보니깐gmp 시간같음 mysql은 기본 utc 속성임
 			// 자동 로그인을 체크 했을때의 세션을 쿠키에 넣어둠 
 			// 우리의 문제는 한컴터를 두명이상이 쓸때 첫번재 사람은 남은 쿠키로 인해서 로그인이 불가능하다. 이런건 구글은
-			//쿠키에 암호화된 아이디를 넣어둬서 해결한다. 우리는 이건 안한다.
+			//쿠키에 암호화된 아이디를 넣둬서 해결한다. 우리는 이건 안한다.
 			Cookie autoLoginCookie = new Cookie("al", sesId); 
 			autoLoginCookie.setMaxAge(60*60*24*7); //일주일동안 쿠키 유지 (자동 로그인 쿠키)
 			autoLoginCookie.setPath("/"); //쿠키가 저장될 경로 설정(해당 경로일때 쿠키 확인이 가능)
