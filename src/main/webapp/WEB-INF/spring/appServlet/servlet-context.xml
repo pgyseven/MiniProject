@@ -59,6 +59,7 @@
 		
 		<interceptor> 
 			<mapping path="/member/login"/>
+			<mapping path="/member/loginPOST"/>
 			<beans:ref bean="loginInterceptor"/> 
 		</interceptor>
 		<interceptor>
