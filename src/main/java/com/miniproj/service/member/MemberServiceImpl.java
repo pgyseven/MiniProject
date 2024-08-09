@@ -102,4 +102,12 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 
+
+	@Override
+	@Transactional(readOnly = true)
+	public MemberVO checkAutoLogin(String savedCookieSesId) throws Exception {
+		return mDao.checkAutoLogin(savedCookieSesId);
+		
+	}
+
 }

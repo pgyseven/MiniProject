@@ -21,6 +21,9 @@ public interface MemberDAO {
 
 	// 자동로그인 정보를 저장하는 메서드
 	int updatAutoLoginInfo(AutoLoginInfo autoLoginInfo) throws Exception;
+
+	// 자동 로그인을 확인하는 메서드
+	MemberVO checkAutoLogin(String savedCookieSesId) throws Exception;
 	
 	
 	
