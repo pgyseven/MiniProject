@@ -29,7 +29,7 @@ public interface RBoardDAO{
 
 
 	//게시글 상세정보를 읽어오는 메서드
-	List<BoardDetailInfo> selectBoardByBoardNo(int BoardNo) throws Exception;
+	BoardDetailInfo selectBoardByBoardNo(int BoardNo) throws Exception;
 
 	//게시글의 조회수를 증가하는 메서드
 	int updateReadCount(int boardNo) throws Exception;

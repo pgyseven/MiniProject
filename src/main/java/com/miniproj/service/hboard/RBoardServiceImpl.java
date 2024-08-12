@@ -106,9 +106,27 @@ public class RBoardServiceImpl implements RBoardService {
 	}
 
 	@Override
-	public List<BoardDetailInfo> read(int boardNo, String ipAddr) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public BoardDetailInfo read(int boardNo, String ipAddr) throws Exception {
+		BoardDetailInfo boardInfo = rDao.selectBoardByBoardNo(boardNo);  //select
+
+
+		// 조회수 증가
+//		if (boardInfo != null) {
+//
+//			int dateDiff = bDao.selectDateDiff(boardNo, ipAddr);  //select
+//			if (dateDiff == -1) {
+//				// ipAddr 유저가 boardNo글을 조회한적이 없다. 조회내역 증가 - > 조회수 증가
+//				if (bDao.saveBoardReadLog(boardNo, ipAddr) == 1) { // 조회 내역 저장 / insert
+//					updateReadCount(boardNo, boardInfo); //update     Propagation.REQUIRED 에 의해서 트랜잭션이 아래 호출하는 매서드 까지 확장
+//				}
+//
+//			} else if (dateDiff >= 1) {
+//				updateReadCount(boardNo, boardInfo); //update
+//				bDao.updateReadWhen(boardNo, ipAddr); // 조회수 증가 한 날로 날짜 update
+//			}
+//		}
+
+		return boardInfo;
 	}
 
 	@Override

@@ -181,7 +181,7 @@
 								
 								<c:choose>
 									<c:when test = "${board.isDelete == 'N'}">
-										<tr onclick="location.href='/hboard/viewBoard?boardNo=${board.boardNo}';">
+										<tr onclick="location.href='/rboard/viewBoard?boardNo=${board.boardNo}';">
 									<td>${board.boardNo}</td>
 									<td>
 									<c:forEach var="i" begin="1" end="${board.step }"> <!-- step 이란걸 주면 증감의 정도도 설정 가능 -->

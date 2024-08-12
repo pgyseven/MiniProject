@@ -48,9 +48,9 @@ public class RBoardDAOImpl implements RBoardDAO {
 	}
 
 	@Override
-	public List<BoardDetailInfo> selectBoardByBoardNo(int BoardNo) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public BoardDetailInfo selectBoardByBoardNo(int BoardNo) throws Exception {
+		
+		return ses.selectOne(NS + ".selectBoardDetailInfoByBoardNo", BoardNo);
 	}
 
 	@Override

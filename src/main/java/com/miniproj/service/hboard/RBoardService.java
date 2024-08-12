@@ -21,7 +21,7 @@ public interface RBoardService{ //인터페이스끼리 상속 가능
 	   boolean saveBoard(HBoardDTO newBoard) throws Exception;
 	   
 	   // 게시판 상세 보기
-	   public List<BoardDetailInfo> read(int boardNo, String ipAddr) throws Exception;
+	   public BoardDetailInfo read(int boardNo, String ipAddr) throws Exception;
 	   
 	   /**
 	    * @작성자 : 802-02
