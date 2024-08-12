@@ -31,8 +31,8 @@ public class RBoardDAOImpl implements RBoardDAO {
 
 	@Override
 	public int insertNewBoard(HBoardDTO newBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return ses.insert(NS + ".saveNewBoard", newBoard);
 	}
 
 	@Override

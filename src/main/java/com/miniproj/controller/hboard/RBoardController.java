@@ -7,9 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.PagingInfo;
 import com.miniproj.model.PagingInfoDTO;
@@ -58,6 +62,34 @@ public class RBoardController {
 			}
 
 	}
+	@RequestMapping("/showSaveBoardForm")
+	public String showSaveBoardForm() {
+		return "/rboard/saveBoardForm";
+		
+	}
+	
+	@RequestMapping(value = "/saveBoard", method = RequestMethod.POST)
+	public String saveBoard(HBoardDTO newBoard, RedirectAttributes redirectAttributes) {
+		System.out.println(newBoard + "글을 저장하자~");
+		
+		System.out.println("이게시글을 출력하자....................");
 
+	
+
+
+		String returnPage = "redirect:/rboard/listAll";
+		try {
+			if (service.saveBoard(newBoard)) { // 게시글 저장에 성공했다면
+				redirectAttributes.addAttribute("status", "success");
+
+			}
+		} catch (Exception e) { // 게시글 저장에 실패했다면
+			e.printStackTrace();
+			redirectAttributes.addAttribute("status", "fail");
+
+		}
+
+		return returnPage; // 게시글 전체 목록 페이지로 돌아감
+	}
 	
 }

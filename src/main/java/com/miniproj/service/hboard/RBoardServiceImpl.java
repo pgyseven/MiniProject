@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miniproj.model.BoardDetailInfo;
@@ -15,7 +17,10 @@ import com.miniproj.model.HBoardVO;
 import com.miniproj.model.HReplyBoardDTO;
 import com.miniproj.model.PagingInfo;
 import com.miniproj.model.PagingInfoDTO;
+import com.miniproj.model.PointLogDTO;
 import com.miniproj.model.SearchCriteriaDTO;
+import com.miniproj.persistence.MemberDAO;
+import com.miniproj.persistence.PointLogDAO;
 import com.miniproj.persistence.RBoardDAO;
 import com.mysql.cj.util.StringUtils;
 
@@ -26,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 public class RBoardServiceImpl implements RBoardService {
 	
 	private final RBoardDAO rDao;
+	private final PointLogDAO pDao;
+	private final MemberDAO mDao;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -75,9 +82,27 @@ public class RBoardServiceImpl implements RBoardService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveBoard(HBoardDTO newBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = false; 
+
+		// 1) newBoard를 ( 새로넘겨진 게시글) DAO 단을 통해 insert 해본다. -insert close
+		if (rDao.insertNewBoard(newBoard) == 1) {
+
+
+			// 1) 1)번에서 insert 가 성공했을 때 글 작성자의 point를 부여한다. -(select) close - insert close
+			PointLogDTO pointLogDTO = new PointLogDTO(newBoard.getWriter(), "글작성");
+			if (pDao.insertPointLog(pointLogDTO) == 1) {
+
+				// 3) 작성자의 userpoint 값 update 글작성한 것에 대한 기존 유저의 포인트를 플러스나 마이너스 하여 넣어줘야한다. close
+				if (mDao.updateUserPoint(pointLogDTO) == 1) {
+					result = true;
+				}
+			}
+		
+		}
+
+		return result;
 	}
 
 	@Override

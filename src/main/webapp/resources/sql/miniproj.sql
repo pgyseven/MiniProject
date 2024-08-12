@@ -484,4 +484,9 @@ update `pgy`.`hboard` set `boardType` = 'rboard' where (`boardNo` = 63 );
 ALTER TABLE `pgy`.`boardreadlog` 
 ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `boardNo`;
 
+-- 컨텐츠 사이즈를 키워주기 위해서  타입 변경 4gb 까지임
+ALTER TABLE `pgy`.`hboard` 
+CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
+
+
 

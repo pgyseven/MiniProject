@@ -10,9 +10,9 @@
       select * from hboard where boardType = 'rboard' order by boardNo desc limit #{startRowIndex}, #{viewPostCntPerPage}
    </select>
 
-   <!-- 새로운 게시글을 저장하는 쿼리문 -->
+   <!-- 새로운 게시글(댓글형)을 저장하는 쿼리문 -->
    <insert id= "saveNewBoard">
-      insert into hboard(title, content, writer, boardType) values(#{title}, #{content}, #{writer}, 'hboard')
+      insert into hboard(title, content, writer, boardType) values(#{title}, #{content}, #{writer}, 'rboard')
    </insert>
    
    

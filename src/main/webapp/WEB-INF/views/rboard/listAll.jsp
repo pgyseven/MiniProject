@@ -243,7 +243,7 @@
 		
 <div style="float : right; margin-right:5px;">
          <button type="button" class="btn btn-info"
-            onclick="location.href='';">글 쓰기</button>
+            onclick="location.href='/rboard/showSaveBoardForm';">글 저장</button>
       </div>
 
       <form class="searchBar" style="clear:right; display:flex; flex-direction: row; align-items: center; justify-content: center;" 
