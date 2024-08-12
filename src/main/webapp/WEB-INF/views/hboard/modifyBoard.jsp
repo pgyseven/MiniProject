@@ -211,7 +211,7 @@ function cancelAddFile(obj) {
 						<div class="mb-3">
 							<label for="writer" class="form-label">작성자</label> <input
 								type="text" class="form-control" id="writer"
-								value="${board.writer}(${board.email})" readonly>
+								value= "${sessionScope.loginMember.userId}" readonly>
 						</div>
 
 						<div class="mb-3">

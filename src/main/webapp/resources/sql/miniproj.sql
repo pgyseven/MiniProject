@@ -463,3 +463,25 @@ update member set sesid=? , allimit=? where userId=?
 
 -- 쿠키에 자동 로그인 한다고 저장되어 있을때 자동 로그인하는 쿼리문
 select * from member where sesId = '쿠키에 저장된 sesId' and allimit > now();
+
+
+---------------------------  댓글형 게시판 -------------------------------
+
+ALTER TABLE `pgy`.`hboard` 
+COMMENT ='계층형 게시판, 댓글 게시판';
+
+-- 계층형 게시판과 댓글형 게시판의 테이블을 함계 사용하기 위해 만든 컬럼 4게시판을 구분하는 등으로 사용할 것임
+
+ALTER TABLE `pgy`.`hboard` 
+ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `isDelete`;
+
+
+-- 기존의 글들을 계층형 게시판(boasrdType = 'hboard')의 글이라고 업데이트, 댓글형 게시판 boardType = 'rboard'
+update hboard set boardType = 'hboard' where boardNo <= 62;
+update `pgy`.`hboard` set `boardType` = 'rboard' where (`boardNo` = 63 );
+
+-- 조회수 처리 테이블 또한 boardType 추가
+ALTER TABLE `pgy`.`boardreadlog` 
+ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `boardNo`;
+
+

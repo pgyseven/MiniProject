@@ -240,7 +240,7 @@
 			</div>
 			<div class="mb-3">
 				<label for="author" class="form-label">작성자</label> <input
-					type="text" class="form-control" id="writer" name="writer"
+					type="text" class="form-control" id="writer" name="writer" value= "${sessionScope.loginMember.userId}" readOnly
 					placeholder="작성자를 입력하세요">
 			</div>
 			<div class="mb-3">

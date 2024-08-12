@@ -199,21 +199,7 @@
 								</tr>
 								</c:when>
 								
-								<c:when test = "${board.isDelete == 'Y'}">
 								
-									<tr>
-									<td>${board.boardNo}</td>
-									<td>삭제된 글 입니다.</td>
-									<td></td>
-									<td class="postDate"></td>
-									<td></td>
-									<td>${board.isDelete}</td>
-								</tr>
-								
-								
-								
-								
-								</c:when>
 								</c:choose>
 							
 							</c:forEach>
@@ -257,11 +243,11 @@
 		
 <div style="float : right; margin-right:5px;">
          <button type="button" class="btn btn-info"
-            onclick="location.href='/hboard/saveBoard';">글 쓰기</button>
+            onclick="location.href='';">글 쓰기</button>
       </div>
 
       <form class="searchBar" style="clear:right; display:flex; flex-direction: row; align-items: center; justify-content: center;" 
-      action="/hboard/listAll" method="post">
+      action="/rboard/listAll" method="post">
             <div class="input-group mt-3 mb-3" style="width:60%;">
               <select class="form-select" name="searchType" id="searchType">
               <option value="-1">--검색조건--</option> <!-- value 속성을 안쓰면 안쪽 내용이 벨류가 된다 그리고 지금 벨류 -1는 지금 검색 조건을 안골랐다는 의미를 준거 -->
