@@ -488,5 +488,8 @@ ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `boardNo`;
 ALTER TABLE `pgy`.`hboard` 
 CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
 
+---------
+ALTER TABLE `pgy`.`boardreadlog` 
+DROP COLUMN `boardType`;
 
 
