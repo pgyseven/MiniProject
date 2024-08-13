@@ -70,6 +70,7 @@
 			<mapping path="/hboard/showReplyForm" /> <!-- 답글 작성 -->
 			
 			<mapping path="/rboard/showSaveBoardForm"/> <!--  댓글 게시판 글 작성 -->
+			<mapping path="/rboard/modifyBoard"/> <!-- 댓글 게시판 글 수정 -->
 			
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
