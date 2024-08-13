@@ -13,9 +13,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miniproj.model.BoardDetailInfo;
+import com.miniproj.model.BoardUpFileStatus;
+import com.miniproj.model.BoardUpFilesVODTO;
 import com.miniproj.model.HBoardDTO;
 import com.miniproj.model.HBoardVO;
 import com.miniproj.model.PagingInfo;
@@ -108,18 +111,10 @@ public class RBoardController {
 				boardDetailInfo = service.read(boardNo, ipAddr);
 				
 			} else if (request.getRequestURI().equals("/rboard/modifyBoard")) {
-//				System.out.println("수정하기 호출...");
-//				returnViewPage = "/rboard/modifyBoard";
-//				boardDetailInfo = service.read(boardNo);
+				System.out.println("rboard 수정하기 호출...");
+				returnViewPage = "/rboard/modifyBoard";
+				boardDetailInfo = service.read(boardNo);
 
-//				int fileCount = -1;
-//				for (BoardDetailInfo b : boardDetailInfo) {
-//					fileCount = b.getFileList().size();
-//					this.modifyFileList = b.getFileList(); // db 에서 가져온 업로드된 파일리스트를 멤버변수에 할당
-//				}
-//				model.addAttribute("fileCount", fileCount);
-//
-//				outputAny();
 			}
 
 		} catch (Exception e1) {
@@ -131,6 +126,25 @@ public class RBoardController {
 		model.addAttribute("board", boardDetailInfo);
 
 		return returnViewPage;
+	}
+	
+	
+	@RequestMapping(value = "/modifyBoardSave", method = RequestMethod.POST)
+	public String modifyBoardSave(HBoardDTO modifyBoard, RedirectAttributes rediAttributes) {
+		System.out.println(modifyBoard.toString() + "로 수정하자");
+		
+		try { 
+			
+			if(service.modifyBoard(modifyBoard)) {
+				rediAttributes.addAttribute("status", "success");
+			}
+		} catch (Exception e) { //DB의 익셉션 및 IO 익셉션을 모두 포함하기 위하여  익셉션으로 바꿈
+			
+			e.printStackTrace();
+			rediAttributes.addAttribute("status", "fail");
+		}
+		return "redirect:/rboard/viewBoard?boardNo=" + modifyBoard.getBoardNo();
+
 	}
 
 }

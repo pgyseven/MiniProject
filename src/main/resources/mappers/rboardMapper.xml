@@ -73,13 +73,6 @@ insert into boardreadlog(readWho, boardNo) values(#{readWho}, #{boardNo})
 
 
 
-
-
-<!-- boardNo번의 게시글을 수정하는 쿼리문 -->
-<update id="updateBoardByBoardNo">
-update hboard set title = #{title}, content = #{content} where boardNo = #{boardNo};
-</update>
-
 <!-- 게시글의 첨부파일을 pk 로 삭제하는 쿼리문 -->
 <delete id="deleteBoardUpFileByPK">
 delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}

@@ -32,7 +32,7 @@ public interface RBoardService{ //인터페이스끼리 상속 가능
 	    * @throwsException : dao단 다녀오는거라 예외 생길 수 있음
 	    */
 	   //read(int boardNo, String ipAddr) 오버로딩 했다
-	   public List<BoardDetailInfo> read(int boardNo) throws Exception; // 게시글 수정을 위해 게시글을 불러오는 메서드
+	   public BoardDetailInfo read(int boardNo) throws Exception; // 게시글 수정을 위해 게시글을 불러오는 메서드
 
 	   
 	   // 게시글 답글 달기

@@ -110,6 +110,7 @@ public class RBoardServiceImpl implements RBoardService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public BoardDetailInfo read(int boardNo, String ipAddr) throws Exception {
+		
 		BoardDetailInfo boardInfo = rDao.selectBoardByBoardNo(boardNo);  //select
 
 
@@ -131,6 +132,24 @@ public class RBoardServiceImpl implements RBoardService {
 
 		return boardInfo;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BoardDetailInfo read(int boardNo) throws Exception {
+		BoardDetailInfo boardInfo = rDao.selectBoardByBoardNo(boardNo);  //select
+		return boardInfo;
+	}
+	
+	
+	@Override
+	public boolean modifyBoard(HBoardDTO modifyBoard) throws Exception {
+		boolean result = false;
+		if(hDao.updateBoardByBoardNo(modifyBoard) == 1) {
+			result = true;
+		}
+		return result;
+	}
+	
 
 	
 	private void updateReadCount(int boardNo, BoardDetailInfo boardInfo) throws Exception {
@@ -145,11 +164,7 @@ public class RBoardServiceImpl implements RBoardService {
 	}
 	
 	
-	@Override
-	public List<BoardDetailInfo> read(int boardNo) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public boolean saveReply(HReplyBoardDTO replyBoard) throws Exception {
@@ -163,11 +178,7 @@ public class RBoardServiceImpl implements RBoardService {
 		return null;
 	}
 
-	@Override
-	public boolean modifyBoard(HBoardDTO modifyBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 
 	@Override
 	public List<HBoardVO> getPopularBoards() throws Exception {

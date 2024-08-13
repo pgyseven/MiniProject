@@ -41,11 +41,6 @@ public class RBoardDAOImpl implements RBoardDAO {
 		return 0;
 	}
 
-	@Override
-	public int insertBoardUpFile(BoardUpFilesVODTO upFile) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public BoardDetailInfo selectBoardByBoardNo(int BoardNo) throws Exception {
@@ -54,65 +49,11 @@ public class RBoardDAOImpl implements RBoardDAO {
 	}
 
 	@Override
-	public int updateReadCount(int boardNo) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public int updateReadWhen(int boardNo, String ipAddr) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int updateBoardRef(int newBoardNo) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int insertReplyBoard(HReplyBoardDTO replyBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void updateRefOrder(int refOrder, int ref) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<BoardUpFilesVODTO> selectBoardUpFiles(int boardNo) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteAllBoardUpFiles(int boardNo) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public int deleteBoardByBoardNo(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int updateBoardByBoardNo(HBoardDTO modifyBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void deleteBoardUpFile(int boardUpFileNo) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public List<HBoardVO> selectPopBoards() throws Exception {
