@@ -492,4 +492,69 @@ CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
 ALTER TABLE `pgy`.`boardreadlog` 
 DROP COLUMN `boardType`;
 
+------------------------- 댓글 기능 구현 ----------------------------
+use pgy;
+
+-- 댓글을 저장하는 테이블 생성
+CREATE TABLE `pgy`.`replyboard` (
+  `replyNo` INT NOT NULL AUTO_INCREMENT,
+  `replyer` VARCHAR(8) NULL,
+  `content` VARCHAR(200) NULL,
+  `regDate` DATETIME NULL DEFAULT now(),
+  `boardNo` INT NOT NULL,
+  PRIMARY KEY (`replyNo`))
+COMMENT = '댓글을 저장하는 테이블';
+
+-- replyboard FK 설정
+alter table replyboard
+add constraint replyer_member_fk foreign key(replyer) references member(userId)
+on delete cascade;
+-- on delete set null 댓글에 아이디를 null 을 넣는다. 그대신 replyer가 null 가능이여야함
+-- on delete cascade 회원 탈퇴하면 댓글도 같이 삭제
+
+-- replyboard fk 설정
+alter table replyboard
+add constraint boardNo_board_fk foreign key(boardNo) references hboard(boardNo);
+
+
+--  댓글 등록
+insert into replyboard(replyer, content, boardNo) values('douner', '세 댓글 테스트입니다.! 1등', 68);
+--  ? 번 글에 대한 모든 댓글을 얻어오는 
+select * from replyboard where boardNo = ?;
+select * from replyboard where boardNo = 63 and boardType = 'rboard';
+
+-- ? 번 글에 대한 게시글과 모든 댓글을 함께 얻어오는 쿼리문
+select h.*, r.* from hboard h inner join replyboard r 
+on h.boardNo = r.boardNo where h.boardNo = 63;
+
+-- 모든 게시글과 모든 댓글을 함께 얻어오는 쿼리문
+select h.*, r.*
+from hboard h left outer join replyboard r 
+on h.boardNo = r.boardNo 
+where boardType = 'rboard';
+
+
+-- ?번 글의 개수 얻어오기
+select count(*) from replyboard where boardNo = 63;
+
+
+-- 댓글 게시판의 데이터와, 그 댓글 게시물에 달려있는 댓글의 갯수를 함께 얻어오는 쿼리문
+select h.boardNo, h.title, h.readcount, h.postDate, (select count(*) from replyBoard where r.boardNo = h.boardNo)
+from hboard h left outer join replyboard r 
+on h.boardNo = r.boardNo 
+where boardType = 'rboard' 
+group by h.boardNo
+order by h.boardNo desc;
+
+select * from hboard
+where boardType = 'rboard';
+
+SELECT h.boardNo, h.title, h.readcount, h.postDate, COUNT(r.boardNo) AS replyCount
+FROM hboard h
+LEFT JOIN replyboard r 
+ON h.boardNo = r.boardNo
+WHERE h.boardType = 'rboard'
+GROUP BY h.boardNo
+ORDER BY h.boardNo DESC;
+
 
