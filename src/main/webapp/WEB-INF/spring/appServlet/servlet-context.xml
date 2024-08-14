@@ -82,6 +82,7 @@
 	
 		<!-- 아래의 패키지를 조사하여 필요한 컨트롤러 객체를 컨테이너에 적재 즉 메모리에 올린다. -->
 	<context:component-scan base-package="com.miniproj.controller" />
+	<context:component-scan base-package="com.miniproj.reply" />
 	
 	
 	
