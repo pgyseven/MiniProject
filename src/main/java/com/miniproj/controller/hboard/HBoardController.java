@@ -2,6 +2,7 @@ package com.miniproj.controller.hboard;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -359,27 +360,30 @@ public class HBoardController {
 	// 일때 2번 호출된다.
 	@RequestMapping(value = { "/viewBoard", "/modifyBoard" }) // value 컨트롤 클릯해서 보면 String[] value() default {}; 이렇게 보이는데
 																// 배열 형태로 할 수 있단걸 알 수 있다.
-	public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest request) {
-
+	public String viewBoard(@RequestParam("boardNo") String boardNo, Model model, HttpServletRequest request) {
+		String returnViewPage = "";
+		List<BoardDetailInfo> boardDetailInfo = null; // service.read(boardNo, ipAddr);
+		
+		try {
 		String ipAddr = GetClientIPAddr.getClientIp(request);
 
 		System.out.println(ipAddr + " 가 뒤에 번호 글 조회" + boardNo);
 
 		// System.out.println("uri : " + request.getRequestURI());
 
-		String returnViewPage = "";
+		
 
-		List<BoardDetailInfo> boardDetailInfo = null; // service.read(boardNo, ipAddr);
+		
 
-		try {
+		
 			if (request.getRequestURI().equals("/hboard/viewBoard")) {
 				System.out.println("상세보기 호출...");
 				returnViewPage = "/hboard/viewBoard";
-				boardDetailInfo = service.read(boardNo, ipAddr);
+				boardDetailInfo = service.read(Integer.parseInt(boardNo), ipAddr);
 			} else if (request.getRequestURI().equals("/hboard/modifyBoard")) {
 				System.out.println("수정하기 호출...");
 				returnViewPage = "/hboard/modifyBoard";
-				boardDetailInfo = service.read(boardNo);
+				boardDetailInfo = service.read(Integer.parseInt(boardNo));
 
 				int fileCount = -1;
 				for (BoardDetailInfo b : boardDetailInfo) {
@@ -391,16 +395,21 @@ public class HBoardController {
 				outputAny();
 			}
 
-		} catch (Exception e1) {
+		 } catch (SQLException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	         returnViewPage = "redirect:/hboard/listAll?status=fail";
+	      } catch (Exception ex) {
+	         System.out.println(boardNo + " 의 값");
+	         System.out.println("요기~~~~~~~~~~~~~~~~~" + ex.getMessage());
+	         returnViewPage = "redirect:/hboard/listAll?status=fail";
+	      }
 
-			e1.printStackTrace();
-			returnViewPage = "redirect:/hboard/listAll?status=fail";
-		}
+	      model.addAttribute("boardDetailInfo", boardDetailInfo);
 
-		model.addAttribute("boardDetailInfo", boardDetailInfo);
+	      return returnViewPage;
 
-		return returnViewPage;
-	}
+	   }
 
 	private void outputAny() {
 		System.out.println("====================================================================================");
