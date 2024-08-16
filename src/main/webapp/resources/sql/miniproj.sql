@@ -557,4 +557,10 @@ WHERE h.boardType = 'rboard'
 GROUP BY h.boardNo
 ORDER BY h.boardNo DESC;
 
+-------------------------- 댓글 페이지 ----------------------
+--  ? 번 글에 대한 모든 댓글을 얻어오는 
+select * from replyboard where boardNo = ?;
 
+select * from replyboard where boardNo = 62 order by replyNo desc limit 6,3;
+
+select count(*) from replyboard where boardNo = ?;
